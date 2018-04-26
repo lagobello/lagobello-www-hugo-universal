@@ -1,48 +1,34 @@
 baseurl = "https://vittorio88.github.io/lagobello-www-hugo/"
+disqusShortname = "shortcode-here"
+languageCode = "en-us"
+paginate = 5
+relativeURLs = false
 theme = "hugo-geo"
 themesdir = "themes"
-relativeURLs = false
-languageCode = "en-us"
 title = "Lago Bello"
-disqusShortname = "shortcode-here"
-paginate = 5
-
-
-[taxonomies]
-	tag = "tags"
-	tutorial = "tutorials"
-
 [params]
-	showglobe = true
-
-	favicon = "favicon.ico"
-	
-	analytics = "code-here"
-
-	email = "vittorio.alfieri@lagobello.com"
-
-	profilepic = "img/profile.png"
-	
-	title = ""
-	subtitle = ""
-
-	# Social buttons for sidebar
-	# Each of these are optional
-	[[params.socialbuttons]]
-	faicon = "twitter"
-	url = "https://twitter.com/alexanderurq"
-	[[params.socialbuttons]]
-	faicon = "google-plus"
-	url = "https://plus.google.com/+YourID"
-
-	[[params.navlinks]]
-	name = "About"
-	url = "about"
-	
-	[[params.navlinks]]
-	name = "Blog"
-	url = ""
-	
-	[[params.navlinks]]
-	name = "Tutorials"
-	url = "tutorial/"
+analytics = "code-here"
+email = "vittorio.alfieri@lagobello.com"
+favicon = "favicon.ico"
+profilepic = "img/profile.png"
+showglobe = true
+subtitle = ""
+title = "Lago Bello"
+[[params.navlinks]]
+name = "About"
+url = "about"
+[[params.navlinks]]
+name = "Blog"
+url = ""
+[[params.navlinks]]
+name = "Tutorials"
+url = "tutorial/"
+[[params.socialbuttons]]
+faicon = "twitter"
+url = "https://twitter.com/alexanderurq"
+[[params.socialbuttons]]
+faicon = "google-plus"
+url = "https://plus.google.com/+YourID"
+[taxonomies]
+tag = "tags"
+tutorial = "tutorials"
