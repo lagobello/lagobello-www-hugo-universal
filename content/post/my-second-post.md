@@ -1,7 +1,6 @@
 ---
-title: "My Second Post"
-date: 2017-12-21T00:24:47+01:00
-draft: false
----
+title: My Second Post
+date: 2017-12-21 00:24:47 +0100
 
-asdfsdf FFFFF
+---
+Lorem Ipsum sample content.
