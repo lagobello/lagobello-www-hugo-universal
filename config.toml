@@ -5,30 +5,38 @@ paginate = 5
 relativeURLs = false
 theme = "hugo-geo"
 themesdir = "themes"
-title = "Lago Bello"
+
+
 [params]
 analytics = "code-here"
-email = "vittorio.alfieri@lagobello.com"
+email = "info@lagobello.com"
 favicon = "favicon.ico"
 profilepic = "img/profile.png"
 showglobe = true
-subtitle = ""
+subtitle = "Real Estate Development"
 title = "Lago Bello"
+
+
 [[params.navlinks]]
 name = "About"
 url = "about"
+
 [[params.navlinks]]
 name = "Blog"
 url = ""
-[[params.navlinks]]
-name = "Tutorials"
-url = "tutorial/"
-[[params.socialbuttons]]
-faicon = "twitter"
-url = "https://twitter.com/alexanderurq"
-[[params.socialbuttons]]
-faicon = "google-plus"
-url = "https://plus.google.com/+YourID"
+
+#[[params.navlinks]]
+#name = "Tutorials"
+#url = "tutorial/"
+
+#[[params.socialbuttons]]
+#faicon = "twitter"
+#url = "https://twitter.com/alexanderurq"
+
+#[[params.socialbuttons]]
+#faicon = "google-plus"
+#url = "https://plus.google.com/+YourID"
+
 [taxonomies]
 tag = "tags"
 tutorial = "tutorials"
