@@ -1,4 +1,4 @@
-baseurl = "https://vittorio88.github.io/lagobello-www-hugo/"
+baseurl = "https://vittorio88.github.io/lagobello-www-hugo"
 #publishDir = "docs"
 theme = "hugo-geo"
 themesdir = "themes"
