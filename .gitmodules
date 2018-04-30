@@ -9,3 +9,10 @@
 [submodule "themes/prologue"]
 	path = themes/prologue
 	url = https://github.com/sethmacleod/prologue.git
+
+[submodule "themes/universal"]
+	path = themes/universal
+	url = https://github.com/devcows/hugo-universal-theme.git
+[submodule "hugo-universal-theme"]
+	path = hugo-universal-theme
+	url = https://github.com/devcows/hugo-universal-theme.git
