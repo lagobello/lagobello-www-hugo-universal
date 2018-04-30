@@ -1,8 +1,10 @@
-baseurl = ""
+baseurl = "https://vittorio88.github.io/lagobello-www-hugo"
 #disqusShortname = "shortcode-here"
 languageCode = "en-us"
 paginate = 5
-relativeURLs = true
+relativeURLS = false
+# relativeURLs = true # broken
+
 theme = "hugo-geo"
 themesdir = "themes"
 
