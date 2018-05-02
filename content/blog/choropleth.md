@@ -1,12 +1,12 @@
 ---
-title: Lago Choropleth
+title: Open Street Map
 date: 2017-12-21 00:21:53 +0100
-banner: "img/banners/logo-main.png"
+banner: "img/osm_logo.png"
+hidden: true
 ---
-I am an experiment, please ignore me!
 
+Here is an open-street map showing our location provided by: openstreetmap.org
 {{< load-leaflet >}}
+{{< leaflet-simple mapHeight="480px" mapWidth="640px" mapLon="-97.552014" mapLat="26.053611" >}}
 
-{{< leaflet-simple mapHeight="480" mapWidth="640" mapLon="-97.552014" mapLat="26.053611" >}}
 
-END
