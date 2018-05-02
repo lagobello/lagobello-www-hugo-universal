@@ -3,6 +3,7 @@ description = "Frequently asked questions"
 keywords = ["FAQ", "How do I", "questions", "what if"]
 title = "FAQ"
 type = "page"
+banner = "img/banners/logo-initial.png"
 
 +++
 If you have any unanswered questions, please let us know through our contact page.

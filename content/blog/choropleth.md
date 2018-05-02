@@ -1,7 +1,7 @@
 ---
 title: Lago Choropleth
 date: 2017-12-21 00:21:53 +0100
-
+banner: "img/banners/logo-main.png"
 ---
 I am an experiment, please ignore me!
 
