@@ -76,7 +76,7 @@ paginate = 10
     defaultDescription = "prepared by Vitto"
 
     # Google Maps API key (if not set will default to not passing a key.)
-    #googleMapsApiKey = ""
+    googleMapsApiKey = "AIzaSyCW4qOsR79D9diOaX20DJ60FC_I85PSsxk"
 
     # Style options: default (light-blue), blue, green, marsala, pink, red, turquoise, violet
     style = "default"
