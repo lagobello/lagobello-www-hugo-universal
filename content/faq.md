@@ -5,7 +5,8 @@ title = "FAQ"
 type = "page"
 
 +++
-If you have any unanswered questions, please let us know through our contact page.
+
+> In case you don't find the answer for your questions please feel free to contact us, our customer support will be happy to help you.
 
 ## 1. WHAT IS THE STATUS OF THE PROJECT
 
@@ -21,12 +22,11 @@ The following has been completed for phase 1.
 
 ## 2. WHEN WILL THE PROJECT BE COMPLETED?
 
-The project is progressing nicely, and phase one is already completed and ready for houses to be built. Phase 2 shall be finished sometime in 2018.
+The project is progressing nicely, and phase one is already completed and ready for houses to be built. Phase 2 shall be finished by the end of 2018.
 
-## 3. Habla Español?
+## 3. HABLA ESPAÑOL?
 
-Como la mayor parte de la zona Rio Grande al sur de Texas, hablamos español y estamos prontos a recibir sus pedidos por informacion.
+¡Sí! Como la mayor parte de la zona Rio Grande al sur de Texas, hablamos español y estamos prontos a recibir sus pedidos por informes.
 
 ---
 
-> In case you haven't found the answer for your question please feel free to contact us, our customer support will be happy to help you.
