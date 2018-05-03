@@ -23,20 +23,25 @@ paginate = 10
     weight = 1
 
 [[menu.main]]
+    name = "Properties"
+    url  = "/properties/"
+    weight = 2
+
+[[menu.main]]
     name = "Blog"
     url  = "/blog/"
-    weight = 2
+    weight = 3
 
 [[menu.main]]
     name = "FAQ"
     identifier = "faq"
     url  = "/faq/"
-    weight = 3
+    weight = 4
 
 [[menu.main]]
     name = "Contact"
     url  = "/contact/"
-    weight = 4
+    weight = 5
 
 # Top bar social links menu
 
@@ -115,7 +120,7 @@ paginate = 10
 # Enable or disable top bar with social icons
 [params.topbar]
     enable = true
-    text = """<p class="hidden-sm hidden-xs">Contact us at + 1(956) 592 - 4418 or info@lagobello.com.</p>
+    text = """<p class="hidden-sm hidden-xs">Contact us at + 1(956) 592 - 4418 or <a href="mailto:info@lagobello.com">info@lagobello.com</a></p>
       <p class="hidden-md hidden-lg"><a href="#" data-animate-hover="pulse"><i class="fa fa-phone"></i></a>
       <a href="#" data-animate-hover="pulse"><i class="fa fa-envelope"></i></a>
       </p>
@@ -152,8 +157,8 @@ paginate = 10
     icon = "fa fa-file-code-o"
     title = "Do you want to see more?"
     subtitle = "We have prepared for you more than 52 different residential lots, with 5 different variations in positioning with respect to the lake.."
-    link_url = "#"
-    link_text = "Check other homepages"
+    link_url = "properties"
+    link_text = "Check our property lots"
 
 [params.clients]
     enable = false

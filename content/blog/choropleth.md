@@ -1,7 +1,7 @@
 ---
 title: Open Street Map
 date: 2017-12-21 00:21:53 +0100
-banner: "img/osm_logo.png"
+banner: "img/blog/osm_logo.png"
 hidden: true
 ---
 
