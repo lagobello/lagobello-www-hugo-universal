@@ -1,0 +1,8 @@
+{{ if .IsNamedParams }}
+<iframe src="https://docs.google.com/spreadsheets/d/{{.Get "docId" }}/pubhtml?gid=0&amp;single=true&amp;widget=false&amp;headers=false&amp;chrome=false" width=500 height=600 ></iframe>
+{{ else }}
+<hr>
+<h1>Google Spreadsheet</h1>
+<h2>Please provide named docId</h2>
+<hr>
+{{ end }}.
