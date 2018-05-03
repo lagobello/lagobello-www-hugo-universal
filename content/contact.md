@@ -1,8 +1,6 @@
 +++
 title = "Contact"
 id = "contact"
-banner = "img/banners/logo-initial.png"
-
 +++
 
 # We are here to help you
