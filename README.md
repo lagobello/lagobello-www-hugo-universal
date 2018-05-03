@@ -12,14 +12,14 @@ Hugo should be installed and in PATH
 
 ## Clone the repository using git
 Enter the following commands one-by-one in a git shell, bash shell, or Powershell.  
-`git clone --recurse-submodules https://github.com/vittorio88/lagobello-www-hugo.git`  <sup>1</sup>  
+`git clone --recurse-submodules https://github.com/vittorio88/lagobello-www-hugo-universal.git`  <sup>1</sup>  
 `git remote rename origin upstream`  <sup>2</sup>  
 
 <sup>1</sup> The `--recurse-submodules` flag is necessary to bring down themes from their individual repositories.  
 <sup>2</sup> It is necessary to rename the remote from origin to upstream, so that a script to push to gh-pages branch works.    
 
 ## Test web server locally using git
-`cd lagobello-www-hugo`  
+`cd lagobello-www-hugo-universal`  
 `hugo server`  
 
 At this point the web page should be accessible through a browser and properly rendered.  
