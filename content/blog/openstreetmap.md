@@ -5,7 +5,7 @@ banner: "img/blog/osm_logo.png"
 hidden: true
 ---
 
-Here is an open-street map showing our location provided by: openstreetmap.org  
+Here is a street map showing our location provided by: [openstreetmap.org](https://www.openstreetmap.org/)  
 
 {{< load-leaflet >}}  
 
