@@ -5,7 +5,11 @@ banner: "img/blog/osm_logo.png"
 hidden: true
 ---
 
-Here is a street map showing our location. For driving directions: [openstreetmap.org](https://www.openstreetmap.org/directions?from=&to=26.04978%2C-97.55225)  
+Here is a street map showing our location. 
+
+<!--more-->
+
+For driving directions: [openstreetmap.org](https://www.openstreetmap.org/directions?from=&to=26.04978%2C-97.55225)  
 
 {{< load-leaflet >}}  
 
