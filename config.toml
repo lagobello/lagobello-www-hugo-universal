@@ -111,8 +111,8 @@ paginate = 10
         <strong>United State of America</strong>
       </p>
       """
-    latitude = "26.0529910"
-    longitude = "-097.5544425"
+    latitude = "26.0497912"
+    longitude = "-97.5522375"
 
 [Permalinks]
     blog = "/blog/:year/:month/:day/:filename/"
