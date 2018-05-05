@@ -8,6 +8,9 @@ draft: true
 
 Here is an an attempt at showing a choropleth built using geojson and visualized with leaflet on an openstreetmaps map.
 
+<!--more-->
+
+
 {{< load-leaflet >}}  
 {{< lago-choropleth >}}
 
