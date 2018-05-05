@@ -96,7 +96,7 @@ paginate = 10
     # Enable the contact form by entering your Formspree.io email
     email = "info@lagobello.com"
 
-    about_us = "<p>We are a small Real Estate Developer interested in helping South Texas Grow!.</p>"
+    about_us = "<p>We are a small Real Estate Developer interested in helping South Texas Grow!</p>"
     copyright = "Copyright (c) 2017 - 2018, Hacienda Lakeview; all rights reserved."
 
     # Format dates with Go's time formatting
