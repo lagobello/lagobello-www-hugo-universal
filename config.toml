@@ -94,8 +94,16 @@ paginate = 10
     # - you're done. Happy mailing!
     #
     # Enable the contact form by entering your Formspree.io email
-    email = "info@lagobello.com"
+    # email = "info@lagobello.com"
 
+	
+	## FORMSPREE DISABLED UNTIL FOLLOWING ISSUE IS FIXED:
+	# https://github.com/devcows/hugo-universal-theme/issues/147
+	
+	# Possibly with following pull-request:
+	# https://github.com/devcows/hugo-universal-theme/pull/152
+	
+	
     about_us = "<p>We are a small Real Estate Developer interested in helping South Texas Grow!</p>"
     copyright = "Copyright (c) 2017 - 2018, Hacienda Lakeview; all rights reserved."
 
@@ -120,7 +128,7 @@ paginate = 10
 # Enable or disable top bar with social icons
 [params.topbar]
     enable = true
-    text = """<p class="hidden-sm hidden-xs">Contact us at + 1(956) 592 - 4418 or <a href="mailto:info@lagobello.com">info@lagobello.com</a></p>
+    text = """<p class="hidden-sm hidden-xs">Contact us at <a href="tel:+(956)305-5246">+1 (956)305-5246</a> or <a href="mailto:info@lagobello.com">info@lagobello.com</a></p>
       <p class="hidden-md hidden-lg"><a href="#" data-animate-hover="pulse"><i class="fa fa-phone"></i></a>
       <a href="#" data-animate-hover="pulse"><i class="fa fa-envelope"></i></a>
       </p>
