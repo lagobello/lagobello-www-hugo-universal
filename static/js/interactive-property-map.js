@@ -1,4 +1,4 @@
-var map = L.map('mapid').setView([26.053611, -97.552014], 16);
+var leaflet_map = L.map('mapid').setView([26.053611, -97.552014], 16);
 
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
   maxZoom: 18,
@@ -6,25 +6,24 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
     '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
     'Imagery © <a href="http://mapbox.com">Mapbox</a>',
   id: 'mapbox.light'
-}).addTo(map);
+}).addTo(leaflet_map);
 
 
 // control that shows lot info on hover
 var info = L.control();
 
-info.onAdd = function(map) {
+info.onAdd = function(leaflet_map) {
   this._div = L.DomUtil.create('div', 'info');
   this.update();
   return this._div;
 };
 
 info.update = function(props) {
-  this._div.innerHTML = '<h4>Lot info:</h4>' + (props ?
-    '<b>' + props.fid + ' lot ID</sup>' :
-    'Hover over a lot');
+  this._div.innerHTML = '<h4>Lot info:</h4>' + 
+    (props ? '<b>' + props.fid + ' lot ID</sup>':'Hover over a lot');
 };
 
-info.addTo(map);
+info.addTo(leaflet_map);
 
 
 // get color depending on population density value
@@ -97,7 +96,7 @@ function resetHighlight(e) {
 }
 
 function zoomToFeature(e) {
-  map.fitBounds(e.target.getBounds());
+  leaflet_map.fitBounds(e.target.getBounds());
 }
 
 function onEachFeature(feature, layer) {
@@ -120,35 +119,35 @@ var geojsonLayerStreet = new L.GeoJSON.AJAX("/lagobello-www-hugo-universal/files
   style: style_street
 });
 
-console.log("Adding layers to map")
-geojsonLayerLake.addTo(map);
-geojsonLayerLots.addTo(map);
-geojsonLayerStreet.addTo(map);
+console.log("Adding layers to leaflet_map")
+geojsonLayerLake.addTo(leaflet_map);
+geojsonLayerLots.addTo(leaflet_map);
+geojsonLayerStreet.addTo(leaflet_map);
 
 
 // Add layers from in memory
 //	geojsonLayerLots = L.geoJson(lots, {
 //		style: style_lots,
 //		onEachFeature: onEachFeature
-//	}).addTo(map);
+//	}).addTo(leaflet_map);
 //	
 //	geojsonLayerLake = L.geoJson(lake, {
 //		style: style_lake,
-//	}).addTo(map);
+//	}).addTo(leaflet_map);
 //	
 //	geojsonLayerStreet = L.geoJson(street, {
 //		style: style_street,
-//	}).addTo(map);
+//	}).addTo(leaflet_map);
 //	
 
-map.attributionControl.addAttribution('Map by vitto');
+leaflet_map.attributionControl.addAttribution('Map by vitto');
 
 
 var legend = L.control({
   position: 'bottomright'
 });
 
-legend.onAdd = function(map) {
+legend.onAdd = function(leaflet_map) {
 
   var div = L.DomUtil.create('div', 'info legend');
   var grades = [0, 8, 16, 24, 32];
@@ -168,4 +167,4 @@ legend.onAdd = function(map) {
   div.innerHTML = labels.join('<br>');
   return div;
 };
-legend.addTo(map);
+legend.addTo(leaflet_map);
