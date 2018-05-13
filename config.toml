@@ -1,4 +1,6 @@
-baseurl = "https://vittorio88.github.io/lagobello-www-hugo-universal/"
+#baseurl = "https://vittorio88.github.io/lagobello-www-hugo-universal/"
+baseurl = ""
+relativeurls = "true"
 title = "Lago Bello"
 theme = "hugo-universal-theme"
 themesDir = "themes/"
