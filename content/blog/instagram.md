@@ -13,4 +13,3 @@ These are a collection of Instagram feeds to give you a feeling of South Texas!
 
 {{< instagram BiUyuyqg26R >}}
 
-{{< instagram -O1THuvJzy >}}

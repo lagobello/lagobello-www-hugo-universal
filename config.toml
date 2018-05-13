@@ -114,8 +114,7 @@ paginate = 10
     logo = "img/logo.png"
     address = """<p><strong>Hacienda Lakeview Incorporated</strong>
         <br>1000 Vittorio Alfieri Ave.
-        <br>Brownsville, Texas
-        <br>78575
+        <br>Brownsville, Texas 78575
         <br>
         <strong>United State of America</strong>
       </p>
