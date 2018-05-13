@@ -1,5 +1,5 @@
-# lagobello-www-hugo
-Public hugo website for https://www.lagobello.com currently hosted at https://vittorio88.github.io/lagobello-www-hugo/  
+# lagobello-www-hugo-universal
+Public hugo website for https://www.lagobello.com currently hosted at https://vittorio88.github.io/lagobello-www-hugo-universal/  
 
 
 # For easy editing
