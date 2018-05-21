@@ -1,5 +1,5 @@
 # lagobello-www-hugo-universal
-Public hugo website for https://www.lagobello.com currently hosted at https://www.lagobello.github.io/
+Public hugo website for https://www.lagobello.com currently hosted at https://lagobello.github.io/
 
 
 # For easy editing
@@ -31,7 +31,7 @@ Perform modification using your text editor of choice, run the `git add` command
 `git push`  
 
 ## How to make modifications "go live"
-Run following script to transparently commit public folder to https://github.com/lagobello/lagobello.github.io
+Run following script to transparently commit public folder to https://github.com/lagobello/lagobello.github.io  
 `./deploy.sh`  
 
 Push modification to GitHub.  
