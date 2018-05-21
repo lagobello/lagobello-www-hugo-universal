@@ -74,7 +74,7 @@ paginate = 10
     viewMorePostLink = "/blog/"
     author = "Vittorio"
     defaultKeywords = ["real", "estate", "development", "land" , "south texas"]
-    defaultDescription = "prepared by Vitto"
+    defaultDescription = "Lago Bello, a residential real estate development, is a new subdivision with 52 property lots available for sale in Brownsville, Texas."
 
     # Google Maps API key (if not set will default to not passing a key.)
     googleMapsApiKey = "AIzaSyCW4qOsR79D9diOaX20DJ60FC_I85PSsxk"
