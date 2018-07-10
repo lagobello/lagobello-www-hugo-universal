@@ -108,14 +108,14 @@ function onEachFeature(feature, layer) {
 }
 
 console.log("loading layers")
-var geojsonLayerLake = new L.GeoJSON.AJAX("/lagobello-www-hugo-universal/files/lake.geojson", {
+var geojsonLayerLake = new L.GeoJSON.AJAX("/files/lake.geojson", {
   style: style_lake
 });
-var geojsonLayerLots = new L.GeoJSON.AJAX("/lagobello-www-hugo-universal/files/lots.geojson", {
+var geojsonLayerLots = new L.GeoJSON.AJAX("/files/lots.geojson", {
   style: style_lots,
   onEachFeature: onEachFeature
 });
-var geojsonLayerStreet = new L.GeoJSON.AJAX("/lagobello-www-hugo-universal/files/street.geojson", {
+var geojsonLayerStreet = new L.GeoJSON.AJAX("/files/street.geojson", {
   style: style_street
 });
 
