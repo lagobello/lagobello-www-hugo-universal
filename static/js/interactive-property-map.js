@@ -1,3 +1,13 @@
+var mousePositionControl = new ol.control.MousePosition({
+  coordinateFormat: ol.coordinate.createStringXY(4),
+  projection: 'EPSG:4326',
+  // comment the following two lines to have the mouse position
+  // be placed within the map.
+  //className: 'custom-mouse-position',
+  //target: document.getElementById('mouse-position'),
+  undefinedHTML: '&nbsp;'
+});
+	  
 var styleLake = new ol.style.Style({
   fill: new ol.style.Fill({
     color: '#92c5eb'
@@ -30,41 +40,9 @@ var styleStreet = new ol.style.Style({
   }),
 });
 
-var styleHighlightLake = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: '#92c5eb'
-  })
-});
-
-var styleHighlightLots = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: '#987654'
-  }),
-  stroke: new ol.style.Stroke({
-          color: '#ffffff',
-          width: 2
-  }),
-});
-
-var styleHighlightPark = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: '#6b8e23'
-  })
-});
-
-var styleHighlightStreet = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: '#6F6E63'
-  }),
-  stroke: new ol.style.Stroke({
-          color: '#ffff00',
-          width: 2
-  }),
-});
-
 var styleHighlight = new ol.style.Style({
   stroke: new ol.style.Stroke({
-          color: '#ffffff',
+          color: 'blue',
           width: 3
   }),
 });
@@ -105,8 +83,13 @@ var layerTileOsm = new ol.layer.Tile({
   source: new ol.source.OSM(),
 });
 		  
-var mapid = new ol.Map({
-        target: 'mapid',
+var olMap = new ol.Map({
+        target: 'ol-map',
+		controls: ol.control.defaults({
+          attributionOptions: {
+            collapsible: true
+          }
+        }).extend([mousePositionControl]),
         layers: [
 			layerTileOsm,
 		  	layerVectorLake,
@@ -121,31 +104,59 @@ var mapid = new ol.Map({
 	})
 });
 
-
-var hoverInteraction = new ol.interaction.Select({
-    condition: ol.events.condition.pointerMove,
-    layers: [
-		  	layerVectorLake,
-			layerVectorLots,
-			layerVectorPark,
-			layerVectorStreet
-    ],
-});
-mapid.addInteraction(hoverInteraction);
-
-var featureOverlayMouseover = new ol.layer.Vector({
+var featureOverlayHighlight = new ol.layer.Vector({
 	source: new ol.source.Vector(),
-    map: mapid,
-    style: function(feature) {
-          styleHighlight.getText().setText(feature.get('name'));
-          return styleHighlight;
-        }
+    map: olMap,
+    style: styleHighlight
 });
 
-hoverInteraction.on('select', function(evt){
-    if(evt.selected.length > 0){
-        console.info('selected: ' + evt.selected[0].getId());
-        
+var highlight;
+
+var featureHighlight = function(pixel) {
+  
+  var feature = retrieveFeature(pixel);
+  
+  if (feature !== highlight) {
+    if (highlight) {
+      featureOverlayHighlight.getSource().removeFeature(highlight);
     }
-});
+    if (feature) {
+      featureOverlayHighlight.getSource().addFeature(feature);
+    }
+    highlight = feature;
+  }
+};
+
+var retrieveFeature = function(pixel) {
+  var feature = olMap.forEachFeatureAtPixel(pixel, function(feature) {
+    return feature;
+  });
+  return feature;
+};
+
+var displayFeatureInfo = function(pixel) {
+
+  var feature = retrieveFeature(pixel);
+  var info = document.getElementById('fid');
+  if (feature) {
+      info.innerHTML = 'feature id is: ' + feature.get('fid');
+    } else {
+      info.innerHTML = '&nbsp;';
+    }
+
+};
+
+ olMap.on('pointermove', function(evt) {
+   if (evt.dragging) {
+     return;
+   }
+   var pixel = olMap.getEventPixel(evt.originalEvent);
+   displayFeatureInfo(pixel);
+   featureHighlight(pixel);
+ });
+
+ olMap.on('click', function(evt) {
+   displayFeatureInfo(evt.pixel);
+ });
+ 
 
