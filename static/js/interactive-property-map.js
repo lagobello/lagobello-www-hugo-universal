@@ -112,9 +112,7 @@ var featureOverlayHighlight = new ol.layer.Vector({
 
 var highlight;
 
-var featureHighlight = function(pixel) {
-  
-  var feature = retrieveFeature(pixel);
+var featureHighlight = function(feature) {
   
   if (feature !== highlight) {
     if (highlight) {
@@ -134,9 +132,8 @@ var retrieveFeature = function(pixel) {
   return feature;
 };
 
-var displayFeatureInfo = function(pixel) {
+var displayFeatureInfo = function(feature) {
 
-  var feature = retrieveFeature(pixel);
   var info = document.getElementById('fid');
   if (feature) {
       info.innerHTML = 'feature id is: ' + feature.get('fid');
@@ -151,12 +148,20 @@ var displayFeatureInfo = function(pixel) {
      return;
    }
    var pixel = olMap.getEventPixel(evt.originalEvent);
-   displayFeatureInfo(pixel);
-   featureHighlight(pixel);
+   var feature = retrieveFeature(pixel);
+   displayFeatureInfo(feature);
+   featureHighlight(feature);
  });
 
  olMap.on('click', function(evt) {
-   displayFeatureInfo(evt.pixel);
+   var feature = retrieveFeature(evt.pixel);
+   displayFeatureInfo(feature);
+   
+   var extent = feature.getGeometry().getExtent();
+   olMap.getView().fit(extent, {duration: 500, padding: [50,50,50,50]})
+   //olMap.getView().animate({zoom: olMap.getView().fit(extent, {duration: 1000}) + 1});
+   //olMap.getView().fit(extent,olMap.getSize());
+  
  });
  
 
