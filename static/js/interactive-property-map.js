@@ -138,7 +138,7 @@ var displayFeatureInfo = function(feature) {
   if (feature) {
       info.innerHTML = 'feature id is: ' + feature.get('fid');
     } else {
-      info.innerHTML = '&nbsp;';
+      info.innerHTML = 'feature id is:  Please hover over feature';
     }
 
 };
@@ -156,12 +156,10 @@ var displayFeatureInfo = function(feature) {
  olMap.on('click', function(evt) {
    var feature = retrieveFeature(evt.pixel);
    displayFeatureInfo(feature);
+   featureHighlight(feature);
    
    var extent = feature.getGeometry().getExtent();
    olMap.getView().fit(extent, {duration: 500, padding: [50,50,50,50]})
-   //olMap.getView().animate({zoom: olMap.getView().fit(extent, {duration: 1000}) + 1});
-   //olMap.getView().fit(extent,olMap.getSize());
   
  });
- 
 
