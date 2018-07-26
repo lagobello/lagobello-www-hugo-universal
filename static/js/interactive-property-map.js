@@ -3,11 +3,11 @@ var mousePositionControl = new ol.control.MousePosition({
   projection: 'EPSG:4326',
   // comment the following two lines to have the mouse position
   // be placed within the map.
-  //className: 'custom-mouse-position',
-  //target: document.getElementById('mouse-position'),
+  className: 'custom-mouse-position',
+  target: document.getElementById('mouse-position'),
   undefinedHTML: '&nbsp;'
-});
-	  
+}); 
+  
 var styleLake = new ol.style.Style({
   fill: new ol.style.Fill({
     color: '#92c5eb'
@@ -134,11 +134,13 @@ var retrieveFeature = function(pixel) {
 
 var displayFeatureInfo = function(feature) {
 
-  var info = document.getElementById('fid');
+  var info = document.getElementById('feature-name');
   if (feature) {
-      info.innerHTML = 'feature id is: ' + feature.get('fid');
+      // console.log(feature.get('name'));
+      // console.log(feature.get('status'));
+      info.innerHTML = 'The status for area  ' + feature.get('name') + '  is  ' + feature.get('status');
     } else {
-      info.innerHTML = 'feature id is:  Please hover over feature';
+      info.innerHTML = 'Please hover or click on a feature for more info.';
     }
 
 };
