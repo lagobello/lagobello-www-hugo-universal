@@ -14,15 +14,35 @@ var styleLake = new ol.style.Style({
   })
 });
 
-var styleLots = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: '#987654'
-  }),
-  stroke: new ol.style.Stroke({
-          color: '#D3D3D3',
-          width: 2
-  }),
-});
+var lotStyles = {
+        'FOR SALE': new ol.style.Style({
+			fill: new ol.style.Fill({
+			color: '#2dd187'
+			}),
+			stroke: new ol.style.Stroke({
+            color: '#D3D3D3',
+            width: 2
+			}),
+		}),
+        'PRE-SALE': new ol.style.Style({
+			fill: new ol.style.Fill({
+			color: '#885ead'
+		}),
+			stroke: new ol.style.Stroke({
+            color: '#D3D3D3',
+            width: 2
+			}),
+        }),
+        'SOLD': new ol.style.Style({
+			fill: new ol.style.Fill({
+			color: '#c03425'
+		}),
+			stroke: new ol.style.Stroke({
+            color: '#D3D3D3',
+            width: 2
+			}),
+        }),
+};
 
 var stylePark = new ol.style.Style({
   fill: new ol.style.Fill({
@@ -55,12 +75,16 @@ var layerVectorLake = new ol.layer.Vector({
 	style: styleLake
 });
 
+var styleFunction = function(feature) {
+   return lotStyles[feature.get('status')];
+};
+	  
 var layerVectorLots = new ol.layer.Vector({
 	source: new ol.source.Vector({
 		format: new ol.format.GeoJSON(),
 		url: '/files/lots.geojson'
 		}),
-	style: styleLots
+	style: styleFunction
 });
 
 var layerVectorPark =  new ol.layer.Vector({
