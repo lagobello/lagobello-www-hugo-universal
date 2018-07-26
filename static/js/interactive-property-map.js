@@ -160,6 +160,11 @@ var displayFeatureInfo = function(feature) {
 
   var info = document.getElementById('feature-name');
   if (feature) {
+    var format = new ol.format.GeoJSON();
+	var turfFeature = format.writeFeatureObject(feature);
+    var area = turf.area(turfFeature);
+    console.log('area is: ' + area);
+  
       // console.log(feature.get('name'));
       // console.log(feature.get('status'));
       info.innerHTML = 'The status for area  ' + feature.get('name') + '  is  ' + feature.get('status');
