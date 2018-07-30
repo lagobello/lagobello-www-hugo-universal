@@ -1,13 +1,3 @@
-var mousePositionControl = new ol.control.MousePosition({
-  coordinateFormat: ol.coordinate.createStringXY(4),
-  projection: 'EPSG:4326',
-  // comment the following two lines to have the mouse position
-  // be placed within the map.
-  className: 'custom-mouse-position',
-  target: document.getElementById('mouse-position'),
-  undefinedHTML: '&nbsp;'
-}); 
-  
 var styleLake = new ol.style.Style({
   fill: new ol.style.Fill({
     color: '#92c5eb'
@@ -67,24 +57,50 @@ var styleHighlight = new ol.style.Style({
   }),
 });
 
+mapboxKey = 'pk.eyJ1IjoibGFnb3ZpdHRvcmlvIiwiYSI6ImNqazZvYWdnZTB6bjMzcG1rcDR1bGpncm0ifQ.E_grlJASX59FUqTlksn09Q'
+
+/* var layerVectorTileMapboxStreets =  new ol.layer.VectorTile({
+    declutter: true,
+    source: new ol.source.VectorTile({
+      attributions: '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
+        '© <a href="https://www.openstreetmap.org/copyright">' +
+        'OpenStreetMap contributors</a>',
+      format: new ol.format.MVT(),
+      url: 'https://{a-d}.tiles.mapbox.com/v4/mapbox.mapbox-streets-v6/' +
+                  '{z}/{x}/{y}.vector.pbf?access_token=' + mapboxKey
+	}),
+            style: createMapboxStreetsV6Style(ol.style.Style, ol.style.Fill, ol.style.Stroke, ol.style.Icon, ol.style.Text)
+}); */
+
+var layerMapboxSatellite =  new ol.layer.Tile({
+    source: new ol.source.XYZ({
+      attributions: '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ',
+      url: 'https://a.tiles.mapbox.com/v4/mapbox.satellite/' +
+                  '{z}/{x}/{y}.png?access_token=' + mapboxKey
+	}),
+	opacity: 0.4
+});
+
 var layerVectorLake = new ol.layer.Vector({
 	source: new ol.source.Vector({
 		format: new ol.format.GeoJSON(),
 		url: '/files/lake.geojson',
 		}),
-	style: styleLake
+	style: styleLake,
+	opacity: 0.8
 });
 
 var styleFunction = function(feature) {
    return lotStyles[feature.get('status')];
 };
-	  
+
 var layerVectorLots = new ol.layer.Vector({
 	source: new ol.source.Vector({
 		format: new ol.format.GeoJSON(),
 		url: '/files/lots.geojson'
 		}),
-	style: styleFunction
+	style: styleFunction,
+	opacity: 0.5
 });
 
 var layerVectorPark =  new ol.layer.Vector({
@@ -92,7 +108,8 @@ var layerVectorPark =  new ol.layer.Vector({
 		format: new ol.format.GeoJSON(),
 		url: '/files/park.geojson'
 		}),
-	style: stylePark
+	style: stylePark,
+	opacity: 0.5
 });
 
 var layerVectorStreet = new ol.layer.Vector({
@@ -100,22 +117,37 @@ var layerVectorStreet = new ol.layer.Vector({
 		format: new ol.format.GeoJSON(),
 		url: '/files/street.geojson'
 		}),
-	style: styleStreet
+	style: styleStreet,
+	opacity: 0.8
 });
 
-var layerTileOsm = new ol.layer.Tile({
+var layerOsmStreet = new ol.layer.Tile({
   source: new ol.source.OSM(),
+  	opacity: 0.8
 });
-		  
+
+var controlMousePosition = new ol.control.MousePosition({
+  coordinateFormat: ol.coordinate.createStringXY(4),
+  projection: 'EPSG:4326',
+  // comment the following two lines to have the mouse position
+  // be placed within the map.
+  className: 'custom-mouse-position',
+  target: document.getElementById('mouse-position'),
+  undefinedHTML: '&nbsp;'
+}); 
+
+var controlDefault = new ol.control.defaults({
+        attributionOptions: {
+            collapsible: true
+            },
+        }).extend([controlMousePosition]);
+
 var olMap = new ol.Map({
         target: 'ol-map',
-		controls: ol.control.defaults({
-          attributionOptions: {
-            collapsible: true
-          }
-        }).extend([mousePositionControl]),
+		controls: controlDefault,
         layers: [
-			layerTileOsm,
+			layerOsmStreet,
+			layerMapboxSatellite,
 		  	layerVectorLake,
 			layerVectorLots,
 			layerVectorPark,
@@ -127,6 +159,7 @@ var olMap = new ol.Map({
           zoom: 17
 	})
 });
+
 
 var featureOverlayHighlight = new ol.layer.Vector({
 	source: new ol.source.Vector(),
@@ -167,7 +200,7 @@ var displayFeatureInfo = function(feature) {
   
       // console.log(feature.get('name'));
       // console.log(feature.get('status'));
-      info.innerHTML = 'The status for area  ' + feature.get('name') + '  is  ' + feature.get('status');
+      info.innerHTML = 'The status for area  ' + feature.get('name') + '  is  ' + feature.get('status') + '  and area is  ' + area + '  m^2';
     } else {
       info.innerHTML = 'Please hover or click on a feature for more info.';
     }
