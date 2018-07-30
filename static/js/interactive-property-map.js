@@ -194,15 +194,12 @@ var displayFeatureInfo = function(feature) {
   var info = document.getElementById('feature-name');
   if (feature) {
     var format = new ol.format.GeoJSON();
-	var turfFeature = format.writeFeatureObject(feature);
+	var turfFeature = format.writeFeatureObject(feature, {'featureProjection': 'EPSG:3857'});
     var area = turf.area(turfFeature);
-    console.log('area is: ' + area);
-  
-      // console.log(feature.get('name'));
-      // console.log(feature.get('status'));
-      info.innerHTML = 'The status for area  ' + feature.get('name') + '  is  ' + feature.get('status') + '  and area is  ' + area + '  m^2';
+	
+      info.innerHTML = 'The status for area  ' + feature.get('name') + '  is  ' + feature.get('status') + '  and area is  ' + area.toFixed(2) + ' square meters or  ' +  (10.7639*area).toFixed(2) + ' square feet';
     } else {
-      info.innerHTML = 'Please hover or click on a feature for more info.';
+      info.innerHTML = 'Please hover, click, or tap on a feature for more info!';
     }
 
 };
