@@ -1,1 +1,1 @@
-hugo -D server
+hugo --bind "0.0.0.0" -D server
