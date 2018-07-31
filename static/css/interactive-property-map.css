@@ -2,3 +2,18 @@
         height: 400px;
         width: 100%;
       }
+
+
+.ol-mouse-position{
+   top: unset;
+   left: 8px;
+   bottom: 10px;
+   font-family: Verdana ;
+   font-size: 10px;
+   width: 150px;
+   height: 15px ;
+   line-height: 10px;
+   box-shadow: 8px 8px 5px #888888;
+   background-color: rgba(0,60,136,0.5);
+   color: white;
+}
