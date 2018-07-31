@@ -1,16 +1,13 @@
 +++
 description = "Properties for sale"
 keywords = ["properties", "lots", "questions", "what if"]
-title = "Properties"
+title = "Interactive Property Map"
 type = "page"
 
 +++
-Below is an image indicating vacant lots.
 
-Please  [click here](../files/map.pdf) to download a PDF file with lot specs.
+This is an interactive map that shows the status of the individual lots that are for sale.
 
-![Property lots](../img/map_preview.jpg)
+<!--more-->
 
-Modify this document [here](https://docs.google.com/spreadsheets/d/164T3Pf3IZ8Zmb3ZSrHrObZlt2icLOZv_2Q4oQfuujmM)!  
-
-{{< google-spreadsheet docId="164T3Pf3IZ8Zmb3ZSrHrObZlt2icLOZv_2Q4oQfuujmM" >}}
+{{< interactive-property-map >}}  
