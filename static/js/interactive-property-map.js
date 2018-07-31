@@ -78,7 +78,7 @@ var layerMapboxSatellite =  new ol.layer.Tile({
       url: 'https://a.tiles.mapbox.com/v4/mapbox.satellite/' +
                   '{z}/{x}/{y}.png?access_token=' + mapboxKey
 	}),
-	opacity: 0.4
+	opacity: 1.0
 });
 
 var layerVectorLake = new ol.layer.Vector({
@@ -123,17 +123,18 @@ var layerVectorStreet = new ol.layer.Vector({
 
 var layerOsmStreet = new ol.layer.Tile({
   source: new ol.source.OSM(),
-  	opacity: 0.8
+  	opacity: 0.6
 });
 
 var controlMousePosition = new ol.control.MousePosition({
-  coordinateFormat: ol.coordinate.createStringXY(4),
+  coordinateFormat: function(coordinate) {
+      return ol.coordinate.format(coordinate, '{y}, {x}', 4);},
   projection: 'EPSG:4326',
   // comment the following two lines to have the mouse position
   // be placed within the map.
-  className: 'custom-mouse-position',
-  target: document.getElementById('mouse-position'),
-  undefinedHTML: '&nbsp;'
+  //className: 'custom-mouse-position',
+  //target: document.getElementById('mouse-position'),
+  undefinedHTML: ''
 }); 
 
 var controlDefault = new ol.control.defaults({
@@ -146,8 +147,8 @@ var olMap = new ol.Map({
         target: 'ol-map',
 		controls: controlDefault,
         layers: [
-			layerOsmStreet,
 			layerMapboxSatellite,
+			layerOsmStreet,
 		  	layerVectorLake,
 			layerVectorLots,
 			layerVectorPark,
