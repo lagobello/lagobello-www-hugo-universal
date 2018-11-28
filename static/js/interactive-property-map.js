@@ -59,6 +59,7 @@ var styleHighlight = new ol.style.Style({
 
 mapboxKey = 'pk.eyJ1IjoibGFnb3ZpdHRvcmlvIiwiYSI6ImNqazZvYWdnZTB6bjMzcG1rcDR1bGpncm0ifQ.E_grlJASX59FUqTlksn09Q'
 
+/* Possibly better vector tile implementation */
 /* var layerVectorTileMapboxStreets =  new ol.layer.VectorTile({
     declutter: true,
     source: new ol.source.VectorTile({
@@ -75,8 +76,8 @@ mapboxKey = 'pk.eyJ1IjoibGFnb3ZpdHRvcmlvIiwiYSI6ImNqazZvYWdnZTB6bjMzcG1rcDR1bGpn
 var layerMapboxSatellite =  new ol.layer.Tile({
     source: new ol.source.XYZ({
       attributions: '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ',
-      url: 'https://a.tiles.mapbox.com/v4/mapbox.satellite/' +
-                  '{z}/{x}/{y}.png?access_token=' + mapboxKey
+      url: 'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v10/tiles/256/' +
+                  '{z}/{x}/{y}?access_token=' + mapboxKey
 	}),
 	opacity: 1.0
 });
@@ -121,10 +122,18 @@ var layerVectorStreet = new ol.layer.Vector({
 	opacity: 0.8
 });
 
-var layerOsmStreet = new ol.layer.Tile({
-  source: new ol.source.OSM(),
-  	opacity: 0.6
-});
+
+ /*
+  * Osm is not used directly, because "street only" tiles are not available.
+ It would be ideal to use Osm directly for streets for faster updates.
+ Possible alternative would be retrieving vector layer,
+ with a style template to vector layer for all possible streets in OSM.
+	*/
+
+//var layerOsmStreet = new ol.layer.Tile({
+//  source: new ol.source.OSM(),
+//  	opacity: 0.6
+//});
 
 var controlMousePosition = new ol.control.MousePosition({
   coordinateFormat: function(coordinate) {
@@ -148,7 +157,7 @@ var olMap = new ol.Map({
 		controls: controlDefault,
         layers: [
 			layerMapboxSatellite,
-			layerOsmStreet,
+//			layerOsmStreet,
 		  	layerVectorLake,
 			layerVectorLots,
 			layerVectorPark,
