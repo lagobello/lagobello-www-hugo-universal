@@ -75,7 +75,9 @@ mapboxKey = 'pk.eyJ1IjoibGFnb3ZpdHRvcmlvIiwiYSI6ImNqazZvYWdnZTB6bjMzcG1rcDR1bGpn
 
 var layerMapboxSatellite =  new ol.layer.Tile({
     source: new ol.source.XYZ({
-      attributions: '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ',
+    attributions: '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
+      '© <a href="https://www.openstreetmap.org/copyright">' +
+      'OpenStreetMap contributors</a>',
       url: 'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v10/tiles/256/' +
                   '{z}/{x}/{y}?access_token=' + mapboxKey
 	}),
