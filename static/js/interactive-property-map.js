@@ -214,23 +214,40 @@ var displayFeatureInfo = function(feature) {
 
 };
 
- olMap.on('pointermove', function(evt) {
-   if (evt.dragging) {
-     return;
-   }
-   var pixel = olMap.getEventPixel(evt.originalEvent);
-   var feature = retrieveFeature(pixel);
-   displayFeatureInfo(feature);
-   featureHighlight(feature);
- });
+/* Event call-backs */
 
- olMap.on('click', function(evt) {
-   var feature = retrieveFeature(evt.pixel);
-   displayFeatureInfo(feature);
-   featureHighlight(feature);
-   
-   var extent = feature.getGeometry().getExtent();
-   olMap.getView().fit(extent, {duration: 500, padding: [50,50,50,50]})
+olMap.on('pointermove', function(evt) {
+  if (evt.dragging) {
+    console.log("dragging detected")
+    return;
+  }
+  var pixel = olMap.getEventPixel(evt.originalEvent);
+  var feature = retrieveFeature(pixel);
+
+  /* feature can be null */
+  if (typeof feature === 'undefined') {
+    console.log("no feature found on mouse-over")
+    return
+  }
   
- });
+  displayFeatureInfo(feature);
+  featureHighlight(feature);
+});
+
+olMap.on('click', function(evt) {
+  var feature = retrieveFeature(evt.pixel);
+
+  /* feature can be null */
+  if (typeof feature  === 'undefined') {
+    console.log("no feature found under click or tap")
+    return
+  }
+  
+  displayFeatureInfo(feature);
+  featureHighlight(feature);
+  
+  var extent = feature.getGeometry().getExtent();
+  olMap.getView().fit(extent, {duration: 500, padding: [50,50,50,50]})
+ 
+});
 
