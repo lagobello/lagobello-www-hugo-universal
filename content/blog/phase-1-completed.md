@@ -9,4 +9,4 @@ Phase 1 of the project has been completed, and most lots have been sold. We are 
 Please contact us at by visiting our [Contact](/contact) page for more info!
 
   
-![](/static/img/works.png)
+![](/img/works.png)
