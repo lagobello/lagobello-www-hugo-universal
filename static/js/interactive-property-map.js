@@ -143,28 +143,28 @@ var controlMousePosition = new ol.control.MousePosition({
   projection: 'EPSG:4326',
   // comment the following two lines to have the mouse position
   // be placed within the map.
-  //className: 'custom-mouse-position',
+  // className: 'ol-control ol-mouse-position',
   //target: document.getElementById('mouse-position'),
   undefinedHTML: ''
 }); 
 
-var controlDefault = new ol.control.defaults({
-        attributionOptions: {
-            collapsible: true
-            },
-        }).extend([controlMousePosition]);
-
 var olMap = new ol.Map({
         target: 'ol-map',
-		controls: controlDefault,
-        layers: [
-			layerMapboxSatellite,
-//			layerOsmStreet,
-		  	layerVectorLake,
-			layerVectorLots,
-			layerVectorPark,
-			layerVectorStreet
-        ],
+        controls: [
+		new ol.control.Attribution(),
+		new ol.control.Rotate(),
+		new ol.control.Zoom(),
+		// new ol.control.ScaleLine(),
+		controlMousePosition
+    	],
+	layers: [
+		layerMapboxSatellite,
+		// layerOsmStreet,
+		layerVectorLake,
+		layerVectorLots,
+		layerVectorPark,
+		layerVectorStreet
+	],
         view: new ol.View({
           center: ol.proj.fromLonLat([-97.553, 26.053]),
 		  rotation: Math.PI / 2.17,
@@ -172,9 +172,16 @@ var olMap = new ol.Map({
 	})
 });
 
+var featureCalculateAreaMeters = function(feature) {
+    var format = new ol.format.GeoJSON();
+    var turfFeature = format.writeFeatureObject(feature, {'featureProjection': 'EPSG:3857'});
+    var area = turf.area(turfFeature);
+    return area
+};
+
 
 var featureOverlayHighlight = new ol.layer.Vector({
-	source: new ol.source.Vector(),
+    source: new ol.source.Vector(),
     map: olMap,
     style: styleHighlight
 });
@@ -205,9 +212,7 @@ var displayFeatureInfo = function(feature) {
 
   var info = document.getElementById('feature-name');
   if (feature) {
-    var format = new ol.format.GeoJSON();
-	var turfFeature = format.writeFeatureObject(feature, {'featureProjection': 'EPSG:3857'});
-    var area = turf.area(turfFeature);
+    var area = featureCalculateAreaMeters(feature);
 	
       info.innerHTML = 'The status for area  ' + feature.get('name') + '  is  ' + feature.get('status') + '  and area is  ' + area.toFixed(2) + ' square meters or  ' +  (10.7639*area).toFixed(2) + ' square feet';
     } else {
