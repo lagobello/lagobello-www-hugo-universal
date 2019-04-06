@@ -148,6 +148,28 @@ var controlMousePosition = new ol.control.MousePosition({
   undefinedHTML: ''
 }); 
 
+var olViewRotated = new ol.View({
+        center: ol.proj.fromLonLat([-97.553, 26.053]),
+	rotation: Math.PI / 2.17,
+        zoom: 17
+});
+
+var olView = new ol.View({
+        center: ol.proj.fromLonLat([-97.553, 26.053]),
+        zoom: 16
+});
+
+var olViewSelector = function(){
+ 
+ if ( window.innerHeight > window.innerWidth ) {
+    console.log("initializing map in portrait mode")
+    return olView
+  } else {
+    console.log("initializing map in landscape mode")
+    return olViewRotated
+  }
+}
+
 var olMap = new ol.Map({
         target: 'ol-map',
         controls: [
@@ -165,11 +187,8 @@ var olMap = new ol.Map({
 		layerVectorPark,
 		layerVectorStreet
 	],
-        view: new ol.View({
-          center: ol.proj.fromLonLat([-97.553, 26.053]),
-		  rotation: Math.PI / 2.17,
-          zoom: 17
-	})
+        view: olViewSelector()
+
 });
 
 var featureCalculateAreaMeters = function(feature) {
@@ -258,3 +277,15 @@ olMap.on('click', function(evt) {
  
 });
 
+window.addEventListener("orientationchange", function() {
+  //console.log("the orientation of the device is now " + screen.orientation.angle);
+
+  if ( screen.orientation.angle  === 0) {
+    console.log("rotating map to portrait mode")
+    olMap.setView(olView);
+  } else {
+    console.log("rotating map to landscape mode")
+    olMap.setView(olViewRotated);
+  }
+
+});
