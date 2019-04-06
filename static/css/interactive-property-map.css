@@ -1,23 +1,36 @@
-      .map {
-        height: 400px;
-        width: 100%;
-      }
-
+.map {
+    height: 400px;
+    width: 100%;
+}
 
 .ol-mouse-position{
-   top: unset;
-   left: 8px;
-   bottom: 10px;
-   font-family: Verdana ;
-   font-size: 10px;
-   width: 150px;
-   height: 15px ;
-   line-height: 10px;
-   box-shadow: 8px 8px 5px #888888;
-   background-color: rgba(0,60,136,0.5);
-   color: white;
+    top: unset;
+    right: unset;
+    left: 8px;
+    bottom: 10px;
+}
+
+.ol-mouse-position span{
+    display: block;
+    margin: 1px;
+    padding: 0;
+    color: #fff;
+    font-size: 1.0em;
+    background-color: rgba(0,60,136,.5);
+    border: none;
+    border-radius: 2px;
+
 }
 
 .ol-rotate {
-   right: 50px
+    right: 50px
 }
+
+.layer-switcher button {
+    background-color: rgba(0,60,136,.5);
+}
+
+.layer-switcher .panel {
+    background-color: rgba(255,255,255,.9);
+}
+
