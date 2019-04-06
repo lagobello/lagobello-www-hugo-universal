@@ -73,7 +73,16 @@ mapboxKey = 'pk.eyJ1IjoibGFnb3ZpdHRvcmlvIiwiYSI6ImNqazZvYWdnZTB6bjMzcG1rcDR1bGpn
             style: createMapboxStreetsV6Style(ol.style.Style, ol.style.Fill, ol.style.Stroke, ol.style.Icon, ol.style.Text)
 }); */
 
+var layerOsmStreet = new ol.layer.Tile({
+    title: 'OpenStreetMap',
+    type: 'base',
+    source: new ol.source.OSM(),
+    opacity: 1.0
+});
+
 var layerMapboxSatellite =  new ol.layer.Tile({
+    title: 'Mapbox Satellite Streets',
+    type: 'base',
     source: new ol.source.XYZ({
     attributions: '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
       '© <a href="https://www.openstreetmap.org/copyright">' +
@@ -85,6 +94,7 @@ var layerMapboxSatellite =  new ol.layer.Tile({
 });
 
 var layerVectorLake = new ol.layer.Vector({
+	title: 'Lake layer',
 	source: new ol.source.Vector({
 		format: new ol.format.GeoJSON(),
 		url: '/files/lake.geojson',
@@ -98,6 +108,7 @@ var styleFunction = function(feature) {
 };
 
 var layerVectorLots = new ol.layer.Vector({
+	title: 'Lot layer',
 	source: new ol.source.Vector({
 		format: new ol.format.GeoJSON(),
 		url: '/files/lots.geojson'
@@ -107,6 +118,7 @@ var layerVectorLots = new ol.layer.Vector({
 });
 
 var layerVectorPark =  new ol.layer.Vector({
+	title: 'Park layer',
 	source: new ol.source.Vector({
 		format: new ol.format.GeoJSON(),
 		url: '/files/park.geojson'
@@ -116,6 +128,7 @@ var layerVectorPark =  new ol.layer.Vector({
 });
 
 var layerVectorStreet = new ol.layer.Vector({
+	title: 'Street layer',
 	source: new ol.source.Vector({
 		format: new ol.format.GeoJSON(),
 		url: '/files/street.geojson'
@@ -124,6 +137,23 @@ var layerVectorStreet = new ol.layer.Vector({
 	opacity: 0.8
 });
 
+var olLayerGroupBasemaps = new ol.layer.Group({
+    title: 'Base maps',
+    layers: [
+	    layerOsmStreet,
+            layerMapboxSatellite
+    ]
+});
+
+var olLayerGroupOverlays = new ol.layer.Group({
+    title: 'Overlays',
+    layers: [
+            layerVectorLake,
+	    layerVectorLots,
+	    layerVectorPark,
+	    layerVectorStreet
+    ]
+});
 
  /*
   * Osm is not used directly, because "street only" tiles are not available.
@@ -132,10 +162,9 @@ var layerVectorStreet = new ol.layer.Vector({
  with a style template to vector layer for all possible streets in OSM.
 	*/
 
-//var layerOsmStreet = new ol.layer.Tile({
-//  source: new ol.source.OSM(),
-//  	opacity: 0.6
-//});
+var layerSwitcher = new ol.control.LayerSwitcher({
+   tipLabel: 'Legend'
+});
 
 var controlMousePosition = new ol.control.MousePosition({
   coordinateFormat: function(coordinate) {
@@ -177,16 +206,13 @@ var olMap = new ol.Map({
 		new ol.control.Rotate(),
 		new ol.control.Zoom(),
 		// new ol.control.ScaleLine(),
-		controlMousePosition
+		controlMousePosition,
+		layerSwitcher
     	],
 	layers: [
-		layerMapboxSatellite,
-		// layerOsmStreet,
-		layerVectorLake,
-		layerVectorLots,
-		layerVectorPark,
-		layerVectorStreet
-	],
+		olLayerGroupBasemaps,
+		olLayerGroupOverlays
+		],
         view: olViewSelector()
 
 });
