@@ -218,6 +218,7 @@ var olMap = new ol.Map({
 		new ol.control.Attribution(),
 		new ol.control.Rotate(),
 		new ol.control.Zoom(),
+		new ol.control.FullScreen(),
 		// new ol.control.ScaleLine(),
 		controlMousePosition,
 		layerSwitcher
