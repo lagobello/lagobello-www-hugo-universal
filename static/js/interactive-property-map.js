@@ -93,6 +93,25 @@ var layerMapboxSatellite =  new ol.layer.Tile({
 	opacity: 1.0
 });
 
+var layerWatercolors = new ol.layer.Group({
+    title: 'Watercolors',
+    type: 'base',
+    combine: true,
+    layers:[
+             new ol.layer.Tile({
+                 source: new ol.source.Stamen({
+                     layer: 'watercolor'
+                 })
+             }),
+             new ol.layer.Tile({
+                 source: new ol.source.Stamen({
+                     layer: 'terrain-labels'
+                 })
+             })
+         ],
+    opacity: 1.0
+});
+
 var layerVectorLake = new ol.layer.Vector({
 	title: 'Lake layer',
 	source: new ol.source.Vector({
@@ -141,6 +160,7 @@ var olLayerGroupBasemaps = new ol.layer.Group({
     title: 'Base maps',
     layers: [
 	    layerOsmStreet,
+	    layerWatercolors,
             layerMapboxSatellite
     ]
 });
@@ -154,13 +174,6 @@ var olLayerGroupOverlays = new ol.layer.Group({
 	    layerVectorStreet
     ]
 });
-
- /*
-  * Osm is not used directly, because "street only" tiles are not available.
- It would be ideal to use Osm directly for streets for faster updates.
- Possible alternative would be retrieving vector layer,
- with a style template to vector layer for all possible streets in OSM.
-	*/
 
 var layerSwitcher = new ol.control.LayerSwitcher({
    tipLabel: 'Legend'
