@@ -57,6 +57,24 @@ var styleHighlight = new ol.style.Style({
   }),
 });
 
+var container = document.getElementById('popup');
+var content = document.getElementById('popup-content');
+var closer = document.getElementById('popup-closer');
+
+var overlay = new ol.Overlay({
+  element: container,
+  autoPan: true,
+  autoPanAnimation: {
+    duration: 250
+  }
+});
+
+closer.onclick = function() {
+  overlay.setPosition(undefined);
+  closer.blur();
+  return false;
+};
+
 mapboxKey = 'pk.eyJ1IjoibGFnb3ZpdHRvcmlvIiwiYSI6ImNqazZvYWdnZTB6bjMzcG1rcDR1bGpncm0ifQ.E_grlJASX59FUqTlksn09Q'
 
 /* Possibly better vector tile implementation */
@@ -181,7 +199,7 @@ var layerSwitcher = new ol.control.LayerSwitcher({
 
 var controlMousePosition = new ol.control.MousePosition({
   coordinateFormat: function(coordinate) {
-      return ol.coordinate.format(coordinate, '<span>{y}, {x}</span>', 4);},
+      return ol.coordinate.format(coordinate, '<span>{y}N, {x}W</span>', 4);},
   projection: 'EPSG:4326',
   className: 'ol-control ol-mouse-position',
   undefinedHTML: ''
@@ -220,6 +238,7 @@ var olMap = new ol.Map({
 		controlMousePosition,
 		layerSwitcher
     	],
+        overlays: [overlay],
 	layers: [
 		olLayerGroupBasemaps,
 		olLayerGroupOverlays
@@ -264,24 +283,50 @@ var retrieveFeature = function(pixel) {
   return feature;
 };
 
-var displayFeatureInfo = function(feature) {
 
-  var info = document.getElementById('feature-name');
-  if (feature) {
-    var area = featureCalculateAreaMeters(feature);
-	
-      info.innerHTML = 'The status for area  ' + feature.get('name') + '  is  ' + feature.get('status') + '  and area is  ' + area.toFixed(2) + ' square meters or  ' +  (10.7639*area).toFixed(2) + ' square feet';
-    } else {
-      info.innerHTML = 'Please hover, click, or tap on a feature for more info!';
-    }
+var retrieveFeatureInfoTable = function (evt) {
+  var feature = retrieveFeature(evt.pixel);
+  var area = featureCalculateAreaMeters(feature);
+  var temp_string = 
+`<table style="width:100%">
+  <tr>
+    <th>Entry</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>Coordinates HDMS</td>
+    <td><code>` + ol.coordinate.toStringHDMS(ol.proj.toLonLat(evt.coordinate)) + `</code></td>
+  </tr>
+  <tr>
+    <td>Coordinates Lat/Lon</td>
+    <td><code>` + ol.coordinate.format(ol.proj.toLonLat(evt.coordinate), '{y}N, {x}W', 4) + `</code></td>
+  </tr>
+  <tr>
+    <td>Name</td>
+    <td><code>` + feature.get('name') + `</code></td>
+  </tr>
+  <tr>
+    <td>Status</td>
+    <td><code>` + feature.get('status') + `</code></td>
+  </tr>
+  <tr>
+    <td>Area [m^2]</td>
+    <td><code>` + area.toFixed(2) + `</code></td>
+  </tr>
+  <tr>
+    <td>Area [ft^2]</td>
+    <td><code>` + (10.7639*area).toFixed(2)+ `</code></td>
+  </tr>
+</table>`
 
-};
+  return temp_string;
+}
 
 /* Event call-backs */
 
 olMap.on('pointermove', function(evt) {
   if (evt.dragging) {
-    console.log("dragging detected")
+    console.debug("dragging detected")
     return;
   }
   var pixel = olMap.getEventPixel(evt.originalEvent);
@@ -289,11 +334,10 @@ olMap.on('pointermove', function(evt) {
 
   /* feature can be null */
   if (typeof feature === 'undefined') {
-    console.log("no feature found on mouse-over")
+    console.debug("no feature found on mouse-over")
     return
   }
   
-  displayFeatureInfo(feature);
   featureHighlight(feature);
 });
 
@@ -306,7 +350,8 @@ olMap.on('click', function(evt) {
     return
   }
   
-  displayFeatureInfo(feature);
+  content.innerHTML = retrieveFeatureInfoTable(evt);
+  overlay.setPosition(evt.coordinate);
   featureHighlight(feature);
   
   var extent = feature.getGeometry().getExtent();

@@ -10,4 +10,6 @@ This is an interactive map that shows the status of the individual lots that are
 
 <!--more-->
 
+Please click on a feature in the map for more details!
+
 {{< interactive-property-map >}}  
