@@ -95,15 +95,7 @@ paginate = 10
     # - you're done. Happy mailing!
     #
     # Enable the contact form by entering your Formspree.io email
-    # email = "info@lagobello.com"
-
-	
-	## FORMSPREE DISABLED UNTIL FOLLOWING ISSUE IS FIXED:
-	# https://github.com/devcows/hugo-universal-theme/issues/147
-	
-	# Possibly with following pull-request:
-	# https://github.com/devcows/hugo-universal-theme/pull/152
-	
+    email = "info@lagobello.com"
 	
     about_us = "<p>We are a small Real Estate Developer interested in helping South Texas Grow!</p>"
     copyright = "Copyright (c) 2017 - 2018, Hacienda Lakeview; all rights reserved."
