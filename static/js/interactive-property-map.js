@@ -322,6 +322,24 @@ var retrieveFeatureInfoTable = function (evt) {
   return temp_string;
 }
 
+var retrieveLotTable = function (url) {
+    var lots_geojson = $.getJSON( url, function( data ) {
+    var items = [];
+      items.push( "<tr><th><b>Lot ID</b></th><th><b>Lot Status</b></th><th><b>Lot Area [m^2]</b></th><th><b>Lot Area [ft^2]</b></th></tr>");
+    $.each( data.features, function( key, val ) {
+     var area = turf.area(val);
+     items.push(  "<tr><td>" + val.properties.name + "</td><td>" + val.properties.status + "</td><td>" + area.toFixed(2)  + "</td><td>" + (10.7639*area).toFixed(2) + "</td></tr>");
+    });
+   
+    $( "<table/>", {
+      "class": "lot-table",
+      html: items.join( "" )
+    }).appendTo( "#lot-table" );
+  });
+  return true;
+}
+retrieveLotTable('/files/lots.geojson');
+
 /* Event call-backs */
 
 olMap.on('pointermove', function(evt) {
