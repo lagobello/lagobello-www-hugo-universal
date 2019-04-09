@@ -76,3 +76,32 @@
 .ol-popup-closer:after {
   content: "✖";
 }
+
+#lot-table {
+  height: 300px;
+  overflow:auto;
+}
+
+.lot-table {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  height: 200px;
+  overflow:auto;
+}
+
+.lot-table td, .lot-table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.lot-table tr:nth-child(even){background-color: #f2f2f2;}
+
+.lot-table tr:hover {background-color: #ddd;}
+
+.lot-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: rgba(0,60,136,.7);
+  color: white;
+}
