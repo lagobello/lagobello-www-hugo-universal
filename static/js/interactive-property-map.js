@@ -298,6 +298,7 @@ var retrieveFeatureInfoTable = function (evt) {
   var area = featureCalculateAreaMeters(feature);
   var temp_string = 
 `<table style="width:100%">
+<!--
   <tr>
     <th>Entry</th>
     <th>Value</th>
@@ -310,6 +311,7 @@ var retrieveFeatureInfoTable = function (evt) {
     <td>Coordinates Lat/Lon</td>
     <td><code>` + ol.coordinate.format(ol.proj.toLonLat(evt.coordinate), '{y}N, {x}W', 4) + `</code></td>
   </tr>
+-->
   <tr>
     <td>Name</td>
     <td><code>` + feature.get('name') + `</code></td>
