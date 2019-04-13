@@ -32,6 +32,15 @@ var lotStyles = {
             width: 2
 			}),
         }),
+        'PENDING': new ol.style.Style({
+          fill: new ol.style.Fill({
+          color: '#ffff00'
+        }),
+          stroke: new ol.style.Stroke({
+                color: '#D3D3D3',
+                width: 2
+          }),
+        }),
 };
 
 var stylePark = new ol.style.Style({
