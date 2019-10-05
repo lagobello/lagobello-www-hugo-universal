@@ -8,9 +8,9 @@ var trace1 = {
   type: "scatter",
   mode: "lines",
   name: 'Water Level [feet]',
+  fill: 'tozeroy',
   x: unpack(rows, 'Timestamp ISO8601'),
   y: unpack(rows, 'water level [ft]'),
-  line: {color: '#000080'}
 }
 
 
@@ -18,9 +18,9 @@ var data = [trace1];
     
 var layout = {
   title: 'Lago Bello - Lake Water Level [ft]', 
+
   xaxis: {
     autorange: true, 
-      range: ['2019-01-01', '2019-12-12'],
     rangeselector: {buttons: [
         {
           count: 1, 
@@ -36,12 +36,12 @@ var layout = {
         }, 
         {step: 'all'}
       ]}, 
-    rangeslider: {range: ['2019-01-01', 'today']},
+    rangeslider: {},
       type: 'date'
   }, 
   yaxis: {
-    autorange: true, 
-    range: [0, 10], 
+    autorange: false, 
+    range: [0, 4], 
     type: 'linear'
   }
 };
