@@ -1,7 +1,7 @@
 +++
 description = "The current water level of the lake at Lago Bello in feet."
 keywords = ["lake", "water", "level", "feet", "telemetry", "pressure"]
-title = "Lago Bello - Water Level"
+title = "Telemetry - Water Level"
 type = "page"
 
 +++

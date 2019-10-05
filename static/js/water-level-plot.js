@@ -17,7 +17,7 @@ var trace1 = {
 var data = [trace1];
     
 var layout = {
-  title: 'Lago Bello - Lake Water Level [ft]', 
+  title: 'Lake Water Level [ft]', 
 
   xaxis: {
     autorange: true, 
