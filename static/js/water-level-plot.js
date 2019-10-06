@@ -46,5 +46,5 @@ var layout = {
   }
 };
 
-Plotly.newPlot('waterLevel', data, layout);
+Plotly.newPlot('waterLevel', data, layout, {displaylogo: false});
 } )
