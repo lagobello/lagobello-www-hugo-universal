@@ -1,4 +1,18 @@
-#waterLevel .icon {
-      height: 25px;
-    width: 25px;
+.js-plotly-plot .icon {
+    height: 25px;
+    width:  25px;
+}
+
+.column {
+  float: left;
+  width: 50%;
+  left: 50%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+
 }
