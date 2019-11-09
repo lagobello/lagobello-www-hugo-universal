@@ -43,6 +43,16 @@ var lotStyles = {
         }),
 };
 
+var styleLotCameronAppraisalDistrict = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: '#FFFF00'
+  }),
+  stroke: new ol.style.Stroke({
+          color: '#000000',
+          width: 1
+  }),
+});
+
 var stylePark = new ol.style.Style({
   fill: new ol.style.Fill({
     color: '#6b8e23'
@@ -163,6 +173,17 @@ var layerVectorLots = new ol.layer.Vector({
 	opacity: 0.5
 });
 
+var layerVectorLotsCameronAppraisalDistrict = new ol.layer.Vector({
+	title: 'Lot layer - Cameron Appraisal District',
+	source: new ol.source.Vector({
+		format: new ol.format.GeoJSON(),
+		url: '/files/lots_cameron_appraisal_district.geojson'
+		}),
+	style: styleLotCameronAppraisalDistrict,
+    visible: false,
+	opacity: 0.9
+});
+
 var layerVectorPark =  new ol.layer.Vector({
 	title: 'Park layer',
 	source: new ol.source.Vector({
@@ -197,6 +218,7 @@ var olLayerGroupOverlays = new ol.layer.Group({
     layers: [
             layerVectorLake,
 	    layerVectorLots,
+        layerVectorLotsCameronAppraisalDistrict,
 	    layerVectorPark,
 	    layerVectorStreet
     ]
