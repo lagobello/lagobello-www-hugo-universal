@@ -22,7 +22,7 @@ The following has been completed for phase 1.
 
 ## 2. WHEN WILL THE PROJECT BE COMPLETED?
 
-The project is progressing nicely, and phase one is already completed and ready for houses to be built. Phase 2 shall be finished by the end of 2018.
+The project is progressing nicely, and phase one is already completed and ready for houses to be built.
 
 ## 3. HABLA ESPAÑOL?
 
