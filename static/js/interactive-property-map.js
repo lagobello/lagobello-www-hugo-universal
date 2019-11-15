@@ -338,26 +338,10 @@ var retrieveFeature = function (pixel) {
 var retrieveFeatureInfoTable = function (evt) {
   var feature = retrieveFeature(evt.pixel);
   var area = featureCalculateAreaMeters(feature);
-  var tempString =
-    `<table style="width:100%">
-<!--
-  <tr>
-    <th>Entry</th>
-    <th>Value</th>
-  </tr>
-  <tr>
-    <td>Coordinates HDMS</td>
-    <td><code>` +
-    ol.coordinate.toStringHDMS(ol.proj.toLonLat(evt.coordinate)) +
-    `</code></td>
-  </tr>
-  <tr>
-    <td>Coordinates Lat/Lon</td>
-    <td><code>` +
-    ol.coordinate.format(ol.proj.toLonLat(evt.coordinate), '{y}N, {x}W', 4) +
-    `</code></td>
-  </tr>
--->
+  var tempString;
+  if (feature.get('name') !== undefined) {
+    tempString =
+ `<table style="width:100%">
   <tr>
     <td>Name</td>
     <td><code>` +
@@ -382,8 +366,36 @@ var retrieveFeatureInfoTable = function (evt) {
     (10.7639 * area).toFixed(2) +
     `</code></td>
   </tr>
+  </table>`;
+  } else {
+    tempString =
+    `<table style="width:100%">
+  <tr>
+    <td>Name</td>
+    <td><code>` +
+    feature.get('legal1') +
+    `</code></td>
+  </tr>
+  <tr>
+    <td>Parcel ID</td>
+    <td><code>` +
+    feature.get('PROP_ID') +
+    `</code></td>
+  </tr>
+  <tr>
+  <td>Area registered [ft^2]</td>
+  <td><code>` +
+  feature.get('Shape_area').toFixed(2) +
+  `</code></td>
+  </tr>
+  <tr>
+    <td>Area calculated [ft^2]</td>
+    <td><code>` +
+    (10.7639 * area).toFixed(2) +
+    `</code></td>
+  </tr>
 </table>`;
-
+  }
   return tempString;
 };
 
