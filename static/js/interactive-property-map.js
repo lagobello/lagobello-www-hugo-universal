@@ -1,3 +1,6 @@
+/*globals ol*/
+/*eslint semi: 2*/
+
 var styleLake = new ol.style.Style({
   fill: new ol.style.Fill({
     color: '#92c5eb'
@@ -204,6 +207,28 @@ var layerVectorStreet = new ol.layer.Vector({
 	opacity: 0.8
 });
 
+
+var source = new ol.source.Vector();
+
+var vector = new ol.layer.Vector({
+  source: source,
+  style: new ol.style.Style({
+    fill: new ol.style.Fill({
+      color: 'rgba(255, 255, 255, 0.2)'
+    }),
+    stroke: new ol.style.Stroke({
+      color: '#ffcc33',
+      width: 2
+    }),
+    image: new ol.style.Circle({
+      radius: 7,
+      fill: new ol.style.Fill({
+        color: '#ffcc33'
+      })
+    })
+  })
+});
+
 var olLayerGroupBasemaps = new ol.layer.Group({
     title: 'Base maps',
     layers: [
@@ -272,7 +297,8 @@ var olMap = new ol.Map({
         overlays: [overlay],
 	layers: [
 		olLayerGroupBasemaps,
-		olLayerGroupOverlays
+		olLayerGroupOverlays,
+        vector
 		],
         view: olViewSelector()
 
@@ -376,23 +402,25 @@ retrieveLotTable('/files/lots.geojson');
 /* Event call-backs */
 
 olMap.on('pointermove', function(evt) {
-  if (evt.dragging) {
-    console.debug("dragging detected")
-    return;
-  }
-  var pixel = olMap.getEventPixel(evt.originalEvent);
-  var feature = retrieveFeature(pixel);
+ if (evt.dragging) {
+   console.debug("dragging detected")
+   return;
+ }
+ var pixel = olMap.getEventPixel(evt.originalEvent);
+ var feature = retrieveFeature(pixel);
 
-  /* feature can be null */
-  if (typeof feature === 'undefined') {
-    console.debug("no feature found on mouse-over")
-    return
-  }
-  
-  featureHighlight(feature);
+ /* feature can be null */
+ if (typeof feature === 'undefined') {
+   console.debug("no feature found on mouse-over")
+   return
+ }
+ 
+ featureHighlight(feature);
 });
 
 olMap.on('click', function(evt) {
+  if (typeSelect.value !== 'info') return;
+
   var feature = retrieveFeature(evt.pixel);
 
   /* feature can be null */
@@ -422,3 +450,242 @@ window.addEventListener("orientationchange", function() {
   }
 
 });
+
+/**
+ * Currently drawn feature.
+ * @type {import("../src/ol/Feature.js").default}
+ */
+var sketch;
+
+
+/**
+ * The help tooltip element.
+ * @type {HTMLElement}
+ */
+var helpTooltipElement;
+
+
+/**
+ * Overlay to show the help messages.
+ * @type {Overlay}
+ */
+var helpTooltip;
+
+
+/**
+ * The measure tooltip element.
+ * @type {HTMLElement}
+ */
+var measureTooltipElement;
+
+
+/**
+ * Overlay to show the measurement.
+ * @type {Overlay}
+ */
+var measureTooltip;
+
+
+/**
+ * Message to show when the user is drawing a polygon.
+ * @type {string}
+ */
+var continuePolygonMsg = 'Click to continue drawing the polygon';
+
+
+/**
+ * Message to show when the user is drawing a line.
+ * @type {string}
+ */
+var continueLineMsg = 'Click to continue drawing the line';
+
+
+/**
+ * Handle pointer move.
+ * @param {import("../src/ol/MapBrowserEvent").default} evt The event.
+ */
+var pointerMoveHandler = function(evt) {
+  if (typeSelect.value == 'info') return;
+  if (evt.dragging) {
+    return;
+  }
+  /** @type {string} */
+  var helpMsg = 'Click to start drawing';
+
+  if (sketch) {
+    var geom = sketch.getGeometry();
+    if (geom instanceof ol.geom.Polygon) {
+      helpMsg = continuePolygonMsg;
+    } else if (geom instanceof ol.geom.LineString) {
+      helpMsg = continueLineMsg;
+    } else { console.log('Could not determine geom type.'); }
+  }
+  helpTooltipElement.innerHTML = helpMsg;
+  helpTooltip.setPosition(evt.coordinate);
+
+  helpTooltipElement.classList.remove('hidden');
+};
+olMap.on('pointermove', pointerMoveHandler);
+
+olMap.getViewport().addEventListener('mouseout', function() {
+  if (typeSelect.value == 'info') return;
+  helpTooltipElement.classList.add('hidden');
+});
+
+var typeSelect = document.getElementById('type');
+
+var draw; // global so we can remove it later
+
+
+/**
+ * Format length output.
+ * @param {LineString} line The line.
+ * @return {string} The formatted length.
+ */
+var formatLength = function(line) {
+  var length = ol.sphere.getLength(line);
+  var output;
+  if (length > 100) {
+    output = (Math.round(length / 1000 * 100) / 100) +
+        ' ' + 'km';
+  } else {
+    output = (Math.round(length * 100) / 100) +
+        ' ' + 'm';
+  }
+  return output;
+};
+
+
+/**
+ * Format area output.
+ * @param {Polygon} polygon The polygon.
+ * @return {string} Formatted area.
+ */
+var formatArea = function(polygon) {
+  var area = ol.sphere.getArea(polygon);
+  var output;
+  if (area > 10000) {
+    output = (Math.round(area / 1000000 * 100) / 100) +
+        ' ' + 'km<sup>2</sup>';
+  } else {
+    output = (Math.round(area * 100) / 100) +
+        ' ' + 'm<sup>2</sup>';
+  }
+  return output;
+};
+
+function addInteraction() {
+if (typeSelect.value == 'info') return;
+ var type = (typeSelect.value == 'area' ? 'Polygon' : 'LineString');
+ if (type === 'info') { return; };
+ draw = new ol.interaction.Draw({
+   source: source,
+   type: type,
+   style: new ol.style.Style({
+     fill: new ol.style.Fill({
+       color: 'rgba(255, 255, 255, 0.2)'
+     }),
+     stroke: new ol.style.Stroke({
+       color: 'rgba(0, 0, 0, 0.5)',
+       lineDash: [10, 10],
+       width: 2
+     }),
+     image: new ol.style.Circle({
+       radius: 5,
+       stroke: new ol.style.Stroke({
+         color: 'rgba(0, 0, 0, 0.7)'
+       }),
+       fill: new ol.style.Fill({
+         color: 'rgba(255, 255, 255, 0.2)'
+       })
+     })
+   })
+ });
+ olMap.addInteraction(draw);
+
+ createMeasureTooltip();
+ createHelpTooltip();
+
+ var listener;
+ draw.on('drawstart',
+   function(evt) {
+     // set sketch
+     sketch = evt.feature;
+
+     /** @type {import("../src/ol/coordinate.js").Coordinate|undefined} */
+     var tooltipCoord = evt.coordinate;
+
+     listener = sketch.getGeometry().on('change', function(evt) {
+       var geom = evt.target;
+       var output;
+       if (geom instanceof ol.geom.Polygon) {
+         output = formatArea(geom);
+         tooltipCoord = geom.getInteriorPoint().getCoordinates();
+       } else if (geom instanceof ol.geom.LineString) {
+         output = formatLength(geom);
+         tooltipCoord = geom.getLastCoordinate();
+       }
+       measureTooltipElement.innerHTML = output;
+       measureTooltip.setPosition(tooltipCoord);
+     });
+   });
+
+ draw.on('drawend',
+   function() {
+     measureTooltipElement.className = 'ol-tooltip ol-tooltip-static';
+     measureTooltip.setOffset([0, -7]);
+     // unset sketch
+     sketch = null;
+     // unset tooltip so that a new one can be created
+     measureTooltipElement = null;
+     createMeasureTooltip();
+     ol.Observable.unByKey(listener);
+   });
+}
+
+
+/**
+* Creates a new help tooltip
+*/
+function createHelpTooltip() {
+ if (helpTooltipElement) {
+   helpTooltipElement.parentNode.removeChild(helpTooltipElement);
+ }
+ helpTooltipElement = document.createElement('div');
+ helpTooltipElement.className = 'ol-tooltip hidden';
+ helpTooltip = new ol.Overlay({
+   element: helpTooltipElement,
+   offset: [15, 0],
+   positioning: 'center-left'
+ });
+ olMap.addOverlay(helpTooltip);
+}
+
+
+/**
+* Creates a new measure tooltip
+*/
+function createMeasureTooltip() {
+ if (measureTooltipElement) {
+   measureTooltipElement.parentNode.removeChild(measureTooltipElement);
+ }
+ measureTooltipElement = document.createElement('div');
+ measureTooltipElement.className = 'ol-tooltip ol-tooltip-measure';
+ measureTooltip = new ol.Overlay({
+   element: measureTooltipElement,
+   offset: [0, -15],
+   positioning: 'bottom-center'
+ });
+ olMap.addOverlay(measureTooltip);
+}
+
+
+/**
+* Let user change the geometry type.
+*/
+typeSelect.onchange = function() {
+ olMap.removeInteraction(draw);
+ addInteraction();
+};
+
+addInteraction();
