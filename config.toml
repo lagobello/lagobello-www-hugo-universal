@@ -45,30 +45,29 @@ paginate = 10
     weight = 5
 
 # Top bar social links menu
-
 [[menu.topbar]]
     weight = 1
     name = "GitHub"
     url = "https://github.com/lagobello/lagobello-www-hugo-universal"
-    pre = "<i class='fa fa-2x fa-github'></i>"
+    pre = "<i class='fab fa-2x fa-github'></i>"
 
 [[menu.topbar]]
     weight = 2
     name = "Facebook"
     url = "https://facebook.com/lagobellosouthtexas"
-    pre = "<i class='fa fa-2x fa-facebook'></i>"
+    pre = "<i class='fab fa-2x fa-facebook'></i>"
 
 [[menu.topbar]]
     weight = 3
     name = "Twitter"
-    url = "https://twitter.com"
-    pre = "<i class='fa fa-2x fa-twitter'></i>"
+    url = "http://twitter.com"
+    pre = "<i class='fab fa-2x fa-twitter'></i>"
 
 [[menu.topbar]]
     weight = 4
     name = "Email"
     url = "mailto:info@lagobello.com"
-    pre = "<i class='fa fa-2x fa-envelope'></i>"
+    pre = "<i class='fas fa-2x fa-envelope'></i>"
 
 [params]
     viewMorePostLink = "/blog/"
@@ -123,8 +122,8 @@ paginate = 10
 [params.topbar]
     enable = true
     text = """<p class="hidden-sm hidden-xs">Contact us at <a href="tel:+(956)305-5246">+1 (956)305-5246</a> or <a href="mailto:info@lagobello.com">info@lagobello.com</a></p>
-      <p class="hidden-md hidden-lg"><a href="#" data-animate-hover="pulse"><i class="fa fa-phone"></i></a>
-      <a href="#" data-animate-hover="pulse"><i class="fa fa-envelope"></i></a>
+      <p class="hidden-md hidden-lg"><a href="#" data-animate-hover="pulse"><i class="fas fa-phone"></i></a>
+      <a href="#" data-animate-hover="pulse"><i class="fas fa-envelope"></i></a>
       </p>
       """
 
