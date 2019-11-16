@@ -75,6 +75,11 @@ paginate = 10
     defaultKeywords = ["real", "estate", "development", "land" , "south texas"]
     defaultDescription = "Lago Bello, a residential real estate development, is a new subdivision with 52 property lots available for sale in Brownsville, Texas."
 
+    # Social media
+    facebook_site = "https://www.facebook.com/lagobellosouthtexas" # the Facebook handle of your site ('https://www.facebook.com/HANDLE')
+    twitter_site = "GoHugoIO" # the Twitter handle of your site (without the '@')
+    default_sharing_image = "img/logo.png"
+
     # Google Maps API key (if not set will default to not passing a key.)
     googleMapsApiKey = "AIzaSyCW4qOsR79D9diOaX20DJ60FC_I85PSsxk"
 
@@ -110,7 +115,7 @@ paginate = 10
         <br>Olmito, Texas 78575
         <br>
         <strong>United State of America</strong>
-      </p>
+      </p><br>
       """
     latitude = "26.0497912"
     longitude = "-97.5522375"
@@ -162,11 +167,11 @@ paginate = 10
     link_text = "Check our property lots"
 
 [params.clients]
-    enable = false
+    enable = true
     # All clients are defined in their own files. You can find example items
     # at 'exampleSite/data/clients'.
     # For more informtion take a look at the README.
-    title = "Our Clients"
+    title = "Served by"
     subtitle = ""
 
 [params.recent_posts]
