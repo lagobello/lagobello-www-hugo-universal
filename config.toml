@@ -155,7 +155,7 @@ paginate = 10
 
 [params.see_more]
     enable = true
-    icon = "fa fa-file-code-o"
+    icon = "far fa-file-alt"
     title = "Do you want to see more?"
     subtitle = "We have prepared for you more than 52 different residential lots, with 5 different variations in positioning with respect to the lake.."
     link_url = "properties"
