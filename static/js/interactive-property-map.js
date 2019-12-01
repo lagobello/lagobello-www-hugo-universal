@@ -448,6 +448,17 @@ olMap.on('pointermove', function (evt) {
   featureHighlight(feature);
 });
 
+function getCenterOfExtent(Extent){
+  var X = Extent[0] + (Extent[2]-Extent[0])/2;
+  var Y = Extent[1] + (Extent[3]-Extent[1])/2;
+  return [X, Y];
+  }
+function movePoint10mDown(Point){
+  var X = Point[1];
+  var Y = Point[0]-50;
+  return [Y,X];
+  }
+
 olMap.on('click', function (evt) {
   if (typeSelect.value !== 'info') return;
 
@@ -464,7 +475,10 @@ olMap.on('click', function (evt) {
   featureHighlight(feature);
 
   var extent = feature.getGeometry().getExtent();
-  olMap.getView().fit(extent, { duration: 500, padding: [50, 50, 50, 50] });
+  var center= getCenterOfExtent(extent);
+  console.debug('center of feature is: ' + center);
+  var centerShifted= movePoint10mDown(center);
+  olMap.getView().animate({zoom: 18, center: centerShifted });
 });
 
 window.addEventListener('orientationchange', function () {
