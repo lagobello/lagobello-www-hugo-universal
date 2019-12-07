@@ -29,20 +29,26 @@ paginate = 10
     weight = 2
 
 [[menu.main]]
+    identifier="tools"
+    name = "Tools"
+    url  = "/tools/"
+    weight = 3
+
+[[menu.main]]
     name = "Blog"
     url  = "/blog/"
-    weight = 3
+    weight = 4
 
 [[menu.main]]
     name = "FAQ"
     identifier = "faq"
     url  = "/faq/"
-    weight = 4
+    weight = 5
 
 [[menu.main]]
     name = "Contact"
     url  = "/contact/"
-    weight = 5
+    weight = 6
 
 # Top bar social links menu
 [[menu.topbar]]
@@ -72,7 +78,8 @@ paginate = 10
 [params]
     viewMorePostLink = "/blog/"
     author = "Vittorio"
-    defaultKeywords = ["real", "estate", "development", "land" , "south texas"]
+    defaultKeywords = ["real", "estate", "development", "land" , "south texas", "lots", "property"]
+    mainSections = ["blog", "tools"]
     defaultDescription = "Lago Bello, a residential real estate development, is a new subdivision with 52 property lots available for sale in Brownsville, Texas."
 
     # Social media
@@ -122,6 +129,7 @@ paginate = 10
 
 [Permalinks]
     blog = "/blog/:year/:month/:day/:filename/"
+    tools = "/tools/:filename/"
 
 # Enable or disable top bar with social icons
 [params.topbar]
