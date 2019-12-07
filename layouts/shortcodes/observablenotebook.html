@@ -5,63 +5,28 @@
   import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
 
   // Your notebook, compiled as an ES module or local file.
-  // import notebook from "{{ .Get "url" }}";
+  import define from "{{ .Get "url" }}";
 
   var displayedCellsArray = "{{ .Get "displayedCells" }}".split(',');
   for (var index in displayedCellsArray){
-    console.log("name is: " + displayedCellsArray[index]);
+    console.debug("displayCell name is: " + displayedCellsArray[index]);
   }
-  // Load the notebook, observing its cells with a default Inspector
-  // that simply renders the value of each cell into the provided DOM node.
-  //  Runtime.load(notebook, Inspector.into(document.getElementById('obs-notebook')));
 
-import define from "{{ .Get "url" }}";
 const runtime = new Runtime();
-// for (let name in displayedCellsArray){
-// runtime.module(name, Inspector.into(document.getElementById('obs-notebook')));
-// }
 
 const main = runtime.module(define, name => {
-//  if (name in displayedCellsArray) {
+  // if name is in array
   if (displayedCellsArray.indexOf(name) > -1) {
-    console.log("Adding inspector for: " + name)
+    console.debug("Adding inspector for: " + name)
     var notebookdiv = document.getElementById('obs-notebook')
     var content = document.createElement('div');
     notebookdiv.appendChild(content);
     return new Inspector(content);
   } else {
-    console.log("Skipping inspector for: " + name )
+    console.debug("Skipping inspector for: " + name )
     return true
   }
 });
-
-  // var renders = "{{ .Get "displayedCells" }}";
-  // for (let i in renders)
-  //       renders[i] = document.getElementById('obs-notebook');
-  //     const main = new Runtime().module(notebook, (name) => {
-  //       if (renders[name])
-  //         return new Inspector(renders[name]);
-  //       else return true;
-  //     });
-  
-  // var renders = "{{ .Get "displayedCells" }}";
-  // var myinspec = new Inspector(renders)
-  // Runtime.load(notebook, myinspec.into(document.getElementById('obs-notebook')));
-  // const main = new Runtime().module(notebook => {
-  //       if (renders == "step-one-location")
-  //         return new Inspector(renders[name]);
-  //     });
-//   import define from "{{ .Get "url" }}";
-
-//   const runtime = new Runtime();
-// const main = runtime.module(define, name => {
-//   if (name === "step-one-location") {
-//     return new Inspector(document.getElementById('obs-notebook'));
-//   }
-// });
-  
-
-  
 </script>
 
 <style>
@@ -69,7 +34,15 @@ const main = runtime.module(define, name => {
       font-size: 1em;
       background: #fdfdfd;
       border-radius: 4px;
-      border: 1px solid #ccc;
+      border: 2px solid #ccc;
       padding: 9px;
+    }
+    /* For jashkenas/inputs/description field */
+    #obs-notebook > * > form > div > div{
+      font-size: 1rem !important;
+    }
+    /* For jashkenas/inputs/forms */
+    #obs-notebook > div > form{
+      margin: 10px
     }
 </style>
