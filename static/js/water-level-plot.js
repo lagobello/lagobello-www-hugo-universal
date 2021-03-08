@@ -4,7 +4,12 @@ function makeplot() {
 };
 
 function processData(allRows) {
-
+	
+	if (allRows == null){
+		console.log('Failed to retrieve data. Unable to build plot.');
+	   return -1
+	}
+	
 	var x = [], y = [], standard_deviation = [];
 
 	for (var i=0; i<allRows.length; i++) {
