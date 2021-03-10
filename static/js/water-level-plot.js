@@ -106,7 +106,7 @@ function makeScatterPlot( x, y, title, div ){
           }, 
           yaxis: {
             autorange: false, 
-            range: [0, 4], 
+            range: [0, 6], 
             type: 'linear'
           }
         };
