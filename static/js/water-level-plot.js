@@ -89,13 +89,13 @@ function makeScatterPlot( x, y, title, div ){
             rangeselector: {buttons: [
                 {
                   count: 1, 
-                  label: '1m', 
+                  label: '1mo', 
                   step: 'month', 
                   stepmode: 'backward'
                 }, 
                 {
                   count: 6, 
-                  label: '6m', 
+                  label: '6mo', 
                   step: 'month', 
                   stepmode: 'backward'
                 }, 
@@ -106,7 +106,7 @@ function makeScatterPlot( x, y, title, div ){
           }, 
           yaxis: {
             autorange: false, 
-            range: [0, 6], 
+            range: [0, 12], 
             type: 'linear'
           }
         };
