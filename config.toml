@@ -10,6 +10,8 @@ defaultContentLanguage = "en"
 #disqusShortname = "devcows"
 # Enable Google Analytics by entering your tracking code
 googleAnalytics = "UA-118647757-1"
+ignoreErrors = ["error-missing-instagram-accesstoken"]
+
 
 # Define the number of posts per page
 paginate = 10
