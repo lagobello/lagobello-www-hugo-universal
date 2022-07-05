@@ -157,6 +157,15 @@ var layerWatercolors = new ol.layer.Group({
   opacity: 1.0
 });
 
+var layerDroneOrthophoto = new ol.layer.Tile({
+  title: 'Drone Orthophoto 2022/07/04',
+  source: new ol.source.XYZ({
+    attributions:'© Vitto',
+    url: '/tiles/orthophoto_20220704/{z}/{x}/{-y}.png'
+  }),
+  opacity: 1.0
+});
+
 var layerVectorLake = new ol.layer.Vector({
   title: 'Lake layer',
   source: new ol.source.Vector({
@@ -164,7 +173,7 @@ var layerVectorLake = new ol.layer.Vector({
     url: '/files/lake.geojson'
   }),
   style: styleLake,
-  opacity: 0.8
+  opacity: 0.4
 });
 
 var styleFunction = function (feature) {
@@ -178,7 +187,7 @@ var layerVectorLots = new ol.layer.Vector({
     url: '/files/lots.geojson'
   }),
   style: styleFunction,
-  opacity: 0.5
+  opacity: 0.4
 });
 
 var layerVectorLotsCameronAppraisalDistrict = new ol.layer.Vector({
@@ -189,7 +198,7 @@ var layerVectorLotsCameronAppraisalDistrict = new ol.layer.Vector({
   }),
   style: styleLotCameronAppraisalDistrict,
   visible: false,
-  opacity: 0.9
+  opacity: 0.8
 });
 
 var layerVectorPark = new ol.layer.Vector({
@@ -199,7 +208,7 @@ var layerVectorPark = new ol.layer.Vector({
     url: '/files/park.geojson'
   }),
   style: stylePark,
-  opacity: 0.5
+  opacity: 0.4
 });
 
 var layerVectorStreet = new ol.layer.Vector({
@@ -209,7 +218,7 @@ var layerVectorStreet = new ol.layer.Vector({
     url: '/files/street.geojson'
   }),
   style: styleStreet,
-  opacity: 0.8
+  opacity: 0.4
 });
 
 var source = new ol.source.Vector();
@@ -241,12 +250,13 @@ var olLayerGroupBasemaps = new ol.layer.Group({
 var olLayerGroupOverlays = new ol.layer.Group({
   title: 'Overlays',
   layers: [
+    layerDroneOrthophoto,
     layerVectorLake,
     layerVectorLots,
     layerVectorLotsCameronAppraisalDistrict,
     layerVectorPark,
     layerVectorStreet
-  ]
+    ]
 });
 
 var layerSwitcher = new ol.control.LayerSwitcher({
