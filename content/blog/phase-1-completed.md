@@ -5,7 +5,7 @@ banner: "img/blog/logo-spacing.png"
 draft: false
 ---
 Phase 1 of the project has been completed, and most lots have been sold.  
-We are currently pre-selling lots for phase 2 of the project.  
+We are currently developing lots for phase 2 of the project.  
 
 Please contact us at by visiting our [Contact](/contact) page for more info!
 

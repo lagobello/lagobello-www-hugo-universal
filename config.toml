@@ -112,7 +112,7 @@ pagerSize = 10
     contact_form_ajax = false
 	
     about_us = "<p>We are a small Real Estate Developer interested in helping South Texas Grow!</p>"
-    copyright = "Copyright (c) 2017 - 2019, Hacienda Lakeview; all rights reserved."
+    copyright = "Copyright (c) 2017 - 2025, Hacienda Lakeview; all rights reserved."
 
     # Format dates with Go's time formatting
     date_format = "January 2, 2006"
@@ -136,7 +136,7 @@ pagerSize = 10
 # Enable or disable top bar with social icons
 [params.topbar]
     enable = true
-    text = """<p class="hidden-sm hidden-xs">Contact us at <a href="tel:+(956)305-5246">+1 (956)305-5246</a> or <a href="mailto:info@lagobello.com">info@lagobello.com</a></p>
+    text = """<p class="hidden-sm hidden-xs">Contact us at <a href="tel:+19563055246">+1 (956)305-LAGO or +1 (956)305-5246</a> or <a href="mailto:info@lagobello.com">info@lagobello.com</a></p>
       <p class="hidden-md hidden-lg"><a href="#" data-animate-hover="pulse"><i class="fas fa-phone"></i></a>
       <a href="#" data-animate-hover="pulse"><i class="fas fa-envelope"></i></a>
       </p>
