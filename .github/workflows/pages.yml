@@ -1,0 +1,44 @@
+name: Hugo - Build & Deploy
+
+on:
+  push:
+  pull_request:                 # build preview for every PR
+  workflow_dispatch:            # manual “Run workflow” button
+
+permissions:                   # minimal scopes
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  # ────────── Build ──────────
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: peaceiris/actions-hugo@v3
+        with:
+          extended: true
+          hugo-version: '0.147.8'   # pin your exact local version
+
+      - run: hugo --minify \
+                 --baseURL ${{ steps.deploy-pages.outputs.base_url || '/' }}
+
+      # Upload the ./public folder as a Pages artifact
+      - uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./public
+
+  # ────────── Deploy ──────────
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v2
