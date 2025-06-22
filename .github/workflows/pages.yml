@@ -1,44 +1,40 @@
 name: Hugo - Build & Deploy
 
 on:
-  push:
-  pull_request:                 # build preview for every PR
-  workflow_dispatch:            # manual “Run workflow” button
+  push:          # build every branch
+  pull_request:  # PR previews
+  workflow_dispatch:
 
-permissions:                   # minimal scopes
+permissions:
   contents: read
   pages: write
   id-token: write
 
 jobs:
-  # ────────── Build ──────────
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
       - uses: peaceiris/actions-hugo@v3
         with:
           extended: true
-          hugo-version: '0.147.8'   # pin your exact local version
+          hugo-version: '0.147.8'
 
-      - run: hugo --minify \
-                 --baseURL ${{ steps.deploy-pages.outputs.base_url || '/' }}
+      - run: hugo --minify
 
-      # Upload the ./public folder as a Pages artifact
-      - uses: actions/upload-pages-artifact@v2
-        with:
-          path: ./public
+      - uses: actions/upload-pages-artifact@v3   # artifact backend v4
 
-  # ────────── Deploy ──────────
+      # optional: outputs.page_url is available here if you want it
+      #   echo "Preview → ${{ steps.upload.outputs.page_url }}"
+  
   deploy:
+    if: github.ref == 'refs/heads/master'        # only prod on master
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4            # required with v3 uploader
