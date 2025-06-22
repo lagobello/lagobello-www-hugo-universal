@@ -26,7 +26,7 @@ The following infrastructure has been completed for Lago Bello Subdivision
 * Private Gate for Residents
 * Fountain at the Entrance of Lago Bello
 
-## 4. HABLA ESPAÑOL?
+## 3. SE HABLA ESPAÑOL?
 
 ¡Sí! Como la mayor parte de la zona Rio Grande al sur de Texas, hablamos español y estamos prontos a recibir sus pedidos por informes.
 
