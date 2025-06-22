@@ -1,8 +1,8 @@
 name: Hugo - Build & Deploy
 
 on:
-  push:          # build every branch
-  pull_request:  # PR previews
+  push:
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -23,8 +23,9 @@ jobs:
 
       - run: hugo --minify
 
-      - uses: actions/upload-pages-artifact@v3   # artifact backend v4
-
+      - uses: actions/upload-pages-artifact@v3
+        with:
+            path: ./public
       # optional: outputs.page_url is available here if you want it
       #   echo "Preview → ${{ steps.upload.outputs.page_url }}"
   
@@ -37,4 +38,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4            # required with v3 uploader
+        uses: actions/deploy-pages@v4
