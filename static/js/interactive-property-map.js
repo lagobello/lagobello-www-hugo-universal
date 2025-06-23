@@ -161,7 +161,7 @@ var layerDroneOrthophoto = new ol.layer.Tile({
   title: 'Drone Orthophoto 2022/07/04',
   source: new ol.source.XYZ({
     attributions:'© Vitto',
-    url: '/tiles/orthophoto_20220704/{z}/{x}/{-y}.png'
+    url: 'https://lagobello.github.io/lagobello-tiles/orthophoto_20220704/{z}/{x}/{-y}.png'
   }),
   opacity: 1.0
 });
