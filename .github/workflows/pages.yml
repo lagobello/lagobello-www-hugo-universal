@@ -31,9 +31,7 @@ jobs:
 
       - uses: actions/upload-pages-artifact@v3
         with:
-            path: ./public
-      # optional: outputs.page_url is available here if you want it
-      #   echo "Preview → ${{ steps.upload.outputs.page_url }}"
+          path: ./public
   
   deploy:
     if: github.ref == 'refs/heads/master'        # only prod on master
