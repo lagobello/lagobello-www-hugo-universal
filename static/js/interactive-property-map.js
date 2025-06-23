@@ -250,8 +250,8 @@ layerSwitcher
 //  3.  Dynamic XYZ drone layers
 // =============================
 (function loadDroneLayers () {
-  const GH_API = 'https://api.github.com/repos/lagobello/lagobello-tiles/contents/xzy?ref=main';
-  const TILE_ROOT = 'https://lagobello.github.io/lagobello-tiles/xzy/';
+  const GH_API = 'https://api.github.com/repos/lagobello/lagobello-tiles/contents/zxy?ref=master';
+  const TILE_ROOT = 'https://lagobello.github.io/lagobello-tiles/zxy/';
 
   fetch(GH_API)
     .then(r => r.json())
