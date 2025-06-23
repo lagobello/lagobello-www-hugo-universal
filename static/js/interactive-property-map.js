@@ -187,6 +187,8 @@ var olLayerGroupBasemaps = new ol.layer.Group({
   layers: [layerOsmStreet, layerWatercolors, layerMapboxSatellite]
 });
 
+var olLayerGroupDrone = new ol.layer.Group({ title: 'Drone imagery', layers: [] });
+
 var olLayerGroupOverlays = new ol.layer.Group({
   title: 'Overlays',
   layers: [
@@ -209,26 +211,9 @@ var controlMousePosition = new ol.control.MousePosition({
   undefinedHTML: ''
 });
 
-var olViewRotated = new ol.View({
-  center: ol.proj.fromLonLat([-97.553, 26.053]),
-  rotation: Math.PI / 2.17,
-  zoom: 17
-});
-
-var olView = new ol.View({
-  center: ol.proj.fromLonLat([-97.553, 26.053]),
-  zoom: 16
-});
-
-var olViewSelector = function () {
-  if (window.innerHeight > window.innerWidth) {
-    console.log('initializing map in portrait mode');
-    return olView;
-  } else {
-    console.log('initializing map in landscape mode');
-    return olViewRotated;
-  }
-};
+var viewDefault = new ol.View({ center: ol.proj.fromLonLat([-97.553, 26.053]), zoom: 16 });
+var viewRot = new ol.View({ center: ol.proj.fromLonLat([-97.553, 26.053]), rotation: Math.PI / 2.17, zoom: 17 });
+function chooseView () { return (window.innerHeight > window.innerWidth) ? viewDefault : viewRot; }
 
 var olMap = new ol.Map({
   target: 'ol-map',
@@ -238,17 +223,18 @@ var olMap = new ol.Map({
     new ol.control.Zoom(),
     new ol.control.FullScreen(),
     // new ol.control.ScaleLine(),
-controlMousePosition,
-layerSwitcher
+  controlMousePosition,
+  layerSwitcher
 ],
   overlays: [overlay],
-  layers: [olLayerGroupBasemaps, olLayerGroupOverlays],
-  view: olViewSelector()
+  layers: [olLayerGroupBasemaps, olLayerGroupDrone, olLayerGroupOverlays],
+  view: chooseView()
 });
 
 // =============================
 //  3.  Dynamic XYZ drone layers
 // =============================
+// ============================= Dynamic XYZ loader =============================
 (function loadDroneLayers () {
   const GH_API = 'https://api.github.com/repos/lagobello/lagobello-tiles/contents/zxy?ref=master';
   const TILE_ROOT = 'https://lagobello.github.io/lagobello-tiles/zxy/';
@@ -265,16 +251,17 @@ layerSwitcher
           maxZoom: 22
         });
         const lyr = new ol.layer.Tile({ source: src, visible: false });
-        lyr.set('title', folder);      // shown in LayerSwitcher
+        lyr.set('title', folder);
         lyr.set('type', 'overlay');
-        olLayerGroupOverlays.getLayers().push(lyr);
-        // Make the newest (last in sorted list) visible by default
+        olLayerGroupDrone.getLayers().push(lyr);
+        // latest flight visible by default
         if (idx === folders.length - 1) lyr.setVisible(true);
       });
       layerSwitcher.renderPanel();
     })
     .catch(console.error);
 })();
+
 var featureCalculateAreaMeters = function (feature) {
   var format = new ol.format.GeoJSON();
   var turfFeature = format.writeFeatureObject(feature, {
@@ -699,7 +686,7 @@ var geolocation = new ol.Geolocation({
   trackingOptions: {
     enableHighAccuracy: true
   },
-  projection: olViewSelector().getProjection()
+  projection: chooseView().getProjection()
 });
 
 function el (id) {
