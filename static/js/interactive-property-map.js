@@ -2,94 +2,64 @@
 /* globals ol turf */
 /* eslint semi: 2 */
 
+// -----------------------------
+//  Lago Bello Interactive Map
+//
+// =============================
+//  0.  Styles
+// =============================
 var styleLake = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: '#92c5eb'
-  })
+  fill: new ol.style.Fill({ color: '#92c5eb' })
 });
 
 var lotStyles = {
   'FOR SALE': new ol.style.Style({
-    fill: new ol.style.Fill({
-      color: '#2dd187'
-    }),
-    stroke: new ol.style.Stroke({
-      color: '#D3D3D3',
-      width: 2
-    })
+    fill: new ol.style.Fill({ color: '#2dd187' }),
+    stroke: new ol.style.Stroke({ color: '#D3D3D3', width: 2 })
   }),
   'PRE-SALE': new ol.style.Style({
-    fill: new ol.style.Fill({
-      color: '#885ead'
-    }),
-    stroke: new ol.style.Stroke({
-      color: '#D3D3D3',
-      width: 2
-    })
+    fill: new ol.style.Fill({ color: '#885ead' }),
+    stroke: new ol.style.Stroke({ color: '#D3D3D3', width: 2 })
   }),
-  SOLD: new ol.style.Style({
-    fill: new ol.style.Fill({
-      color: '#c03425'
-    }),
-    stroke: new ol.style.Stroke({
-      color: '#D3D3D3',
-      width: 2
-    })
+  'SOLD': new ol.style.Style({
+    fill: new ol.style.Fill({ color: '#c03425' }),
+    stroke: new ol.style.Stroke({ color: '#D3D3D3', width: 2 })
   }),
-  PENDING: new ol.style.Style({
-    fill: new ol.style.Fill({
-      color: '#ffff00'
-    }),
-    stroke: new ol.style.Stroke({
-      color: '#D3D3D3',
-      width: 2
-    })
+  'PENDING': new ol.style.Style({
+    fill: new ol.style.Fill({ color: '#ffff00' }),
+    stroke: new ol.style.Stroke({ color: '#D3D3D3', width: 2 })
   })
 };
 
 var styleLotCameronAppraisalDistrict = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: '#FFFF00'
-  }),
-  stroke: new ol.style.Stroke({
-    color: '#000000',
-    width: 1
-  })
+  fill: new ol.style.Fill({ color: '#FFFF00' }),
+  stroke: new ol.style.Stroke({ color: '#000000', width: 1 })
 });
 
 var stylePark = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: '#6b8e23'
-  })
+  fill: new ol.style.Fill({ color: '#6b8e23' })
 });
 
 var styleStreet = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: '#6F6E63'
-  }),
-  stroke: new ol.style.Stroke({
-    color: '#fade84',
-    width: 2
-  })
+  fill: new ol.style.Fill({ color: '#6F6E63' }),
+  stroke: new ol.style.Stroke({ color: '#fade84', width: 2 })
 });
 
 var styleHighlight = new ol.style.Style({
-  stroke: new ol.style.Stroke({
-    color: 'blue',
-    width: 3
-  })
+  stroke: new ol.style.Stroke({ color: 'blue', width: 3 })
 });
 
+// =============================
+//  1.  Map controls & overlays
+// =============================
 var container = document.getElementById('popup');
-var content = document.getElementById('popup-content');
-var closer = document.getElementById('popup-closer');
+var content   = document.getElementById('popup-content');
+var closer    = document.getElementById('popup-closer');
 
 var overlay = new ol.Overlay({
   element: container,
   autoPan: true,
-  autoPanAnimation: {
-    duration: 250
-  }
+  autoPanAnimation: { duration: 250 }
 });
 
 closer.onclick = function () {
@@ -98,23 +68,9 @@ closer.onclick = function () {
   return false;
 };
 
-var mapboxKey =
-  'pk.eyJ1IjoibGFnb3ZpdHRvcmlvIiwiYSI6ImNqazZvYWdnZTB6bjMzcG1rcDR1bGpncm0ifQ.E_grlJASX59FUqTlksn09Q';
+var mapboxKey = 'pk.eyJ1IjoibGFnb3ZpdHRvcmlvIiwiYSI6ImNqazZvYWdnZTB6bjMzcG1rcDR1bGpncm0ifQ.E_grlJASX59FUqTlksn09Q';
 
-/* Possibly better vector tile implementation */
-/* var layerVectorTileMapboxStreets =  new ol.layer.VectorTile({
-    declutter: true,
-    source: new ol.source.VectorTile({
-      attributions: '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
-        '© <a href="https://www.openstreetmap.org/copyright">' +
-        'OpenStreetMap contributors</a>',
-      format: new ol.format.MVT(),
-      url: 'https://{a-d}.tiles.mapbox.com/v4/mapbox.mapbox-streets-v6/' +
-                  '{z}/{x}/{y}.vector.pbf?access_token=' + mapboxKey
-     }),
-            style: createMapboxStreetsV6Style(ol.style.Style, ol.style.Fill, ol.style.Stroke, ol.style.Icon, ol.style.Text)
-}); */
-
+// ------------------ Base layers
 var layerOsmStreet = new ol.layer.Tile({
   title: 'OpenStreetMap',
   type: 'base',
@@ -143,29 +99,13 @@ var layerWatercolors = new ol.layer.Group({
   type: 'base',
   combine: true,
   layers: [
-    new ol.layer.Tile({
-      source: new ol.source.Stamen({
-        layer: 'watercolor'
-      })
-    }),
-    new ol.layer.Tile({
-      source: new ol.source.Stamen({
-        layer: 'terrain-labels'
-      })
-    })
+    new ol.layer.Tile({ source: new ol.source.Stamen({ layer: 'watercolor' }) }),
+    new ol.layer.Tile({ source: new ol.source.Stamen({ layer: 'terrain-labels' }) })
   ],
   opacity: 1.0
 });
 
-var layerDroneOrthophoto = new ol.layer.Tile({
-  title: 'Drone Orthophoto 2022/07/04',
-  source: new ol.source.XYZ({
-    attributions:'© Vitto',
-    url: 'https://lagobello.github.io/lagobello-tiles/orthophoto_20220704/{z}/{x}/{-y}.png'
-  }),
-  opacity: 1.0
-});
-
+// ------------- Vector overlays
 var layerVectorLake = new ol.layer.Vector({
   title: 'Lake layer',
   source: new ol.source.Vector({
@@ -250,18 +190,15 @@ var olLayerGroupBasemaps = new ol.layer.Group({
 var olLayerGroupOverlays = new ol.layer.Group({
   title: 'Overlays',
   layers: [
-    layerDroneOrthophoto,
-    layerVectorLake,
-    layerVectorLots,
-    layerVectorLotsCameronAppraisalDistrict,
-    layerVectorPark,
-    layerVectorStreet
+  layerVectorLake,
+  layerVectorLots,
+  layerVectorLotsCameronAppraisalDistrict,
+  layerVectorPark,
+  layerVectorStreet
     ]
 });
 
-var layerSwitcher = new ol.control.LayerSwitcher({
-  tipLabel: 'Legend'
-});
+var layerSwitcher = new ol.control.LayerSwitcher({ tipLabel: 'Legend' });
 
 var controlMousePosition = new ol.control.MousePosition({
   coordinateFormat: function (coordinate) {
@@ -301,14 +238,43 @@ var olMap = new ol.Map({
     new ol.control.Zoom(),
     new ol.control.FullScreen(),
     // new ol.control.ScaleLine(),
-    controlMousePosition,
-    layerSwitcher
-  ],
+controlMousePosition,
+layerSwitcher
+],
   overlays: [overlay],
-  layers: [olLayerGroupBasemaps, olLayerGroupOverlays, layerVectorDrawings],
+  layers: [olLayerGroupBasemaps, olLayerGroupOverlays],
   view: olViewSelector()
 });
 
+// =============================
+//  3.  Dynamic XYZ drone layers
+// =============================
+(function loadDroneLayers () {
+  const GH_API = 'https://api.github.com/repos/lagobello/lagobello-tiles/contents/xzy?ref=main';
+  const TILE_ROOT = 'https://lagobello.github.io/lagobello-tiles/xzy/';
+
+  fetch(GH_API)
+    .then(r => r.json())
+    .then(entries => entries.filter(e => e.type === 'dir').map(e => e.name).sort())
+    .then(folders => {
+      if (!folders.length) return;
+      folders.forEach((folder, idx) => {
+        const src = new ol.source.XYZ({
+          url: `${TILE_ROOT}${encodeURIComponent(folder)}/{z}/{x}/{-y}.png`,
+          attributions: `© Drone flight ${folder.replace(/_/g,' ')}`,
+          maxZoom: 22
+        });
+        const lyr = new ol.layer.Tile({ source: src, visible: false });
+        lyr.set('title', folder);      // shown in LayerSwitcher
+        lyr.set('type', 'overlay');
+        olLayerGroupOverlays.getLayers().push(lyr);
+        // Make the newest (last in sorted list) visible by default
+        if (idx === folders.length - 1) lyr.setVisible(true);
+      });
+      layerSwitcher.renderPanel();
+    })
+    .catch(console.error);
+})();
 var featureCalculateAreaMeters = function (feature) {
   var format = new ol.format.GeoJSON();
   var turfFeature = format.writeFeatureObject(feature, {
