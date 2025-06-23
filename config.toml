@@ -188,6 +188,3 @@ pagerSize = 10
     enable = true
     title = "From our blog"
     subtitle = "Here are some of our latest updates!"
-
-[outputs]
-    home = ["HTML", "RSS", "SITEMAP"]
