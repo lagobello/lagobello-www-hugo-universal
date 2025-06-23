@@ -23,6 +23,12 @@ jobs:
 
       - run: hugo --minify
 
+      - run: |
+          echo "🔍 Listing /public"
+          ls -l public
+          echo "🔍 Any nested index.html?"
+          find public -name index.html | sed 's/^/📄 /'
+
       - uses: actions/upload-pages-artifact@v3
         with:
             path: ./public
