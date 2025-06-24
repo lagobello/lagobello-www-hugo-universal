@@ -120,6 +120,10 @@ var styleFunction = function (feature) {
   return lotStyles[feature.get('status')];
 };
 
+var styleFunctionPlatLots = function (feature) {
+  return lotStyles['FOR SALE'];
+};
+
 var layerVectorLots = new ol.layer.Vector({
   title: 'Lot layer',
   source: new ol.source.Vector({
@@ -127,6 +131,17 @@ var layerVectorLots = new ol.layer.Vector({
     url: '/files/lots.geojson'
   }),
   style: styleFunction,
+  opacity: 0.4
+});
+
+var layerVectorLotsPlat = new ol.layer.Vector({
+  title: 'Lot layer - plat',
+  source: new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS.geojson'
+  }),
+  style: styleFunctionPlatLots,
+  visible: false,
   opacity: 0.4
 });
 
@@ -150,6 +165,27 @@ var layerVectorPark = new ol.layer.Vector({
   style: stylePark,
   opacity: 0.4
 });
+
+var layerVectorCaminata = new ol.layer.Vector({
+  title: 'Caminata layer',
+  source: new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-CAMINATA.geojson'
+  }),
+  style: stylePark,
+  opacity: 0.8
+});
+
+var layerVectorCaminataProposed = new ol.layer.Vector({
+  title: 'Caminata layer proposed',
+  source: new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-CAMINATA-PROPOSED.geojson'
+  }),
+  style: stylePark,
+  opacity: 0.8
+});
+
 
 var layerVectorStreet = new ol.layer.Vector({
   title: 'Street layer',
@@ -192,8 +228,11 @@ var olLayerGroupDrone = new ol.layer.Group({ title: 'Drone imagery', layers: [] 
 var olLayerGroupOverlays = new ol.layer.Group({
   title: 'Overlays',
   layers: [
+  layerVectorCaminata,
+  layerVectorCaminataProposed,
   layerVectorLake,
   layerVectorLots,
+  layerVectorLotsPlat,
   layerVectorLotsCameronAppraisalDistrict,
   layerVectorPark,
   layerVectorStreet
