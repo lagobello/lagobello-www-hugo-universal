@@ -155,7 +155,7 @@ var layerVectorStreet = new ol.layer.Vector({
   title: 'Street layer',
   source: new ol.source.Vector({
     format: new ol.format.GeoJSON(),
-    url: '/files/street.geojson'
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-STREET.geojson'
   }),
   style: styleStreet,
   opacity: 0.4
