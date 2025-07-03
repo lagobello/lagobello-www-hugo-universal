@@ -269,26 +269,26 @@
 /* Layer Switcher specific styling */
 .layer-switcher, .ol-layerswitcher {
   /* Inherits from .ol-control for background, border-radius */
-  min-width: 2.5em !important;
-  min-height: 2.5em !important;
-  padding: 0 !important; /* Padding handled by centering content if container is larger */
+  min-width: 3.5em !important; /* Aggressively increase container width */
+  min-height: 2.7em !important; /* Aggressively increase container height */
+  padding: 0 !important;
   display: flex !important;
   align-items: center !important;
-  justify-content: center !important;
+  justify-content: center !important; /* Center the button within this larger container */
   line-height: normal !important;
 }
 
 .layer-switcher button, .ol-layerswitcher button {
-  width: 2em !important; /* Increased width for the button */
-  height: 1.75em !important; /* Kept height, or could be 2em for square */
-  line-height: 1.75em !important;
+  width: 3.0em !important; /* Aggressively increase button width */
+  height: 2.2em !important; /* Aggressively increase button height */
+  line-height: 2.2em !important; /* Match height */
   background-color: transparent !important;
   color: black !important;
-  font-size: 0.9em !important; /* Keep reduced font-size for the icon character */
-  padding: 2px !important; /* Keep small, balanced padding */
+  font-size: 0.9em !important; /* Keep font-size for icon relatively small */
+  padding: 2px !important;
   display: flex !important;
   align-items: center !important;
-  justify-content: flex-start !important; /* Keep left justification */
+  justify-content: flex-start !important; /* Left justify icon within the button */
   margin: 0 !important;
   box-sizing: border-box !important;
   overflow: visible !important;
