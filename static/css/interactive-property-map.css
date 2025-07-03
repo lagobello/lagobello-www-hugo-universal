@@ -218,10 +218,11 @@
   /* Default OL zoom has its own margin-bottom if it's part of ol-control. */
   /* We'll use --ol-zoom-control-total-height for spacing *after* it. */
 }
-.ol-info-control { top: calc(0.5em + var(--ol-zoom-control-total-height)) !important; }
-.ol-length-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 1) !important; }
-.ol-area-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 2) !important; }
-.ol-unit-toggle-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 3) !important; }
+/* Add an additional slot height after zoom before info control */
+.ol-info-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 0.5) !important; } /* Adding half for now, can be a full slot */
+.ol-length-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 1.5) !important; }
+.ol-area-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 2.5) !important; }
+.ol-unit-toggle-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 3.5) !important; }
 /* Note: UnitToggleControl itself has two buttons vertically, so its actual height will be more than one slot. */
 /* This will make the spacing after UnitToggleControl seem larger if anything followed it using single slot logic. */
 /* For now, it's the last in the column. */
@@ -268,8 +269,7 @@
 /* Layer Switcher specific styling */
 .layer-switcher, .ol-layerswitcher {
   /* This control itself should inherit .ol-control styling for background, border-radius. */
-  /* Default OL padding for a control is often 2px. Let's ensure it. */
-  padding: 2px !important;
+  padding: 4px !important; /* Increased padding for the container */
   /* It's usually positioned top-right by default. */
 }
 
