@@ -290,66 +290,162 @@ var viewDefault = new ol.View({ center: ol.proj.fromLonLat([-97.553, 26.053]), z
 var viewRot = new ol.View({ center: ol.proj.fromLonLat([-97.553, 26.053]), rotation: Math.PI / 2.17, zoom: 17 });
 function chooseView () { return (window.innerHeight > window.innerWidth) ? viewDefault : viewRot; }
 
-// Custom OpenLayers Control for Tools - MOVED HERE
-class ToolControl extends ol.control.Control {
+// Global references to individual tool control instances for managing active state
+let infoControlInstance, lengthControlInstance, areaControlInstance;
+
+// Global function to manage active state of tool controls
+function setSelectedTool(toolMode, clickedControlInstance) {
+  currentToolMode = toolMode;
+
+  const controls = [infoControlInstance, lengthControlInstance, areaControlInstance];
+  controls.forEach(control => {
+    if (control && control.element) { // Check if control and its element exist
+      if (control === clickedControlInstance) {
+        control.element.firstChild.classList.add('active'); // Assuming button is firstChild
+      } else {
+        control.element.firstChild.classList.remove('active');
+      }
+    }
+  });
+  setActiveToolInteraction(toolMode); // This handles map interactions
+}
+
+
+// --- InfoControl ---
+class InfoControl extends ol.control.Control {
   constructor(opt_options) {
     const options = opt_options || {};
+    const button = document.createElement('button');
+    button.innerHTML = 'ℹ️';
+    button.title = 'Info Mode';
 
     const element = document.createElement('div');
-    element.className = 'ol-tool-control ol-unselectable ol-control'; // ol-control for base styling
+    element.className = 'ol-info-control ol-unselectable ol-control';
+    element.appendChild(button);
 
-    // Call super constructor first with the main element
-    super({
-      element: element,
-      target: options.target,
+    super({ element: element, target: options.target });
+    infoControlInstance = this; // Store instance for global access
+
+    button.addEventListener('click', () => {
+      setSelectedTool('info', this);
     });
+  }
+}
 
-    this.buttons = {}; // Initialize this.buttons after super()
-    const toolInfo = [
-      { id: 'info', text: 'ℹ️', title: 'Info Mode' },
-      { id: 'length', text: '📏', title: 'Length Tool' },
-      { id: 'area', text: '📐', title: 'Area Tool' },
-    ];
+// --- LengthControl ---
+class LengthControl extends ol.control.Control {
+  constructor(opt_options) {
+    const options = opt_options || {};
+    const button = document.createElement('button');
+    button.innerHTML = '📏';
+    button.title = 'Length Tool';
 
-    toolInfo.forEach(tool => {
-      const button = document.createElement('button');
-      button.innerHTML = tool.text;
-      button.title = tool.title;
-      // 'this' in arrow function will correctly refer to ToolControl instance
-      button.addEventListener('click', () => {
-        this.setActiveButton(tool.id);
-        setActiveToolInteraction(tool.id);
-      });
-      element.appendChild(button);
-      this.buttons[tool.id] = button; // Assign to this.buttons after super()
+    const element = document.createElement('div');
+    element.className = 'ol-length-control ol-unselectable ol-control';
+    element.appendChild(button);
+
+    super({ element: element, target: options.target });
+    lengthControlInstance = this; // Store instance for global access
+
+    button.addEventListener('click', () => {
+      setSelectedTool('length', this);
     });
+  }
+}
 
-    // Set initial active button, this is fine now
-    this.setActiveButton(currentToolMode);
+// --- AreaControl ---
+class AreaControl extends ol.control.Control {
+  constructor(opt_options) {
+    const options = opt_options || {};
+    const button = document.createElement('button');
+    button.innerHTML = '📐';
+    button.title = 'Area Tool';
+
+    const element = document.createElement('div');
+    element.className = 'ol-area-control ol-unselectable ol-control';
+    element.appendChild(button);
+
+    super({ element: element, target: options.target });
+    areaControlInstance = this; // Store instance for global access
+
+    button.addEventListener('click', () => {
+      setSelectedTool('area', this);
+    });
+  }
+}
+
+// --- UnitToggleControl ---
+class UnitToggleControl extends ol.control.Control {
+  constructor(opt_options) {
+    const options = opt_options || {};
+    const element = document.createElement('div');
+    element.className = 'ol-unit-toggle-control ol-unselectable ol-control';
+
+    super({ element: element, target: options.target });
+
+    this.metricButton = document.createElement('button');
+    this.metricButton.innerHTML = 'M 📏'; // Placeholder, can be improved
+    this.metricButton.title = 'Use Metric Units';
+    this.metricButton.addEventListener('click', () => this.setUnit('metric'));
+    element.appendChild(this.metricButton);
+
+    this.imperialButton = document.createElement('button');
+    this.imperialButton.innerHTML = 'I 📐'; // Placeholder, can be improved
+    this.imperialButton.title = 'Use Imperial Units';
+    this.imperialButton.addEventListener('click', () => this.setUnit('imperial'));
+    element.appendChild(this.imperialButton);
+
+    // Set initial active state based on global displayUnits
+    this.updateButtonActiveState();
   }
 
-  setActiveButton(toolId) {
-    for (const id in this.buttons) {
-      if (id === toolId) {
-        this.buttons[id].classList.add('active');
-      } else {
-        this.buttons[id].classList.remove('active');
-      }
+  setUnit(unit) {
+    if (displayUnits === unit) return; // No change
+    displayUnits = unit;
+    this.updateButtonActiveState();
+    refreshMapMeasurements(); // Call global function to update UI
+  }
+
+  updateButtonActiveState() {
+    if (displayUnits === 'metric') {
+      this.metricButton.classList.add('active');
+      this.imperialButton.classList.remove('active');
+    } else {
+      this.imperialButton.classList.add('active');
+      this.metricButton.classList.remove('active');
     }
   }
 }
 
+// Placeholder for the function that will refresh UI elements when units change
+function refreshMapMeasurements() {
+  console.log(`Unit system changed to: ${displayUnits}. UI refresh needed.`);
+  // Implementation will be in Phase 2
+  // This function will need to update:
+  // - Active drawing tooltips (length/area)
+  // - Feature info pop-up (if open)
+  // - Lot table
+}
+
+
+// REMOVED old combined ToolControl class
+
 var olMap = new ol.Map({
   target: 'ol-map',
   controls: [
-    new ol.control.Attribution({collapsible: true}), // Assuming this was the intent of attributionOptions
+    // Standard controls that might be positioned elsewhere by default by OL
+    new ol.control.Attribution({collapsible: true}),
     new ol.control.Rotate(),
-    new ol.control.Zoom(),
     new ol.control.FullScreen(),
-    // new ol.control.ScaleLine(), // This was commented out before
-    controlMousePosition, // This is an instance of ol.control.MousePosition
-    layerSwitcher, // This is an instance of ol.control.LayerSwitcher
-    new ToolControl() // Add the new custom tool control
+    controlMousePosition,
+    layerSwitcher,
+
+    // Controls intended for the single top-left column
+    new ol.control.Zoom(),
+    new InfoControl(),
+    new LengthControl(),
+    new AreaControl(),
+    new UnitToggleControl(),
   ],
   overlays: [overlay],
   layers: [olLayerGroupBasemaps, olLayerGroupDrone, olLayerGroupOverlays],
