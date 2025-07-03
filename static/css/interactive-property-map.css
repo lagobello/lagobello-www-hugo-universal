@@ -269,22 +269,29 @@
 /* Layer Switcher specific styling */
 .layer-switcher, .ol-layerswitcher {
   /* This control itself should inherit .ol-control styling for background, border-radius. */
-  padding: 4px !important; /* Increased padding for the container */
   /* It's usually positioned top-right by default. */
+  /* Explicitly size the container to be larger than the button */
+  width: 2.2em !important; /* Example: accommodates a 1.75em button + padding */
+  height: 2.2em !important;
+  padding: 0 !important; /* Remove padding if width/height are explicit for the container */
+  display: flex !important; /* Use flex to center the button within this container */
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .layer-switcher button, .ol-layerswitcher button {
-  /* Make sure it conforms to the standard button styling and size */
-  width: 1.375em !important;
-  height: 1.375em !important;
-  line-height: 1.375em !important;
+  /* Button should be smaller than its container now */
+  width: 1.75em !important;
+  height: 1.75em !important;
+  line-height: 1.75em !important; /* Match height */
   padding: 0 !important;
   background-color: transparent !important;
   color: black !important; /* For the layer switcher icon itself */
-  font-size: 1.14em !important; /* Match other control buttons */
+  font-size: 1em !important; /* Base font size for the button, icon scales relative to this */
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  margin: 0 !important; /* No margin if centered by flex parent */
 }
 
 /* Ensure the icon itself within the button is not too large or has weird margins */

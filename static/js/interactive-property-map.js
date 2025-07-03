@@ -262,7 +262,8 @@ var layerVectorDrawings = new ol.layer.Vector({
         color: '#ffcc33'
       })
     })
-  })
+  }),
+  zIndex: 100 // Ensure drawing layer is on top
 });
 
 var olLayerGroupBasemaps = new ol.layer.Group({
