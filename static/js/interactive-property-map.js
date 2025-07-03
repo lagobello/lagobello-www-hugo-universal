@@ -145,6 +145,17 @@ var layerVectorLotsPlat = new ol.layer.Vector({
   opacity: 0.4
 });
 
+var layerVectorLotsPlat = new ol.layer.Vector({
+  title: 'Lot layer - Section 3 (future)',
+  source: new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S3.geojson'
+  }),
+  style: styleFunctionPlatLots,
+  visible: false,
+  opacity: 0.4
+});
+
 var layerVectorLotsCameronAppraisalDistrict = new ol.layer.Vector({
   title: 'Lot layer - Cameron Appraisal District',
   source: new ol.source.Vector({
@@ -163,6 +174,18 @@ var layerVectorPark = new ol.layer.Vector({
     url: '/files/park.geojson'
   }),
   style: stylePark,
+  visible: true,
+  opacity: 0.4
+});
+
+var layerVectorCommonArea = new ol.layer.Vector({
+  title: 'Common Area - Section 3',
+  source: new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-COMMONAREA-S3.geojson'
+  }),
+  style: stylePark,
+  visible: false,
   opacity: 0.4
 });
 
@@ -195,6 +218,16 @@ var layerVectorStreet = new ol.layer.Vector({
   }),
   style: styleStreet,
   opacity: 0.4
+});
+
+var layerVectorStreetS3 = new ol.layer.Vector({
+  title: 'Street layer - Section 3',
+  source: new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-STREET-S3.geojson'
+  }),
+  style: styleStreet,
+  opacity: 0.8
 });
 
 var source = new ol.source.Vector();
@@ -235,7 +268,9 @@ var olLayerGroupOverlays = new ol.layer.Group({
   layerVectorLotsPlat,
   layerVectorLotsCameronAppraisalDistrict,
   layerVectorPark,
-  layerVectorStreet
+  layerVectorCommonArea,
+  layerVectorStreet,
+  layerVectorStreetS3
     ]
 });
 
