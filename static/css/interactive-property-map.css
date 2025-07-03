@@ -268,46 +268,45 @@
 
 /* Layer Switcher specific styling */
 .layer-switcher, .ol-layerswitcher {
-  /* This control itself should inherit .ol-control styling for background, border-radius. */
-  /* It's usually positioned top-right by default. */
-  /* Explicitly size the container to be larger than the button */
-  width: 2.2em !important; /* Example: accommodates a 1.75em button + padding */
-  height: 2.2em !important;
-  padding: 0 !important; /* Remove padding if width/height are explicit for the container */
-  display: flex !important; /* Use flex to center the button within this container */
-  align-items: center !important;
-  justify-content: center !important;
+  /* Inherits from .ol-control for background, border-radius */
+  padding: 2px !important; /* Standard OL control padding */
+  line-height: normal !important; /* Reset line-height that might affect container height */
+  width: auto !important; /* Allow content (button) to determine width */
+  height: auto !important; /* Allow content (button) to determine height */
+  /* overflow: visible; /* Default, ensure no 'hidden' causing cutoffs if content is right */
 }
 
 .layer-switcher button, .ol-layerswitcher button {
-  /* Button should be smaller than its container now */
-  width: 1.75em !important;
-  height: 1.75em !important;
-  line-height: 1.75em !important; /* Match height */
+  width: 1.375em !important;
+  height: 1.375em !important;
+  line-height: 1.375em !important; /* Match height for potential vertical centering of icon */
   padding: 0 !important;
   background-color: transparent !important;
-  color: black !important; /* For the layer switcher icon itself */
-  font-size: 1em !important; /* Base font size for the button, icon scales relative to this */
+  color: black !important;
+  font-size: 1.14em !important; /* Consistent with other .ol-control buttons */
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  margin: 0 !important; /* No margin if centered by flex parent */
+  margin: 0 !important; /* Button should fit snugly within container's padding */
+  box-sizing: border-box !important;
 }
 
 /* Ensure the icon itself within the button is not too large or has weird margins */
-.layer-switcher button i, .ol-layerswitcher button i, /* If uses <i> for icon */
-.layer-switcher button svg, .ol-layerswitcher button svg { /* If uses <svg> for icon */
+.layer-switcher button i, .ol-layerswitcher button i,
+.layer-switcher button svg, .ol-layerswitcher button svg {
   max-width: 100%;
   max-height: 100%;
-  display: block; /* Helps with sizing/centering */
-  margin: auto; /* Helps with centering */
+  display: block;
+  margin: auto;
 }
 
 /* The panel itself needs to be styled if it's not already */
 .layer-switcher .panel, .ol-layerswitcher .panel {
-    background-color: rgba(255,255,255,0.9) !important; /* Light background for panel */
+    background-color: rgba(255,255,255,0.9) !important;
     border: 1px solid #ccc !important;
-    color: black !important; /* Text color within panel */
+    color: black !important;
+    z-index: 1050 !important; /* Ensure panel is above other map elements */
+    /* OL LayerSwitcher JS handles display:none/block for opening/closing */
 }
 
 
