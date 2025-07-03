@@ -826,11 +826,17 @@ geolocation.on('change', function () {
     const speed = geolocation.getSpeed() !== undefined ? geolocation.getSpeed().toFixed(2) : '-';
 
     let currentCoords = {lat: '-', lon: '-'};
-    const position = geolocation.getPosition();
+    const position = geolocation.getPosition(); // This is in view projection
     if (position) {
-      const lonLat = ol.proj.toLonLat(position); // Transform to EPSG:4326
+      const lonLat = ol.proj.toLonLat(position); // Transform to EPSG:4326 for display
       currentCoords.lon = lonLat[0];
       currentCoords.lat = lonLat[1];
+
+      // Center map if needsCentering_ flag is true
+      if (window.trackingControlInstance.needsCentering_) {
+        olMap.getView().animate({ center: position, zoom: Math.max(olMap.getView().getZoom(), 17), duration: 500 });
+        window.trackingControlInstance.needsCentering_ = false; // Reset flag after centering
+      }
     }
 
     window.trackingControlInstance.updateStats(accuracy, altitude, altitudeAccuracy, heading, speed, currentCoords);
@@ -948,23 +954,29 @@ class TrackingControl extends ol.control.Control {
 
     this.button_ = button;
     this.trackingOn_ = false; // To keep track of tracking state
+    this.needsCentering_ = false; // Flag to control centering on first fix
 
     this.button_.addEventListener('click', this.handleTrackToggle_.bind(this), false);
   }
 
   handleTrackToggle_() {
     this.trackingOn_ = !this.trackingOn_;
-    geolocation.setTracking(this.trackingOn_); // Connect to actual geolocation
+    geolocation.setTracking(this.trackingOn_);
     if (this.trackingOn_) {
-      this.button_.innerHTML = '📡'; // Broadcasting satellite for "on" state / disable tracking
-      this.statsElement_.style.display = 'flex'; // Show stats (will be styled to flex row by CSS)
-      // Potentially change button style to indicate 'on' state (e.g. class)
+      this.button_.innerHTML = '📡';
+      this.statsElement_.style.display = 'flex';
+      this.needsCentering_ = true; // Set flag to center on next position update
+      // Attempt to center immediately if position is already available
+      const currentPosition = geolocation.getPosition();
+      if (currentPosition && this.needsCentering_) {
+        olMap.getView().animate({ center: currentPosition, zoom: Math.max(olMap.getView().getZoom(), 17), duration: 500 });
+        this.needsCentering_ = false; // Centered, so reset flag
+      }
     } else {
-      this.button_.innerHTML = '🛰️'; // Satellite for "off" state / enable tracking
-      this.statsElement_.style.display = 'none'; // Hide stats
-      // Reset stats display
-      this.updateStats('-', '-', '-', '-', '-', {lat: '-', lon: '-'}); // Add default for coords
-      // Potentially change button style to indicate 'off' state
+      this.button_.innerHTML = '🛰️';
+      this.statsElement_.style.display = 'none';
+      this.updateStats('-', '-', '-', '-', '-', {lat: '-', lon: '-'});
+      this.needsCentering_ = false; // Tracking off, no need to center
     }
     console.log('Tracking toggled:', this.trackingOn_);
   }

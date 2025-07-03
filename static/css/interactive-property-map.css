@@ -143,7 +143,7 @@
 /* Custom Tracking Control Styles */
 .tracking-control {
   top: .5em;
-  right: 5.5em; /* Further adjusted to clear rotate button: prev 4em */
+  right: 7em; /* Increased spacing: prev 5.5em */
   left: auto; /* Override default OL if any */
   background-color: transparent; /* ol.css uses var(--ol-subtle-background-color) for .ol-control which is rgba(128,128,128,0.25) - we want ours to be a container */
   border-radius: 4px; /* Matches .ol-control */
