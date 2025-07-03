@@ -588,7 +588,10 @@ function movePoint10mDown(Point){
   }
 
 olMap.on('click', function (evt) {
-  if (typeSelect.value !== 'info') return;
+  // Corrected: typeSelect.value to currentToolMode
+  if (currentToolMode !== 'info') {
+    return;
+  }
 
   var feature = retrieveFeature(evt.pixel);
 
