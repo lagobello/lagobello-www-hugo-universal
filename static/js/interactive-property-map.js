@@ -287,7 +287,8 @@ var olLayerGroupOverlays = new ol.layer.Group({
   layerVectorCommonArea,
   layerVectorStreet,
   layerVectorStreetS3
-    ]
+    ],
+  zIndex: 10 // Ensure this group is below the drawing layer (zIndex 100)
 });
 
 var layerSwitcher = new ol.control.LayerSwitcher({ tipLabel: 'Legend' });
