@@ -808,17 +808,45 @@ function el (id) {
   return document.getElementById(id);
 }
 
-el('track').addEventListener('change', function () {
-  geolocation.setTracking(this.checked);
-});
+// The old el('track') listener will be removed as the new control handles this.
+// el('track').addEventListener('change', function () {
+//   geolocation.setTracking(this.checked);
+// });
 
 // update the HTML page when the position changes.
+// This assumes 'trackingControlInstance' will be the instance of our new control.
+// This instance needs to be created before this part of the script runs,
+// or this callback needs to be set after the control is instantiated.
 geolocation.on('change', function () {
-  el('accuracy').innerText = geolocation.getAccuracy() + ' [m]';
-  el('altitude').innerText = geolocation.getAltitude() + ' [m]';
-  el('altitudeAccuracy').innerText = geolocation.getAltitudeAccuracy() + ' [m]';
-  el('heading').innerText = geolocation.getHeading() + ' [rad]';
-  el('speed').innerText = geolocation.getSpeed() + ' [m/s]';
+  if (window.trackingControlInstance && window.trackingControlInstance.trackingOn_) {
+    const accuracy = geolocation.getAccuracy() !== undefined ? geolocation.getAccuracy().toFixed(2) : '-';
+    const altitude = geolocation.getAltitude() !== undefined ? geolocation.getAltitude().toFixed(2) : '-';
+    const altitudeAccuracy = geolocation.getAltitudeAccuracy() !== undefined ? geolocation.getAltitudeAccuracy().toFixed(2) : '-';
+    const heading = geolocation.getHeading() !== undefined ? geolocation.getHeading().toFixed(2) : '-';
+    const speed = geolocation.getSpeed() !== undefined ? geolocation.getSpeed().toFixed(2) : '-';
+
+    let currentCoords = {lat: '-', lon: '-'};
+    const position = geolocation.getPosition(); // This is in view projection
+    if (position) {
+      const lonLat = ol.proj.toLonLat(position); // Transform to EPSG:4326 for display
+      currentCoords.lon = lonLat[0];
+      currentCoords.lat = lonLat[1];
+
+      // Center map if needsCentering_ flag is true
+      if (window.trackingControlInstance.needsCentering_) {
+        olMap.getView().animate({ center: position, zoom: Math.max(olMap.getView().getZoom(), 17), rotation: 0, duration: 500 });
+        window.trackingControlInstance.needsCentering_ = false; // Reset flag after centering
+      }
+    }
+
+    window.trackingControlInstance.updateStats(accuracy, altitude, altitudeAccuracy, heading, speed, currentCoords);
+  }
+  // The custom control now handles these updates.
+  // el('accuracy').innerText = geolocation.getAccuracy() + ' [m]';
+  // el('altitude').innerText = geolocation.getAltitude() + ' [m]';
+  // el('altitudeAccuracy').innerText = geolocation.getAltitudeAccuracy() + ' [m]';
+  // el('heading').innerText = geolocation.getHeading() + ' [rad]';
+  // el('speed').innerText = geolocation.getSpeed() + ' [m/s]';
 });
 
 // handle geolocation error.
@@ -826,6 +854,13 @@ geolocation.on('error', function (error) {
   var info = document.getElementById('info');
   info.innerHTML = error.message;
   info.style.display = '';
+  if (window.trackingControlInstance) {
+    window.trackingControlInstance.updateStats('Error', 'Error', 'Error', 'Error', 'Error', {lat: 'Error', lon: 'Error'});
+    // Optionally disable tracking or show error state on button
+    if (window.trackingControlInstance.trackingOn_) {
+        window.trackingControlInstance.handleTrackToggle_(); // Toggle to off state
+    }
+  }
 });
 
 var accuracyFeature = new ol.Feature();
@@ -858,3 +893,114 @@ var layerPositionMarker = new ol.layer.Vector({
     features: [accuracyFeature, positionFeature]
   })
 });
+
+
+// =============================
+//  Custom Tracking Control
+// =============================
+// Make sure this class definition is before its instantiation
+class TrackingControl extends ol.control.Control {
+  /**
+   * @param {Object} [opt_options] Control options.
+   */
+  constructor(opt_options) {
+    const options = opt_options || {};
+
+    const button = document.createElement('button');
+    button.innerHTML = '🛰️'; // Satellite emoji for "off" state / enable tracking
+    button.title = 'Toggle GPS Tracking';
+
+    const element = document.createElement('div');
+    element.className = 'ol-unselectable ol-control tracking-control'; // Added a custom class
+    element.appendChild(button);
+
+    // Call super constructor first
+    super({
+      element: element,
+      target: options.target,
+    });
+
+    // Create container for stats
+    this.statsElement_ = document.createElement('div');
+    this.statsElement_.className = 'tracking-stats';
+    // Initially hide stats or show placeholder text
+    this.statsElement_.style.display = 'none';
+    element.appendChild(this.statsElement_);
+
+    // Create individual stat elements
+    this.accuracyElement_ = document.createElement('div');
+    this.accuracyElement_.innerHTML = 'Accuracy: -';
+    this.statsElement_.appendChild(this.accuracyElement_);
+
+    this.altitudeElement_ = document.createElement('div');
+    this.altitudeElement_.innerHTML = 'Altitude: -';
+    this.statsElement_.appendChild(this.altitudeElement_);
+
+    this.altitudeAccuracyElement_ = document.createElement('div');
+    this.altitudeAccuracyElement_.innerHTML = 'Alt. Accuracy: -';
+    this.statsElement_.appendChild(this.altitudeAccuracyElement_);
+
+    this.headingElement_ = document.createElement('div');
+    this.headingElement_.innerHTML = 'Heading: -';
+    this.statsElement_.appendChild(this.headingElement_);
+
+    this.speedElement_ = document.createElement('div');
+    this.speedElement_.innerHTML = 'Speed: -';
+    this.statsElement_.appendChild(this.speedElement_);
+
+    this.coordinatesElement_ = document.createElement('div');
+    this.coordinatesElement_.innerHTML = 'Coords: -';
+    this.statsElement_.appendChild(this.coordinatesElement_);
+
+    this.button_ = button;
+    this.trackingOn_ = false; // To keep track of tracking state
+    this.needsCentering_ = false; // Flag to control centering on first fix
+
+    this.button_.addEventListener('click', this.handleTrackToggle_.bind(this), false);
+  }
+
+  handleTrackToggle_() {
+    this.trackingOn_ = !this.trackingOn_;
+    geolocation.setTracking(this.trackingOn_);
+    if (this.trackingOn_) {
+      this.button_.innerHTML = '📡';
+      this.statsElement_.style.display = 'flex';
+      this.needsCentering_ = true; // Set flag to center on next position update
+      // Attempt to center immediately if position is already available
+      const currentPosition = geolocation.getPosition();
+      if (currentPosition && this.needsCentering_) {
+        olMap.getView().animate({ center: currentPosition, zoom: Math.max(olMap.getView().getZoom(), 17), rotation: 0, duration: 500 });
+        this.needsCentering_ = false; // Centered, so reset flag
+      }
+    } else {
+      this.button_.innerHTML = '🛰️';
+      this.statsElement_.style.display = 'none';
+      this.updateStats('-', '-', '-', '-', '-', {lat: '-', lon: '-'});
+      this.needsCentering_ = false; // Tracking off, no need to center
+    }
+    console.log('Tracking toggled:', this.trackingOn_);
+  }
+
+  updateStats(accuracy, altitude, altitudeAccuracy, heading, speed, coordinates) {
+    this.accuracyElement_.innerHTML = `Accuracy: ${accuracy} [m]`;
+    this.altitudeElement_.innerHTML = `Altitude: ${altitude} [m]`;
+    this.altitudeAccuracyElement_.innerHTML = `Alt. Accuracy: ${altitudeAccuracy} [m]`;
+    this.headingElement_.innerHTML = `Heading: ${heading} [rad]`;
+    this.speedElement_.innerHTML = `Speed: ${speed} [m/s]`;
+    if (coordinates && coordinates.lat !== '-' && coordinates.lon !== '-') {
+      this.coordinatesElement_.innerHTML = `Coords: ${coordinates.lat.toFixed(4)}, ${coordinates.lon.toFixed(4)}`;
+    } else {
+      this.coordinatesElement_.innerHTML = 'Coords: -';
+    }
+  }
+}
+
+// Instantiate the custom control
+window.trackingControlInstance = new TrackingControl();
+
+// Add the custom control to the map
+// Need to ensure olMap is defined before this line.
+// Typically, map initialization code is wrapped in a DOMContentLoaded or similar event,
+// or this part of the script is placed after the map div and OL map instantiation.
+// For this file structure, olMap is defined much earlier.
+olMap.addControl(window.trackingControlInstance);

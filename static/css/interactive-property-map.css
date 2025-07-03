@@ -139,3 +139,67 @@
 .ol-tooltip-static:before {
   border-top-color: #ffcc33;
 }
+
+/* Custom Tracking Control Styles */
+.tracking-control {
+  top: .5em;
+  right: 7em; /* Increased spacing: prev 5.5em */
+  left: auto; /* Override default OL if any */
+  background-color: transparent; /* ol.css uses var(--ol-subtle-background-color) for .ol-control which is rgba(128,128,128,0.25) - we want ours to be a container */
+  border-radius: 4px; /* Matches .ol-control */
+  padding: 0;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+}
+
+.tracking-control button {
+  /* Mimic .ol-control button styles */
+  background-color: var(--ol-background-color, white);
+  color: var(--ol-subtle-foreground-color, #666666);
+  border: none;
+  border-radius: 2px; /* Matches .ol-control button */
+  /* height: 1.375em; From .ol-control button, adjust padding to achieve similar */
+  /* width: 1.375em; From .ol-control button, adjust padding to achieve similar */
+  padding: 4px; /* Adjust to make square-ish with emoji */
+  margin: 1px; /* Matches .ol-control button */
+  font-weight: bold; /* OL default is bold for some text, normal for compass */
+  font-size: 1.2em; /* Keep emoji slightly larger, or adjust to 1em if too big */
+  line-height: 1; /* Adjust for emoji vertical centering */
+  cursor: pointer;
+  min-width: auto; /* Let padding and content define width */
+  text-align: center;
+  order: 2; /* Button will be on the right */
+  /* box-shadow: 0 0 5px rgba(0,0,0,0.2); OL buttons don't have shadow by default */
+}
+
+.tracking-control button:hover,
+.tracking-control button:focus {
+  /* Mimic .ol-control button:hover, :focus */
+  text-decoration: none;
+  outline: 1px solid var(--ol-subtle-foreground-color, #666666); /* Or none if it looks better */
+  color: var(--ol-foreground-color, #333333);
+}
+
+.tracking-stats {
+  display: flex; /* This is set by JS, but good to have as default if ever shown by CSS */
+  flex-direction: row; /* Stats in a row */
+  align-items: center; /* Align stat items */
+  background-color: rgba(255,255,255,0.8); /* Background for stats area */
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-right: 0px; /* No margin needed if button has margin-left */
+  order: 1; /* Stats will be on the left */
+  box-shadow: 0 0 5px rgba(0,0,0,0.2); /* Add shadow to stats block */
+}
+
+.tracking-stats div { /* Individual stat item */
+  padding: 2px 5px;
+  font-size: 0.75em; /* Slightly smaller font for stats */
+  color: #333;
+  white-space: nowrap; /* Prevent wrapping of individual stat lines */
+}
+
+.tracking-stats div:not(:last-child) {
+  border-right: 1px solid #ccc; /* Separator lines */
+}
