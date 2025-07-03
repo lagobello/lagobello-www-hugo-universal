@@ -140,6 +140,41 @@
   border-top-color: #ffcc33;
 }
 
+/* New Tool Controls Styling */
+#tool-controls {
+  top: .5em; /* Align with default OL controls like zoom */
+  left: .5em;
+  background-color: rgba(255, 255, 255, 0.4); /* Semi-transparent background like other OL controls */
+  border-radius: 4px;
+  padding: 2px;
+  display: flex; /* Arrange tool buttons in a row */
+  flex-direction: column; /* Stack tool buttons vertically */
+}
+
+.tool-control-button {
+  background-color: rgba(0, 60, 136, 0.5); /* OL blue, semi-transparent */
+  color: white;
+  border: none;
+  border-radius: 2px;
+  padding: 5px;
+  margin: 1px; /* Spacing between buttons */
+  font-size: 1.2em; /* Adjust emoji/icon size */
+  line-height: 1.2; /* Adjust for vertical centering of emoji/icon */
+  cursor: pointer;
+  text-align: center;
+  width: 1.5em; /* Ensure buttons are roughly square */
+  height: 1.5em; /* Ensure buttons are roughly square */
+}
+
+.tool-control-button:hover {
+  background-color: rgba(0, 60, 136, 0.7); /* Darker on hover */
+}
+
+.tool-control-button.active {
+  background-color: rgba(0, 60, 136, 1); /* Solid color for active button */
+  color: #fff;
+}
+
 /* Custom Tracking Control Styles */
 .tracking-control {
   top: .5em;

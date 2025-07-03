@@ -379,37 +379,53 @@ var retrieveFeatureInfoTable = function (evt) {
   var tempString;
 
   // Old style geojson with 'name' and 'status'
+  var areaString = '';
+  if (area) {
+    if (displayUnits === 'imperial') {
+      var areaSqFt = area * 10.7639;
+      if (areaSqFt > 43560) { // If larger than an acre
+        areaString = `<td>Area</td><td><code>${(areaSqFt / 43560).toFixed(2)} acres</code></td>`;
+      } else {
+        areaString = `<td>Area</td><td><code>${areaSqFt.toFixed(2)} ft<sup>2</sup></code></td>`;
+      }
+    } else { // Metric
+      if (area > 10000) {
+        areaString = `<td>Area</td><td><code>${(area / 1000000).toFixed(2)} km<sup>2</sup></code></td>`;
+      } else {
+        areaString = `<td>Area</td><td><code>${area.toFixed(2)} m<sup>2</sup></code></td>`;
+      }
+    }
+  } else {
+    areaString = '<td>Area</td><td><code>N/A</code></td>';
+  }
+
   if (feature.get('name') !== undefined) {
     tempString =
  `<table style="width:100%">
   <tr>
     <td>Name</td>
-    <td><code>` +
-    feature.get('name') +
-    `</code></td>
+    <td><code>${feature.get('name')}</code></td>
   </tr>
   <tr>
     <td>Status</td>
-    <td><code>` +
-    feature.get('status') +
-    `</code></td>
+    <td><code>${feature.get('status')}</code></td>
   </tr>
-  <tr>
-    <td>Area [m^2]</td>
-    <td><code>` +
-    (area ? area.toFixed(2) : 'N/A') +
-    `</code></td>
-  </tr>
-  <tr>
-    <td>Area [ft^2]</td>
-    <td><code>` +
-    (area ? (10.7639 * area).toFixed(2) : 'N/A') +
-    `</code></td>
-  </tr>
+  <tr>${areaString}</tr>
   </table>`;
   }
   // New style geojson with 'EntityHandle'
   else if (feature.get('EntityHandle') !== undefined) {
+    // Assuming 'Area registered' might be a property in the future, if not, it shows N/A
+    var registeredAreaFt2 = feature.get('AREA_REGISTERED_FT2') || '---'; // Example property name
+    var registeredAreaString = `<td>Area registered</td><td><code>${registeredAreaFt2} ${displayUnits === 'imperial' ? "ft<sup>2</sup>" : ""}</code></td>`;
+    if (displayUnits === 'metric' && registeredAreaFt2 !== '---') {
+        // Convert if necessary, or state units clearly if mixed display is intended for registered values
+        // For now, assumes registered area is always in ft2 and we just display it.
+        // A more robust solution would involve knowing the unit of registeredAreaFt2 or having it in both.
+         registeredAreaString = `<td>Area registered (ft<sup>2</sup>)</td><td><code>${registeredAreaFt2}</code></td>`;
+    }
+
+
     tempString =
     `<table style="width:100%">
   <tr>
@@ -422,26 +438,10 @@ var retrieveFeatureInfoTable = function (evt) {
   </tr>
   <tr>
     <td>Entity ID</td>
-    <td><code>` +
-    feature.get('EntityHandle') +
-    `</code></td>
+    <td><code>${feature.get('EntityHandle')}</code></td>
   </tr>
-  <tr>
-  <td>Area registered [ft^2]</td>
-  <td><code>---</code></td> <!-- Placeholder for Area Registered -->
-  </tr>
-  <tr>
-    <td>Area [m^2]</td>
-    <td><code>` +
-    (area ? area.toFixed(2) : 'N/A') +
-    `</code></td>
-  </tr>
-  <tr>
-    <td>Area calculated [ft^2]</td>
-    <td><code>` +
-    (area ? (10.7639 * area).toFixed(2) : 'N/A') +
-    `</code></td>
-  </tr>
+  <tr>${registeredAreaString}</tr>
+  <tr>${areaString.replace('Area', 'Area calculated')}</tr>
 </table>`;
   }
   // Fallback for other feature types or if no specific properties are found
@@ -450,28 +450,13 @@ var retrieveFeatureInfoTable = function (evt) {
     `<table style="width:100%">
   <tr>
     <td>Layer</td>
-    <td><code>` +
-    (feature.get('Layer') || 'Unknown') + // Display layer name if available
-    `</code></td>
+    <td><code>${(feature.get('Layer') || 'Unknown')}</code></td>
   </tr>
    <tr>
     <td>EntityHandle</td>
-    <td><code>` +
-    (feature.get('EntityHandle') || 'N/A') + // Display EntityHandle if available
-    `</code></td>
+    <td><code>${(feature.get('EntityHandle') || 'N/A')}</code></td>
   </tr>
-  <tr>
-    <td>Area [m^2]</td>
-    <td><code>` +
-    (area ? area.toFixed(2) : 'N/A') +
-    `</code></td>
-  </tr>
-  <tr>
-    <td>Area [ft^2]</td>
-    <td><code>` +
-    (area ? (10.7639 * area).toFixed(2) : 'N/A') +
-    `</code></td>
-  </tr>
+  <tr>${areaString}</tr>
 </table>`;
   }
   return tempString;
@@ -480,21 +465,36 @@ var retrieveFeatureInfoTable = function (evt) {
 var retrieveLotTable = function (url) {
   $.getJSON(url, function (data) {
     var items = [];
+    var areaHeader = displayUnits === 'imperial' ? 'Lot Area [ft<sup>2</sup>]' : 'Lot Area [m<sup>2</sup>]';
+    if (displayUnits === 'imperial') {
+        areaHeader = turf.area(data.features[0]) * 10.7639 > 43560 ? 'Lot Area [acres]' : 'Lot Area [ft<sup>2</sup>]';
+    } else {
+        areaHeader = turf.area(data.features[0]) > 10000 ? 'Lot Area [km<sup>2</sup>]' : 'Lot Area [m<sup>2</sup>]';
+    }
+
+
     items.push(
-      '<tr><th><b>Lot ID</b></th><th><b>Lot Status</b></th><th><b>Lot Area [m^2]</b></th><th><b>Lot Area [ft^2]</b></th></tr>'
+      `<tr><th><b>Lot ID</b></th><th><b>Lot Status</b></th><th><b>${areaHeader}</b></th></tr>`
     );
     $.each(data.features, function (key, val) {
-      var area = turf.area(val);
+      var areaM2 = turf.area(val); // Area in square meters
+      var displayArea;
+      if (displayUnits === 'imperial') {
+        var areaSqFt = areaM2 * 10.7639;
+        if (areaSqFt > 43560) { // acre
+            displayArea = (areaSqFt / 43560).toFixed(2);
+        } else {
+            displayArea = areaSqFt.toFixed(2);
+        }
+      } else { // Metric
+        if (areaM2 > 10000) { // km2
+            displayArea = (areaM2 / 1000000).toFixed(2);
+        } else { // m2
+            displayArea = areaM2.toFixed(2);
+        }
+      }
       items.push(
-        '<tr><td>' +
-          val.properties.name +
-          '</td><td>' +
-          val.properties.status +
-          '</td><td>' +
-          area.toFixed(2) +
-          '</td><td>' +
-          (10.7639 * area).toFixed(2) +
-          '</td></tr>'
+        `<tr><td>${val.properties.name}</td><td>${val.properties.status}</td><td>${displayArea}</td></tr>`
       );
     });
 
@@ -643,11 +643,41 @@ var pointerMoveHandler = function (evt) {
 olMap.on('pointermove', pointerMoveHandler);
 
 olMap.getViewport().addEventListener('mouseout', function () {
-  if (typeSelect.value === 'info') return;
+  if (currentToolMode === 'info') return; // Updated
   helpTooltipElement.classList.add('hidden');
 });
 
-var typeSelect = document.getElementById('type');
+// var typeSelect = document.getElementById('type'); // Removed old dropdown
+var currentToolMode = 'info'; // Default tool
+const displayUnits = 'imperial'; // Default unit system: 'imperial' or 'metric'
+
+// New tool control elements
+const infoTool = document.getElementById('info-tool');
+const lengthTool = document.getElementById('length-tool');
+const areaTool = document.getElementById('area-tool');
+const toolButtons = [infoTool, lengthTool, areaTool];
+
+function setActiveTool(toolId) {
+  currentToolMode = toolId;
+  toolButtons.forEach(button => {
+    if (button.id === toolId + '-tool') {
+      button.classList.add('active');
+    } else {
+      button.classList.remove('active');
+    }
+  });
+  olMap.removeInteraction(draw);
+  addInteraction();
+}
+
+// Set initial active tool
+setActiveTool('info');
+
+// Event listeners for new tool controls
+infoTool.addEventListener('click', () => setActiveTool('info'));
+lengthTool.addEventListener('click', () => setActiveTool('length'));
+areaTool.addEventListener('click', () => setActiveTool('area'));
+
 
 var draw; // global so we can remove it later
 
@@ -657,12 +687,21 @@ var draw; // global so we can remove it later
  * @return {string} The formatted length.
  */
 var formatLength = function (line) {
-  var length = ol.sphere.getLength(line);
+  var length = ol.sphere.getLength(line); // Length in meters
   var output;
-  if (length > 100) {
-    output = Math.round((length / 1000) * 100) / 100 + ' ' + 'km';
-  } else {
-    output = Math.round(length * 100) / 100 + ' ' + 'm';
+  if (displayUnits === 'imperial') {
+    var lengthFeet = length * 3.28084;
+    if (lengthFeet > 5280) { // If longer than a mile
+      output = (lengthFeet / 5280).toFixed(2) + ' ' + 'mi';
+    } else {
+      output = lengthFeet.toFixed(2) + ' ' + 'ft';
+    }
+  } else { // Metric
+    if (length > 100) {
+      output = (length / 1000).toFixed(2) + ' ' + 'km';
+    } else {
+      output = length.toFixed(2) + ' ' + 'm';
+    }
   }
   return output;
 };
@@ -673,22 +712,33 @@ var formatLength = function (line) {
  * @return {string} Formatted area.
  */
 var formatArea = function (polygon) {
-  var area = ol.sphere.getArea(polygon);
+  var area = ol.sphere.getArea(polygon); // Area in square meters
   var output;
-  if (area > 10000) {
-    output = Math.round((area / 1000000) * 100) / 100 + ' ' + 'km<sup>2</sup>';
-  } else {
-    output = Math.round(area * 100) / 100 + ' ' + 'm<sup>2</sup>';
+  if (displayUnits === 'imperial') {
+    var areaSqFt = area * 10.7639;
+    if (areaSqFt > 43560) { // If larger than an acre
+      output = (areaSqFt / 43560).toFixed(2) + ' ' + 'acres';
+    } else {
+      output = areaSqFt.toFixed(2) + ' ' + 'ft<sup>2</sup>';
+    }
+  } else { // Metric
+    if (area > 10000) {
+      output = (area / 1000000).toFixed(2) + ' ' + 'km<sup>2</sup>';
+    } else {
+      output = area.toFixed(2) + ' ' + 'm<sup>2</sup>';
+    }
   }
   return output;
 };
 
 function addInteraction () {
-  if (typeSelect.value === 'info') return;
-  var type = typeSelect.value === 'area' ? 'Polygon' : 'LineString';
-  if (type === 'info') {
+  if (currentToolMode === 'info') { // Updated
+    olMap.removeInteraction(draw); // Ensure draw interaction is removed when in info mode
     return;
   }
+  var type = currentToolMode === 'area' ? 'Polygon' : 'LineString'; // Updated
+  // No need for: if (type === 'info') return; as it's handled above
+
   draw = new ol.interaction.Draw({
     source: source,
     type: type,
@@ -786,15 +836,9 @@ function createMeasureTooltip () {
   olMap.addOverlay(measureTooltip);
 }
 
-/**
- * Let user change the geometry type.
- */
-typeSelect.onchange = function () {
-  olMap.removeInteraction(draw);
-  addInteraction();
-};
+// Removed old typeSelect.onchange listener
 
-addInteraction();
+addInteraction(); // Initial call to set up interaction based on default currentToolMode
 
 var geolocation = new ol.Geolocation({
   // enableHighAccuracy must be set to true to have the heading value.
