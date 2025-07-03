@@ -417,6 +417,10 @@ var retrieveFeatureInfoTable = function (evt) {
   </tr>
   <tr>
     <td>Parcel ID</td>
+    <td><code>---</code></td> <!-- Placeholder for Parcel ID -->
+  </tr>
+  <tr>
+    <td>Entity ID</td>
     <td><code>` +
     feature.get('EntityHandle') +
     `</code></td>
