@@ -269,25 +269,27 @@
 /* Layer Switcher specific styling */
 .layer-switcher, .ol-layerswitcher {
   /* Inherits from .ol-control for background, border-radius */
-  padding: 2px !important; /* Standard OL control padding */
-  line-height: normal !important; /* Reset line-height that might affect container height */
-  width: auto !important; /* Allow content (button) to determine width */
-  height: auto !important; /* Allow content (button) to determine height */
-  /* overflow: visible; /* Default, ensure no 'hidden' causing cutoffs if content is right */
-}
-
-.layer-switcher button, .ol-layerswitcher button {
-  width: 1.375em !important;
-  height: 1.375em !important;
-  line-height: 1.375em !important; /* Match height for potential vertical centering of icon */
-  padding: 0 !important;
-  background-color: transparent !important;
-  color: black !important;
-  font-size: 1.14em !important; /* Consistent with other .ol-control buttons */
+  min-width: 2.5em !important;
+  min-height: 2.5em !important;
+  padding: 0 !important; /* Padding handled by centering content if container is larger */
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  margin: 0 !important; /* Button should fit snugly within container's padding */
+  line-height: normal !important;
+}
+
+.layer-switcher button, .ol-layerswitcher button {
+  width: 1.75em !important; /* Ensure button has a defined, reasonable size for an icon */
+  height: 1.75em !important;
+  line-height: 1.75em !important;
+  padding: 0 !important;
+  background-color: transparent !important;
+  color: black !important;
+  font-size: 1em !important; /* Let icon scale with this base size */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
   box-sizing: border-box !important;
 }
 
