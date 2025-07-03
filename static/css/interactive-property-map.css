@@ -159,9 +159,9 @@
 /* Buttons within ANY .ol-control (custom or default like zoom) */
 .ol-control button {
   background-color: transparent;
-  color: black;
-  font-family: 'Arial', sans-serif;
-  font-size: 1.14em; /* Matches OL default */
+  /* color: black; /* Removed to allow emoji native colors. Specific controls can set color if needed. */
+  font-family: 'Arial', sans-serif; /* Fallback, OL might use its own stack */
+  font-size: 1.14em; /* Matches OL default for icon buttons, emojis might render based on this too */
   font-weight: bold;
   text-decoration: none;
   text-align: center;
@@ -190,16 +190,17 @@
 /* OL Zoom control buttons are often just text +/- */
 .ol-zoom button {
     font-weight: bold;
+    color: black !important; /* Ensure zoom +/- are black if general color was removed for emojis */
 }
 
 /* === Top-Left Control Column Styling === */
-/* Define a CSS variable for control height + margin for easier calculation */
 :root {
-  --ol-control-slot-height: 2.2em; /* Approx 1.375em (btn) + 2px*2 (ctrl padding) + 2px*2 (btn margin) + 5px (ctrl margin-bottom) -> adjust this value */
-                                 /* Let's try with a base button height + overall control margin */
-                                 /* Control padding 2px + button margin 1px + button height 1.375em + button margin 1px + control padding 2px = ~1.375em + 6px. */
-                                 /* Add margin-bottom of control itself (5px) */
-                                 /* So, roughly 1.375em + 11px. Let's use a fixed em value and test. Say 2.2em. */
+  /* Assuming a single button control like Info, Length, Area, UnitToggle (single button height) */
+  /* Button height 1.375em + internal margins/padding ~0.2em + control padding ~0.2em + margin-bottom 5px */
+  --ol-single-button-control-slot-height: 2.2em; /* Estimate for one custom control + space below it */
+  /* OL Zoom control has two buttons, so it's taller. */
+  /* (1.375em * 2) for buttons + 1px internal margin + 4px padding + 5px margin-bottom = ~2.75em + 10px */
+  --ol-zoom-control-total-height: 3.4em; /* Adjusted estimate for zoom control height + its margin-bottom */
 }
 
 .ol-zoom,
@@ -207,16 +208,24 @@
 .ol-length-control,
 .ol-area-control,
 .ol-unit-toggle-control {
-  position: absolute !important; /* Ensure absolute positioning */
+  position: absolute !important;
   left: 0.5em !important;
-  margin-bottom: 5px !important; /* This is for spacing if they were in normal flow, less critical for absolute */
+  /* margin-bottom is effectively handled by the 'slot height' in top calculations */
 }
 
-.ol-zoom { top: 0.5em !important; }
-.ol-info-control { top: calc(0.5em + var(--ol-control-slot-height) * 1) !important; }
-.ol-length-control { top: calc(0.5em + var(--ol-control-slot-height) * 2) !important; }
-.ol-area-control { top: calc(0.5em + var(--ol-control-slot-height) * 3) !important; }
-.ol-unit-toggle-control { top: calc(0.5em + var(--ol-control-slot-height) * 4) !important; }
+.ol-zoom {
+  top: 0.5em !important;
+  /* Default OL zoom has its own margin-bottom if it's part of ol-control. */
+  /* We'll use --ol-zoom-control-total-height for spacing *after* it. */
+}
+.ol-info-control { top: calc(0.5em + var(--ol-zoom-control-total-height)) !important; }
+.ol-length-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 1) !important; }
+.ol-area-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 2) !important; }
+.ol-unit-toggle-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 3) !important; }
+/* Note: UnitToggleControl itself has two buttons vertically, so its actual height will be more than one slot. */
+/* This will make the spacing after UnitToggleControl seem larger if anything followed it using single slot logic. */
+/* For now, it's the last in the column. */
+
 /* === End Top-Left Column Styling === */
 
 
@@ -258,19 +267,24 @@
 
 /* Layer Switcher specific styling */
 .layer-switcher, .ol-layerswitcher {
-  /* This control itself should inherit .ol-control styling for background, border-radius, padding */
+  /* This control itself should inherit .ol-control styling for background, border-radius. */
+  /* Default OL padding for a control is often 2px. Let's ensure it. */
+  padding: 2px !important;
   /* It's usually positioned top-right by default. */
 }
 
 .layer-switcher button, .ol-layerswitcher button {
-  /* General .ol-control button styles should apply. We might need to ensure its size. */
-  /* Standard OL button height/width is 1.375em. If the icon is an SVG or larger, this might need adjustment. */
-  width: 1.75em !important; /* Slightly larger to accommodate typical layer switcher icons if needed */
-  height: 1.75em !important;
-  line-height: 1.75em !important; /* Match height for vertical centering if not using flex fully */
-  padding: 0 !important; /* Ensure no extra padding cuts off icon */
-  /* background-color: transparent !important; should be inherited */
-  /* color: black !important; should be inherited for icon color */
+  /* Make sure it conforms to the standard button styling and size */
+  width: 1.375em !important;
+  height: 1.375em !important;
+  line-height: 1.375em !important;
+  padding: 0 !important;
+  background-color: transparent !important;
+  color: black !important; /* For the layer switcher icon itself */
+  font-size: 1.14em !important; /* Match other control buttons */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 /* Ensure the icon itself within the button is not too large or has weird margins */

@@ -4,7 +4,7 @@
 
 // Global application state variables
 var currentToolMode = 'info'; // Default tool: 'info', 'length', 'area'
-const displayUnits = 'imperial'; // Default unit system: 'imperial' or 'metric'
+let displayUnits = 'imperial'; // Default unit system: 'imperial' or 'metric' (changed to let)
 
 // Global draw variable for interactions
 var draw;
@@ -401,13 +401,13 @@ class UnitToggleControl extends ol.control.Control {
     super({ element: element, target: options.target });
 
     this.imperialButton = document.createElement('button');
-    this.imperialButton.innerHTML = 'Imperial 👑';
+    this.imperialButton.innerHTML = '👑';
     this.imperialButton.title = 'Use Imperial Units';
     this.imperialButton.addEventListener('click', () => this.setUnit('imperial'));
     element.appendChild(this.imperialButton); // Imperial button first
 
     this.metricButton = document.createElement('button');
-    this.metricButton.innerHTML = 'Metric ⚙️';
+    this.metricButton.innerHTML = '⚙️';
     this.metricButton.title = 'Use Metric Units';
     this.metricButton.addEventListener('click', () => this.setUnit('metric'));
     element.appendChild(this.metricButton); // Metric button second
