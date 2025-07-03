@@ -140,28 +140,42 @@
   border-top-color: #ffcc33;
 }
 
-#tracker-ui-container {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 8px;
+/* Custom Tracking Control Styles */
+.tracking-control {
+  top: 65px; /* Adjust as needed to avoid overlap with other controls like zoom */
+  left: .5em;
+  background-color: rgba(255,255,255,0.8); /* Slightly more opaque for readability */
   border-radius: 4px;
-  z-index: 1000; /* Ensure it's above map elements */
+  padding: 2px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
 }
 
-#tracker-ui-container label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-#tracker-ui-container p {
-  margin: 0;
-  font-size: 0.8em;
-}
-
-#tracker-ui-container code {
-  background-color: rgba(0,0,0,0.1);
-  padding: 2px 4px;
+.tracking-control button {
+  background-color: rgba(0,60,136,.7); /* OL default button color */
+  color: white;
+  border: none;
   border-radius: 2px;
+  padding: 5px;
+  margin: 2px;
+  font-weight: bold;
+  cursor: pointer;
+  min-width: 20px; /* Ensure button has a decent size */
+  text-align: center;
+}
+
+.tracking-control button:hover {
+  background-color: rgba(0,60,136,1); /* Darken on hover */
+}
+
+.tracking-stats {
+  padding: 5px;
+  font-size: 0.8em;
+  color: #333;
+  background-color: rgba(255,255,255,0.9); /* Ensure stats are readable */
+  border-top: 1px solid #ccc;
+  margin-top: 2px;
+}
+
+.tracking-stats div {
+  padding: 1px 0;
 }

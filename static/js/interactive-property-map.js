@@ -808,17 +808,30 @@ function el (id) {
   return document.getElementById(id);
 }
 
-el('track').addEventListener('change', function () {
-  geolocation.setTracking(this.checked);
-});
+// The old el('track') listener will be removed as the new control handles this.
+// el('track').addEventListener('change', function () {
+//   geolocation.setTracking(this.checked);
+// });
 
 // update the HTML page when the position changes.
+// This assumes 'trackingControlInstance' will be the instance of our new control.
+// This instance needs to be created before this part of the script runs,
+// or this callback needs to be set after the control is instantiated.
 geolocation.on('change', function () {
-  el('accuracy').innerText = geolocation.getAccuracy() + ' [m]';
-  el('altitude').innerText = geolocation.getAltitude() + ' [m]';
-  el('altitudeAccuracy').innerText = geolocation.getAltitudeAccuracy() + ' [m]';
-  el('heading').innerText = geolocation.getHeading() + ' [rad]';
-  el('speed').innerText = geolocation.getSpeed() + ' [m/s]';
+  if (window.trackingControlInstance && window.trackingControlInstance.trackingOn_) {
+    const accuracy = geolocation.getAccuracy() !== undefined ? geolocation.getAccuracy().toFixed(2) : '-';
+    const altitude = geolocation.getAltitude() !== undefined ? geolocation.getAltitude().toFixed(2) : '-';
+    const altitudeAccuracy = geolocation.getAltitudeAccuracy() !== undefined ? geolocation.getAltitudeAccuracy().toFixed(2) : '-';
+    const heading = geolocation.getHeading() !== undefined ? geolocation.getHeading().toFixed(2) : '-';
+    const speed = geolocation.getSpeed() !== undefined ? geolocation.getSpeed().toFixed(2) : '-';
+    window.trackingControlInstance.updateStats(accuracy, altitude, altitudeAccuracy, heading, speed);
+  }
+  // The custom control now handles these updates.
+  // el('accuracy').innerText = geolocation.getAccuracy() + ' [m]';
+  // el('altitude').innerText = geolocation.getAltitude() + ' [m]';
+  // el('altitudeAccuracy').innerText = geolocation.getAltitudeAccuracy() + ' [m]';
+  // el('heading').innerText = geolocation.getHeading() + ' [rad]';
+  // el('speed').innerText = geolocation.getSpeed() + ' [m/s]';
 });
 
 // handle geolocation error.
@@ -826,6 +839,13 @@ geolocation.on('error', function (error) {
   var info = document.getElementById('info');
   info.innerHTML = error.message;
   info.style.display = '';
+  if (window.trackingControlInstance) {
+    window.trackingControlInstance.updateStats('Error', 'Error', 'Error', 'Error', 'Error');
+    // Optionally disable tracking or show error state on button
+    if (window.trackingControlInstance.trackingOn_) {
+        window.trackingControlInstance.handleTrackToggle_(); // Toggle to off state
+    }
+  }
 });
 
 var accuracyFeature = new ol.Feature();
@@ -858,3 +878,97 @@ var layerPositionMarker = new ol.layer.Vector({
     features: [accuracyFeature, positionFeature]
   })
 });
+
+
+// =============================
+//  Custom Tracking Control
+// =============================
+// Make sure this class definition is before its instantiation
+class TrackingControl extends ol.control.Control {
+  /**
+   * @param {Object} [opt_options] Control options.
+   */
+  constructor(opt_options) {
+    const options = opt_options || {};
+
+    const button = document.createElement('button');
+    button.innerHTML = 'T'; // Placeholder for an icon or text
+
+    const element = document.createElement('div');
+    element.className = 'ol-unselectable ol-control tracking-control'; // Added a custom class
+    element.appendChild(button);
+
+    // Create container for stats
+    this.statsElement_ = document.createElement('div');
+    this.statsElement_.className = 'tracking-stats';
+    // Initially hide stats or show placeholder text
+    this.statsElement_.style.display = 'none';
+    element.appendChild(this.statsElement_);
+
+    // Create individual stat elements
+    this.accuracyElement_ = document.createElement('div');
+    this.accuracyElement_.innerHTML = 'Accuracy: -';
+    this.statsElement_.appendChild(this.accuracyElement_);
+
+    this.altitudeElement_ = document.createElement('div');
+    this.altitudeElement_.innerHTML = 'Altitude: -';
+    this.statsElement_.appendChild(this.altitudeElement_);
+
+    this.altitudeAccuracyElement_ = document.createElement('div');
+    this.altitudeAccuracyElement_.innerHTML = 'Alt. Accuracy: -';
+    this.statsElement_.appendChild(this.altitudeAccuracyElement_);
+
+    this.headingElement_ = document.createElement('div');
+    this.headingElement_.innerHTML = 'Heading: -';
+    this.statsElement_.appendChild(this.headingElement_);
+
+    this.speedElement_ = document.createElement('div');
+    this.speedElement_.innerHTML = 'Speed: -';
+    this.statsElement_.appendChild(this.speedElement_);
+
+    super({
+      element: element,
+      target: options.target,
+    });
+
+    this.button_ = button;
+    this.trackingOn_ = false; // To keep track of tracking state
+
+    this.button_.addEventListener('click', this.handleTrackToggle_.bind(this), false);
+  }
+
+  handleTrackToggle_() {
+    this.trackingOn_ = !this.trackingOn_;
+    geolocation.setTracking(this.trackingOn_); // Connect to actual geolocation
+    if (this.trackingOn_) {
+      this.button_.innerHTML = 'S'; // Stop
+      this.statsElement_.style.display = 'block'; // Show stats
+      // Potentially change button style to indicate 'on' state
+    } else {
+      this.button_.innerHTML = 'T'; // Track
+      this.statsElement_.style.display = 'none'; // Hide stats
+      // Reset stats display
+      this.updateStats('-', '-', '-', '-', '-');
+      // Potentially change button style to indicate 'off' state
+    }
+    console.log('Tracking toggled:', this.trackingOn_);
+  }
+
+  updateStats(accuracy, altitude, altitudeAccuracy, heading, speed) {
+    this.accuracyElement_.innerHTML = `Accuracy: ${accuracy} [m]`;
+    this.altitudeElement_.innerHTML = `Altitude: ${altitude} [m]`;
+    this.altitudeAccuracyElement_.innerHTML = `Alt. Accuracy: ${altitudeAccuracy} [m]`;
+    this.headingElement_.innerHTML = `Heading: ${heading} [rad]`;
+    this.speedElement_.innerHTML = `Speed: ${speed} [m/s]`;
+  }
+}
+
+// Instantiate the custom control
+window.trackingControlInstance = new TrackingControl();
+
+// Add the custom control to the map
+// Need to ensure olMap is defined before this line.
+// Typically, map initialization code is wrapped in a DOMContentLoaded or similar event,
+// or this part of the script is placed after the map div and OL map instantiation.
+// For this file structure, olMap is defined much earlier.
+olMap.addControl(window.trackingControlInstance);
