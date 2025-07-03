@@ -285,11 +285,11 @@
   background-color: transparent !important;
   color: black !important;
   font-size: 0.9em !important; /* Reduced font-size for the icon character */
-  padding: 1px !important; /* Minimal padding around the icon */
+  padding: 2px !important; /* Small, balanced padding */
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important; /* Keep left justification */
-  padding-left: 3px !important; /* Keep existing padding on the left */
+  /* Removed padding-left: 3px !important; */
   margin: 0 !important;
   box-sizing: border-box !important;
   overflow: visible !important; /* Attempt to prevent clipping if icon is still slightly too big */

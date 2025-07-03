@@ -929,7 +929,7 @@ function addInteraction () {
     });
   });
 
-  draw.on('drawend', function () {
+  draw.on('drawend', function (evt) { // Added evt parameter here
     measureTooltipElement.className = 'ol-tooltip ol-tooltip-static';
     measureTooltip.setOffset([0, -7]);
     // unset sketch
