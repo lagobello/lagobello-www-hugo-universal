@@ -316,13 +316,13 @@
 .download-geojson-link {
   margin-left: 4px; /* Reduced space between layer title and download icon */
   text-decoration: none;
-  color: #28a745; /* Green color for the download icon */
+  color: green; /* Green color for the download icon */
   font-size: 0.9em; /* Slightly smaller than layer title if needed */
   cursor: pointer;
 }
 
 .download-geojson-link:hover {
-  color: #1e7e34; /* Darker green on hover */
+  color: darkgreen; /* Darker green on hover */
   text-decoration: none; /* Keep no underline on hover, or add if preferred */
 }
 
