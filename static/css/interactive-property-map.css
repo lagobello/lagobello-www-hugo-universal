@@ -144,46 +144,13 @@
 
 /* Styling for OpenLayers controls to achieve default OL look */
 
-/* Targeting the specific OL container for top-left controls */
-.ol-zoom.ol-unselectable.ol-control, /* Default OL Zoom in top-left */
-.ol-info-control.ol-unselectable.ol-control,
-.ol-length-control.ol-unselectable.ol-control,
-.ol-area-control.ol-unselectable.ol-control,
-.ol-unit-toggle-control.ol-unselectable.ol-control {
-  /* These are individual controls. OL places them in a default top-left container. */
-  /* We need to make that container a flex column. */
-  /* Let's assume they share a common direct parent that is the top-left group. */
-  /* This is hard to target without seeing OL's exact DOM structure for grouping. */
-  /* As a fallback, we can use absolute positioning with calc for each. */
-  /* However, the request is to try flexbox on the parent first. */
-
-  /* The following styles apply to each control block in the top-left column */
-   margin-bottom: 5px !important; /* Space between controls in the column */
-}
-
-/* Attempt to make the OL default top-left control group a flex column */
-/* This selector might need to be very specific to OL's generated HTML structure */
-/* A common pattern: .ol-overlaycontainer-stopevent > div that holds top-left controls */
-/* If .ol-zoom is the first such control, its parent might be targetable. */
-/* This is a best-guess selector for the container of top-left controls */
-.ol-overlaycontainer-stopevent > .ol-control-container-top-left, /* Ideal if OL uses this class */
-.ol-overlaycontainer-stopevent > div:has(>.ol-zoom) { /* More generic: a div parent of .ol-zoom */
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-start !important; /* Align items to the start */
-    top: .5em !important;
-    left: .5em !important;
-    width: auto !important; /* Let content determine width */
-    background-color: transparent !important; /* Container itself is transparent */
-}
-
-
 /* General style for each control block (Zoom, Info, Length, Area, UnitToggle) */
 /* OL controls are typically positioned absolutely by OL itself. We style their appearance. */
 .ol-control {
   background-color: rgba(255, 255, 255, 0.4); /* Default OL light background */
   border-radius: 4px;
   padding: 2px;
+  /* Default OL controls are position: absolute already. We'll override top/left for the column group. */
 }
 .ol-control:hover {
     background-color: rgba(255,255,255,0.6);
@@ -225,6 +192,34 @@
     font-weight: bold;
 }
 
+/* === Top-Left Control Column Styling === */
+/* Define a CSS variable for control height + margin for easier calculation */
+:root {
+  --ol-control-slot-height: 2.2em; /* Approx 1.375em (btn) + 2px*2 (ctrl padding) + 2px*2 (btn margin) + 5px (ctrl margin-bottom) -> adjust this value */
+                                 /* Let's try with a base button height + overall control margin */
+                                 /* Control padding 2px + button margin 1px + button height 1.375em + button margin 1px + control padding 2px = ~1.375em + 6px. */
+                                 /* Add margin-bottom of control itself (5px) */
+                                 /* So, roughly 1.375em + 11px. Let's use a fixed em value and test. Say 2.2em. */
+}
+
+.ol-zoom,
+.ol-info-control,
+.ol-length-control,
+.ol-area-control,
+.ol-unit-toggle-control {
+  position: absolute !important; /* Ensure absolute positioning */
+  left: 0.5em !important;
+  margin-bottom: 5px !important; /* This is for spacing if they were in normal flow, less critical for absolute */
+}
+
+.ol-zoom { top: 0.5em !important; }
+.ol-info-control { top: calc(0.5em + var(--ol-control-slot-height) * 1) !important; }
+.ol-length-control { top: calc(0.5em + var(--ol-control-slot-height) * 2) !important; }
+.ol-area-control { top: calc(0.5em + var(--ol-control-slot-height) * 3) !important; }
+.ol-unit-toggle-control { top: calc(0.5em + var(--ol-control-slot-height) * 4) !important; }
+/* === End Top-Left Column Styling === */
+
+
 /* UnitToggleControl specific layout and button styling */
 .ol-unit-toggle-control {
   display: flex;
@@ -262,26 +257,31 @@
 
 
 /* Layer Switcher specific styling */
-.layer-switcher, .ol-layerswitcher { /* ol-layerswitcher is the common class name */
-  /* Basic .ol-control styling (background, border-radius) should be inherited if it has .ol-control class */
-  /* If not, we might need to add it here, or ensure the main element gets .ol-control */
-  /* Assuming it's an .ol-control, so background and padding are handled. */
-  /* Ensure its button is sized correctly and styled */
+.layer-switcher, .ol-layerswitcher {
+  /* This control itself should inherit .ol-control styling for background, border-radius, padding */
+  /* It's usually positioned top-right by default. */
 }
 
 .layer-switcher button, .ol-layerswitcher button {
-  /* Should inherit from general .ol-control button for: */
-  /* - color: black */
-  /* - font-family, font-size (base), font-weight (base) */
-  /* - border, border-radius, padding (0), margin (1px) */
-  /* - display: flex, align-items: center, justify-content: center */
-  /* - cursor: pointer */
-  /* Ensure dimensions are consistent with other icon buttons */
-  width: 1.375em !important; /* Standard OL button width */
-  height: 1.375em !important; /* Standard OL button height */
-  line-height: 1.375em !important; /* For icon centering if not using flex */
-  background-color: transparent !important; /* Explicitly ensure this if OL default has its own button bg */
+  /* General .ol-control button styles should apply. We might need to ensure its size. */
+  /* Standard OL button height/width is 1.375em. If the icon is an SVG or larger, this might need adjustment. */
+  width: 1.75em !important; /* Slightly larger to accommodate typical layer switcher icons if needed */
+  height: 1.75em !important;
+  line-height: 1.75em !important; /* Match height for vertical centering if not using flex fully */
+  padding: 0 !important; /* Ensure no extra padding cuts off icon */
+  /* background-color: transparent !important; should be inherited */
+  /* color: black !important; should be inherited for icon color */
 }
+
+/* Ensure the icon itself within the button is not too large or has weird margins */
+.layer-switcher button i, .ol-layerswitcher button i, /* If uses <i> for icon */
+.layer-switcher button svg, .ol-layerswitcher button svg { /* If uses <svg> for icon */
+  max-width: 100%;
+  max-height: 100%;
+  display: block; /* Helps with sizing/centering */
+  margin: auto; /* Helps with centering */
+}
+
 /* The panel itself needs to be styled if it's not already */
 .layer-switcher .panel, .ol-layerswitcher .panel {
     background-color: rgba(255,255,255,0.9) !important; /* Light background for panel */
