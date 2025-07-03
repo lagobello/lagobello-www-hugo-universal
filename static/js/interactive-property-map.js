@@ -834,7 +834,7 @@ geolocation.on('change', function () {
 
       // Center map if needsCentering_ flag is true
       if (window.trackingControlInstance.needsCentering_) {
-        olMap.getView().animate({ center: position, zoom: Math.max(olMap.getView().getZoom(), 17), duration: 500 });
+        olMap.getView().animate({ center: position, zoom: Math.max(olMap.getView().getZoom(), 17), rotation: 0, duration: 500 });
         window.trackingControlInstance.needsCentering_ = false; // Reset flag after centering
       }
     }
@@ -969,7 +969,7 @@ class TrackingControl extends ol.control.Control {
       // Attempt to center immediately if position is already available
       const currentPosition = geolocation.getPosition();
       if (currentPosition && this.needsCentering_) {
-        olMap.getView().animate({ center: currentPosition, zoom: Math.max(olMap.getView().getZoom(), 17), duration: 500 });
+        olMap.getView().animate({ center: currentPosition, zoom: Math.max(olMap.getView().getZoom(), 17), rotation: 0, duration: 500 });
         this.needsCentering_ = false; // Centered, so reset flag
       }
     } else {
