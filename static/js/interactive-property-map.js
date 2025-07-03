@@ -384,7 +384,7 @@ function addDownloadLinksToLayerSwitcher() {
         if (isGeoJSONFormat || (typeof url === 'string' && url.toLowerCase().endsWith('.geojson'))) {
           const downloadLink = document.createElement('a');
           downloadLink.href = url;
-          downloadLink.innerHTML = '📥'; // Updated Download icon (Inbox Tray)
+          downloadLink.innerHTML = '⭳'; // Updated Download icon (U+2B73)
           downloadLink.title = `Download ${layerTitle}`;
           downloadLink.className = 'download-geojson-link';
 
