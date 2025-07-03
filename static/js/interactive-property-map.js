@@ -400,17 +400,17 @@ class UnitToggleControl extends ol.control.Control {
 
     super({ element: element, target: options.target });
 
-    this.metricButton = document.createElement('button');
-    this.metricButton.innerHTML = 'M 📏'; // Placeholder, can be improved
-    this.metricButton.title = 'Use Metric Units';
-    this.metricButton.addEventListener('click', () => this.setUnit('metric'));
-    element.appendChild(this.metricButton);
-
     this.imperialButton = document.createElement('button');
-    this.imperialButton.innerHTML = 'I 📐'; // Placeholder, can be improved
+    this.imperialButton.innerHTML = 'Imperial 👑';
     this.imperialButton.title = 'Use Imperial Units';
     this.imperialButton.addEventListener('click', () => this.setUnit('imperial'));
-    element.appendChild(this.imperialButton);
+    element.appendChild(this.imperialButton); // Imperial button first
+
+    this.metricButton = document.createElement('button');
+    this.metricButton.innerHTML = 'Metric ⚙️';
+    this.metricButton.title = 'Use Metric Units';
+    this.metricButton.addEventListener('click', () => this.setUnit('metric'));
+    element.appendChild(this.metricButton); // Metric button second
 
     // Set initial active state based on global displayUnits
     this.updateButtonActiveState();
