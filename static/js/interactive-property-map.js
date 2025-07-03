@@ -892,7 +892,8 @@ class TrackingControl extends ol.control.Control {
     const options = opt_options || {};
 
     const button = document.createElement('button');
-    button.innerHTML = 'T'; // Placeholder for an icon or text
+    button.innerHTML = '🛰️'; // Satellite emoji for "off" state / enable tracking
+    button.title = 'Toggle GPS Tracking';
 
     const element = document.createElement('div');
     element.className = 'ol-unselectable ol-control tracking-control'; // Added a custom class
@@ -942,11 +943,11 @@ class TrackingControl extends ol.control.Control {
     this.trackingOn_ = !this.trackingOn_;
     geolocation.setTracking(this.trackingOn_); // Connect to actual geolocation
     if (this.trackingOn_) {
-      this.button_.innerHTML = 'S'; // Stop
-      this.statsElement_.style.display = 'block'; // Show stats
-      // Potentially change button style to indicate 'on' state
+      this.button_.innerHTML = '📡'; // Broadcasting satellite for "on" state / disable tracking
+      this.statsElement_.style.display = 'flex'; // Show stats (will be styled to flex row by CSS)
+      // Potentially change button style to indicate 'on' state (e.g. class)
     } else {
-      this.button_.innerHTML = 'T'; // Track
+      this.button_.innerHTML = '🛰️'; // Satellite for "off" state / enable tracking
       this.statsElement_.style.display = 'none'; // Hide stats
       // Reset stats display
       this.updateStats('-', '-', '-', '-', '-');

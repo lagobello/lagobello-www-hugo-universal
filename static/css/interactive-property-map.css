@@ -142,40 +142,56 @@
 
 /* Custom Tracking Control Styles */
 .tracking-control {
-  top: 65px; /* Adjust as needed to avoid overlap with other controls like zoom */
-  left: .5em;
-  background-color: rgba(255,255,255,0.8); /* Slightly more opaque for readability */
+  top: .5em;
+  right: .5em; /* Position to top-right */
+  left: auto; /* Override default OL if any */
+  background-color: rgba(255,255,255,0.0); /* Make control background transparent initially */
   border-radius: 4px;
-  padding: 2px;
-  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  padding: 0; /* Remove padding from main control, will add to children */
+  box-shadow: none; /* Remove shadow from main control */
+  display: flex; /* Enable flexbox for horizontal layout */
+  align-items: center; /* Align items vertically */
 }
 
 .tracking-control button {
-  background-color: rgba(0,60,136,.7); /* OL default button color */
+  background-color: rgba(0,60,136,.7);
   color: white;
   border: none;
-  border-radius: 2px;
-  padding: 5px;
-  margin: 2px;
+  border-radius: 4px; /* Match OL controls */
+  padding: 5px 8px; /* Adjust padding */
+  margin-left: 5px; /* Add margin if stats are to the left */
   font-weight: bold;
+  font-size: 1.2em; /* Make emoji slightly larger */
   cursor: pointer;
-  min-width: 20px; /* Ensure button has a decent size */
+  min-width: 30px;
   text-align: center;
+  order: 2; /* Button will be on the right */
+  box-shadow: 0 0 5px rgba(0,0,0,0.2); /* Add shadow to button */
 }
 
 .tracking-control button:hover {
-  background-color: rgba(0,60,136,1); /* Darken on hover */
+  background-color: rgba(0,60,136,1);
 }
 
 .tracking-stats {
-  padding: 5px;
-  font-size: 0.8em;
-  color: #333;
-  background-color: rgba(255,255,255,0.9); /* Ensure stats are readable */
-  border-top: 1px solid #ccc;
-  margin-top: 2px;
+  display: flex; /* This is set by JS, but good to have as default if ever shown by CSS */
+  flex-direction: row; /* Stats in a row */
+  align-items: center; /* Align stat items */
+  background-color: rgba(255,255,255,0.8); /* Background for stats area */
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-right: 0px; /* No margin needed if button has margin-left */
+  order: 1; /* Stats will be on the left */
+  box-shadow: 0 0 5px rgba(0,0,0,0.2); /* Add shadow to stats block */
 }
 
-.tracking-stats div {
-  padding: 1px 0;
+.tracking-stats div { /* Individual stat item */
+  padding: 2px 5px;
+  font-size: 0.75em; /* Slightly smaller font for stats */
+  color: #333;
+  white-space: nowrap; /* Prevent wrapping of individual stat lines */
+}
+
+.tracking-stats div:not(:last-child) {
+  border-right: 1px solid #ccc; /* Separator lines */
 }
