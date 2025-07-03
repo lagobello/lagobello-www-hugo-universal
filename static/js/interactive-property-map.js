@@ -9,13 +9,10 @@ let displayUnits = 'imperial'; // Default unit system: 'imperial' or 'metric' (c
 // Global draw variable for interactions
 var draw;
 
-// Global references to individual tool control instances for managing active state
-// Explicitly use window object to avoid 'already declared' issues if script is re-processed.
+// Global references to individual tool control instances
 window.infoControlInstance = window.infoControlInstance || null;
 window.lengthControlInstance = window.lengthControlInstance || null;
 window.areaControlInstance = window.areaControlInstance || null;
-
-let testDrawLayer = null; // For debugging drawing visibility
 
 
 // -----------------------------
@@ -246,14 +243,15 @@ var layerVectorStreetS3 = new ol.layer.Vector({
   opacity: 0.8
 });
 
-var source = new ol.source.Vector();
+var genericSource = new ol.source.Vector(); // Renamed from 'source' in case it's used elsewhere
+var drawingLayerSource = new ol.source.Vector(); // Dedicated source for drawings
 
 var layerVectorDrawings = new ol.layer.Vector({
-  source: source,
+  source: drawingLayerSource, // Use dedicated source
   style: new ol.style.Style({
-    fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 0.1)' }), // Light red fill for areas (DEBUG)
-    stroke: new ol.style.Stroke({ color: 'rgba(255, 0, 0, 1)', width: 4 }), // Bright red, thick stroke (DEBUG)
-    image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 1)' }) }) // Bright red points (DEBUG)
+    fill: new ol.style.Fill({ color: 'rgba(255, 255, 255, 0.2)' }), // Original fill
+    stroke: new ol.style.Stroke({ color: '#ffcc33', width: 3 }),    // Original color, slightly thicker width
+    image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({ color: '#ffcc33' }) }) // Original image style
   }),
   zIndex: 100 // Ensure drawing layer is on top
 });
@@ -299,10 +297,7 @@ var viewRot = new ol.View({ center: ol.proj.fromLonLat([-97.553, 26.053]), rotat
 function chooseView () { return (window.innerHeight > window.innerWidth) ? viewDefault : viewRot; }
 
 // Global references to individual tool control instances for managing active state
-// Explicitly use window object to avoid 'already declared' issues if script is re-processed.
-// window.infoControlInstance = window.infoControlInstance || null; // Already handled at the top
-// window.lengthControlInstance = window.lengthControlInstance || null;
-// window.areaControlInstance = window.areaControlInstance || null;
+// window.infoControlInstance, window.lengthControlInstance, window.areaControlInstance are initialized at the top.
 
 // Global function to manage active state of tool controls
 function setSelectedTool(toolMode, clickedControlInstance) {
@@ -439,8 +434,6 @@ function refreshMapMeasurements() {
 }
 
 
-// REMOVED old combined ToolControl class
-
 var olMap = new ol.Map({
   target: 'ol-map',
   controls: [
@@ -459,8 +452,7 @@ var olMap = new ol.Map({
     new UnitToggleControl(),
   ],
   overlays: [overlay],
-  // layers: [olLayerGroupBasemaps, olLayerGroupDrone, olLayerGroupOverlays], // Original
-  layers: [olLayerGroupBasemaps, olLayerGroupDrone, olLayerGroupOverlays /*, layerVectorDrawings TEMPORARILY REMOVED FOR DEBUGGING */],
+  layers: [olLayerGroupBasemaps, olLayerGroupDrone, olLayerGroupOverlays, layerVectorDrawings], // Restored layerVectorDrawings
   view: chooseView()
 });
 
@@ -814,28 +806,19 @@ olMap.getViewport().addEventListener('mouseout', function () {
   helpTooltipElement.classList.add('hidden');
 });
 
-// var typeSelect = document.getElementById('type'); // Removed old dropdown
-// currentToolMode, displayUnits, and draw are now defined at the top of the script
+// Global variables currentToolMode, displayUnits, and draw are defined at the top of the script.
 
-// Function to set the active tool and update interactions
-// This function will be called by the new OL control
+// Function to set the active tool and update interactions.
+// Called by the individual tool controls.
 function setActiveToolInteraction(toolMode) {
   currentToolMode = toolMode;
-  // console.log("Tool mode set to: " + currentToolMode); // For debugging
-  if (olMap) { // Check if map is initialized
+  if (olMap) {
     if (draw) {
       olMap.removeInteraction(draw);
     }
-    addInteraction(); // This function now relies on global currentToolMode
+    addInteraction();
   }
 }
-
-// The old setActiveTool function is replaced by setActiveToolInteraction and logic within ToolControl
-// Removed: infoTool, lengthTool, areaTool variables and their event listeners
-// Removed: toolButtons array
-// Removed: setActiveTool('info') initial call, this is handled by ToolControl constructor
-
-// var draw; // global so we can remove it later - already defined globally
 
 /**
  * Format length output.
@@ -896,12 +879,26 @@ function addInteraction () {
   // No need for: if (type === 'info') return; as it's handled above
 
   draw = new ol.interaction.Draw({
-    source: source,
+    source: drawingLayerSource, // Use dedicated drawing source
     type: type,
     style: new ol.style.Style({
-      fill: new ol.style.Fill({ color: 'rgba(0, 0, 255, 0.1)' }), // Light blue fill (DEBUG)
-      stroke: new ol.style.Stroke({ color: 'rgba(0, 0, 255, 1)', width: 4, lineDash: [10, 10] }), // Bright blue, thick, dashed stroke (DEBUG)
-      image: new ol.style.Circle({ radius: 5, stroke: new ol.style.Stroke({color: 'rgba(0,0,255,1)'}), fill: new ol.style.Fill({color: 'rgba(0,0,255,0.1)'}) }) // Blue points (DEBUG)
+      fill: new ol.style.Fill({
+        color: 'rgba(255, 255, 255, 0.2)' // Original fill
+      }),
+      stroke: new ol.style.Stroke({
+        color: 'rgba(0, 0, 0, 0.5)', // Original stroke color
+        lineDash: [10, 10],
+        width: 2 // Original width
+      }),
+      image: new ol.style.Circle({
+        radius: 5,
+        stroke: new ol.style.Stroke({
+          color: 'rgba(0, 0, 0, 0.7)' // Original image stroke
+        }),
+        fill: new ol.style.Fill({
+          color: 'rgba(255, 255, 255, 0.2)' // Original image fill
+        })
+      })
     })
   });
   olMap.addInteraction(draw);
@@ -953,43 +950,15 @@ function addInteraction () {
     createMeasureTooltip();
     ol.Observable.unByKey(listener);
 
-    // Original console logs for reference
-    console.log('drawend event triggered (original source).');
+    // Console logs for debugging drawing persistence
+    console.log('drawend event triggered.');
     if (evt.feature) {
-      console.log('Original Feature geometry type:', evt.feature.getGeometry().getType());
-      console.log('Original Feature style (after direct set):', evt.feature.getStyle());
+      console.log('Drawn feature geometry type:', evt.feature.getGeometry().getType());
     }
-    console.log('Total features on original drawing source:', source.getFeatures().length);
+    console.log('Total features on drawingLayerSource:', drawingLayerSource.getFeatures().length);
 
-    // --- Test Layer Debugging Logic ---
-    if (!testDrawLayer) {
-        console.log('Creating testDrawLayer.');
-        // Re-use debugRedStyle for consistency in this test
-        const debugStyleForTestLayer = new ol.style.Style({
-            stroke: new ol.style.Stroke({ color: 'rgba(255, 0, 0, 1)', width: 4 }),
-            fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 0.1)' }),
-            image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 1)' }) })
-        });
-        testDrawLayer = new ol.layer.Vector({
-            source: new ol.source.Vector(), // New source for the test layer
-            style: debugStyleForTestLayer,
-            zIndex: 999
-        });
-        olMap.addLayer(testDrawLayer);
-    }
-    if (evt.feature) {
-        const clonedFeature = evt.feature.clone();
-        // Explicitly set style on clone too, as it might not be carried over if it was direct
-        const debugStyleForClonedFeature = new ol.style.Style({
-            stroke: new ol.style.Stroke({ color: 'rgba(255, 0, 0, 1)', width: 4 }),
-            fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 0.1)' }),
-            image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 1)' }) })
-        });
-        clonedFeature.setStyle(debugStyleForClonedFeature);
-        testDrawLayer.getSource().addFeature(clonedFeature);
-        console.log('Cloned feature added to testDrawLayer. Total features in testDrawLayer source:', testDrawLayer.getSource().getFeatures().length);
-    }
-    // Commented out: if (layerVectorDrawings) { layerVectorDrawings.getSource().changed(); }
+    // Ensure the drawingLayerSource (and thus layerVectorDrawings) refreshes
+    drawingLayerSource.changed();
   });
 }
 
@@ -1026,8 +995,6 @@ function createMeasureTooltip () {
   });
   olMap.addOverlay(measureTooltip);
 }
-
-// Removed old typeSelect.onchange listener
 
 addInteraction(); // Initial call to set up interaction based on default currentToolMode
 
