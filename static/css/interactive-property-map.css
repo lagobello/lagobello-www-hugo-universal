@@ -312,6 +312,20 @@
     /* OL LayerSwitcher JS handles display:none/block for opening/closing */
 }
 
+/* Styling for the GeoJSON download link in the LayerSwitcher */
+.download-geojson-link {
+  margin-left: 8px; /* Space between layer title and download icon */
+  text-decoration: none;
+  color: #007bff; /* A standard link blue, or inherit */
+  font-size: 0.9em; /* Slightly smaller than layer title if needed */
+  cursor: pointer;
+}
+
+.download-geojson-link:hover {
+  color: #0056b3; /* Darker blue on hover */
+  text-decoration: underline;
+}
+
 
 /* Custom Tracking Control Styles */
 .tracking-control { /* This is an .ol-control, so it inherits some base styles */

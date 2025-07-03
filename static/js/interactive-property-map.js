@@ -316,6 +316,91 @@ function setSelectedTool(toolMode, clickedControlInstance) {
   setActiveToolInteraction(toolMode); // This handles map interactions
 }
 
+// Function to add download links to GeoJSON layers in the LayerSwitcher
+function addDownloadLinksToLayerSwitcher() {
+  if (!layerSwitcher || !layerSwitcher.panel) {
+    // console.warn('LayerSwitcher panel not found or layerSwitcher not ready.');
+    return;
+  }
+
+  const panelUl = layerSwitcher.panel.querySelector('ul');
+  if (!panelUl) {
+    // console.warn('LayerSwitcher panel UL element not found.');
+    return;
+  }
+
+  // Iterate over layer list items. LayerSwitcher creates LIs with a label and input.
+  // We need to find the corresponding OL layer to check its source.
+  const listItems = panelUl.getElementsByTagName('li');
+
+  for (let i = 0; i < listItems.length; i++) {
+    const li = listItems[i];
+
+    // Prevent adding multiple download links
+    if (li.querySelector('a.download-geojson-link')) {
+      continue;
+    }
+
+    const label = li.querySelector('label');
+    if (!label) continue;
+
+    const layerTitle = label.textContent.trim();
+    if (!layerTitle) continue;
+
+    let targetLayer = null;
+
+    // Helper function to recursively find layer by title
+    function findLayerByTitle(layerCollection, title) {
+        let foundLayer = null;
+        layerCollection.forEach(function(layer) {
+            if (foundLayer) return; // Already found
+            if (layer.get('title') === title && !(layer instanceof ol.layer.Group)) {
+                foundLayer = layer;
+            } else if (layer instanceof ol.layer.Group) {
+                // Check if this group itself is the target (if LayerSwitcher allows group downloads)
+                // For now, only targeting non-group layers. Recurse if needed.
+                // foundLayer = findLayerByTitle(layer.getLayers(), title); // Simple recursion
+                // More robust: LayerSwitcher.forEachRecursive might be better if available globally
+                // or we can use its logic. For now, this simple recursion should work for a few levels.
+                 layer.getLayers().forEach(function(subLayer){ // Basic one-level recursion for groups
+                    if(subLayer.get('title') === title && !(subLayer instanceof ol.layer.Group)){
+                        foundLayer = subLayer;
+                    }
+                 });
+            }
+        });
+        return foundLayer;
+    }
+
+    targetLayer = findLayerByTitle(olMap.getLayers(), layerTitle);
+
+    if (targetLayer) {
+      const source = targetLayer.getSource();
+      if (source instanceof ol.source.Vector && typeof source.getUrl === 'function' && source.getUrl()) {
+        const url = source.getUrl();
+        const format = source.getFormat();
+        const isGeoJSONFormat = format && typeof format.getType === 'function' && format.getType().toLowerCase() === 'geojson';
+
+        if (isGeoJSONFormat || (typeof url === 'string' && url.toLowerCase().endsWith('.geojson'))) {
+          const downloadLink = document.createElement('a');
+          downloadLink.href = url;
+          downloadLink.innerHTML = '💾'; // Download icon
+          downloadLink.title = `Download ${layerTitle}`;
+          downloadLink.className = 'download-geojson-link';
+
+          let filename = layerTitle.replace(/[^\w\s.-]/gi, '_').replace(/\s+/g, '_').toLowerCase();
+          if (!filename) filename = "layer";
+          if (!filename.endsWith('.geojson')) filename += ".geojson";
+          downloadLink.download = filename;
+
+          // Append after the label, within the li but ensure it doesn't break flex layouts if any
+          li.appendChild(downloadLink); // Simpler append, styling will handle positioning
+        }
+      }
+    }
+  }
+}
+
 
 // --- InfoControl ---
 class InfoControl extends ol.control.Control {
@@ -455,6 +540,18 @@ var olMap = new ol.Map({
   layers: [olLayerGroupBasemaps, olLayerGroupDrone, olLayerGroupOverlays, layerVectorDrawings], // Restored layerVectorDrawings
   view: chooseView()
 });
+
+// After map is initialized and layer switcher is added, listen for its panel updates
+if (layerSwitcher && layerSwitcher.panel) {
+  layerSwitcher.panel.addEventListener('rendercomplete', addDownloadLinksToLayerSwitcher);
+  // Also call it once initially in case the panel is already rendered (e.g. if startActive is true)
+  // or if the event isn't caught reliably on first load.
+  // A small timeout ensures the DOM elements are likely available.
+  setTimeout(addDownloadLinksToLayerSwitcher, 500);
+} else {
+  console.warn('LayerSwitcher or its panel is not available to attach rendercomplete listener.');
+}
+
 
 // =============================
 //  3.  Dynamic XYZ drone layers
