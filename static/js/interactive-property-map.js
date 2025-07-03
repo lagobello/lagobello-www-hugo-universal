@@ -934,7 +934,14 @@ function addInteraction () {
     measureTooltip.setOffset([0, -7]);
     // Ensure the feature uses the layer's style, not the interaction's temporary style
     if (evt.feature) {
-      evt.feature.setStyle(undefined);
+      // evt.feature.setStyle(undefined); // Previous attempt
+      const debugRedStyle = new ol.style.Style({
+          stroke: new ol.style.Stroke({ color: 'rgba(255, 0, 0, 1)', width: 4 }), // Bright solid red, width 4
+          fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 0.1)' }),
+          image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 1)' }) })
+      });
+      evt.feature.setStyle(debugRedStyle);
+      console.log('Applied direct RED debug style to feature in drawend.');
     }
     // unset sketch
     sketch = null;
