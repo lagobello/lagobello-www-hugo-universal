@@ -290,6 +290,53 @@ var viewDefault = new ol.View({ center: ol.proj.fromLonLat([-97.553, 26.053]), z
 var viewRot = new ol.View({ center: ol.proj.fromLonLat([-97.553, 26.053]), rotation: Math.PI / 2.17, zoom: 17 });
 function chooseView () { return (window.innerHeight > window.innerWidth) ? viewDefault : viewRot; }
 
+// Custom OpenLayers Control for Tools - MOVED HERE
+class ToolControl extends ol.control.Control {
+  constructor(opt_options) {
+    const options = opt_options || {};
+
+    const element = document.createElement('div');
+    element.className = 'ol-tool-control ol-unselectable ol-control'; // ol-control for base styling
+
+    this.buttons = {};
+    const toolInfo = [
+      { id: 'info', text: 'ℹ️', title: 'Info Mode' },
+      { id: 'length', text: '📏', title: 'Length Tool' },
+      { id: 'area', text: '📐', title: 'Area Tool' },
+    ];
+
+    toolInfo.forEach(tool => {
+      const button = document.createElement('button');
+      button.innerHTML = tool.text;
+      button.title = tool.title;
+      button.addEventListener('click', () => {
+        this.setActiveButton(tool.id);
+        setActiveToolInteraction(tool.id);
+      });
+      element.appendChild(button);
+      this.buttons[tool.id] = button;
+    });
+
+    super({
+      element: element,
+      target: options.target,
+    });
+
+    // Set initial active button
+    this.setActiveButton(currentToolMode);
+  }
+
+  setActiveButton(toolId) {
+    for (const id in this.buttons) {
+      if (id === toolId) {
+        this.buttons[id].classList.add('active');
+      } else {
+        this.buttons[id].classList.remove('active');
+      }
+    }
+  }
+}
+
 var olMap = new ol.Map({
   target: 'ol-map',
   controls: [
@@ -665,53 +712,6 @@ function setActiveToolInteraction(toolMode) {
       olMap.removeInteraction(draw);
     }
     addInteraction(); // This function now relies on global currentToolMode
-  }
-}
-
-// Custom OpenLayers Control for Tools
-class ToolControl extends ol.control.Control {
-  constructor(opt_options) {
-    const options = opt_options || {};
-
-    const element = document.createElement('div');
-    element.className = 'ol-tool-control ol-unselectable ol-control'; // ol-control for base styling
-
-    this.buttons = {};
-    const toolInfo = [
-      { id: 'info', text: 'ℹ️', title: 'Info Mode' },
-      { id: 'length', text: '📏', title: 'Length Tool' },
-      { id: 'area', text: '📐', title: 'Area Tool' },
-    ];
-
-    toolInfo.forEach(tool => {
-      const button = document.createElement('button');
-      button.innerHTML = tool.text;
-      button.title = tool.title;
-      button.addEventListener('click', () => {
-        this.setActiveButton(tool.id);
-        setActiveToolInteraction(tool.id);
-      });
-      element.appendChild(button);
-      this.buttons[tool.id] = button;
-    });
-
-    super({
-      element: element,
-      target: options.target,
-    });
-
-    // Set initial active button
-    this.setActiveButton(currentToolMode);
-  }
-
-  setActiveButton(toolId) {
-    for (const id in this.buttons) {
-      if (id === toolId) {
-        this.buttons[id].classList.add('active');
-      } else {
-        this.buttons[id].classList.remove('active');
-      }
-    }
   }
 }
 
