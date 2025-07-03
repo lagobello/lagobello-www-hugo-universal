@@ -144,6 +144,40 @@
 
 /* Styling for OpenLayers controls to achieve default OL look */
 
+/* Targeting the specific OL container for top-left controls */
+.ol-zoom.ol-unselectable.ol-control, /* Default OL Zoom in top-left */
+.ol-info-control.ol-unselectable.ol-control,
+.ol-length-control.ol-unselectable.ol-control,
+.ol-area-control.ol-unselectable.ol-control,
+.ol-unit-toggle-control.ol-unselectable.ol-control {
+  /* These are individual controls. OL places them in a default top-left container. */
+  /* We need to make that container a flex column. */
+  /* Let's assume they share a common direct parent that is the top-left group. */
+  /* This is hard to target without seeing OL's exact DOM structure for grouping. */
+  /* As a fallback, we can use absolute positioning with calc for each. */
+  /* However, the request is to try flexbox on the parent first. */
+
+  /* The following styles apply to each control block in the top-left column */
+   margin-bottom: 5px !important; /* Space between controls in the column */
+}
+
+/* Attempt to make the OL default top-left control group a flex column */
+/* This selector might need to be very specific to OL's generated HTML structure */
+/* A common pattern: .ol-overlaycontainer-stopevent > div that holds top-left controls */
+/* If .ol-zoom is the first such control, its parent might be targetable. */
+/* This is a best-guess selector for the container of top-left controls */
+.ol-overlaycontainer-stopevent > .ol-control-container-top-left, /* Ideal if OL uses this class */
+.ol-overlaycontainer-stopevent > div:has(>.ol-zoom) { /* More generic: a div parent of .ol-zoom */
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important; /* Align items to the start */
+    top: .5em !important;
+    left: .5em !important;
+    width: auto !important; /* Let content determine width */
+    background-color: transparent !important; /* Container itself is transparent */
+}
+
+
 /* General style for each control block (Zoom, Info, Length, Area, UnitToggle) */
 /* OL controls are typically positioned absolutely by OL itself. We style their appearance. */
 .ol-control {
@@ -207,46 +241,82 @@
   font-weight: normal; /* Text buttons are often not bold */
 }
 
+/* Styling for the Mouse Position (Cursor Position) control */
+.ol-mouse-position {
+  /* Inherits .ol-control for background, padding, border-radius if it has that class. */
+  /* If not, or to ensure consistency: */
+  background-color: rgba(255, 255, 255, 0.4) !important; /* Default OL light background */
+  border-radius: 4px !important;
+  padding: 3px 5px !important; /* Typical padding for text-based controls */
+  color: black !important; /* Text color */
+  font-size: 0.85em !important; /* OL default mouse position font size is often smaller */
+  /* Its default position is bottom-center, which is fine. */
+  /* Remove any custom background from its internal span if it exists from old styles */
+}
+.ol-mouse-position span { /* If spans inside have their own conflicting styles */
+    background-color: transparent !important;
+    color: black !important;
+    border: none !important;
+    padding: 0 2px !important; /* Minimal padding between coordinate parts */
+}
+
+
+/* Layer Switcher specific styling */
+.layer-switcher, .ol-layerswitcher { /* ol-layerswitcher is the common class name */
+  /* Basic .ol-control styling (background, border-radius) should be inherited if it has .ol-control class */
+  /* If not, we might need to add it here, or ensure the main element gets .ol-control */
+  /* Assuming it's an .ol-control, so background and padding are handled. */
+  /* Ensure its button is sized correctly and styled */
+}
+
+.layer-switcher button, .ol-layerswitcher button {
+  /* Should inherit from general .ol-control button for: */
+  /* - color: black */
+  /* - font-family, font-size (base), font-weight (base) */
+  /* - border, border-radius, padding (0), margin (1px) */
+  /* - display: flex, align-items: center, justify-content: center */
+  /* - cursor: pointer */
+  /* Ensure dimensions are consistent with other icon buttons */
+  width: 1.375em !important; /* Standard OL button width */
+  height: 1.375em !important; /* Standard OL button height */
+  line-height: 1.375em !important; /* For icon centering if not using flex */
+  background-color: transparent !important; /* Explicitly ensure this if OL default has its own button bg */
+}
+/* The panel itself needs to be styled if it's not already */
+.layer-switcher .panel, .ol-layerswitcher .panel {
+    background-color: rgba(255,255,255,0.9) !important; /* Light background for panel */
+    border: 1px solid #ccc !important;
+    color: black !important; /* Text color within panel */
+}
+
+
 /* Custom Tracking Control Styles */
-.tracking-control {
-  top: .5em;
-  right: 7em; /* Increased spacing: prev 5.5em */
-  left: auto; /* Override default OL if any */
-  background-color: transparent; /* ol.css uses var(--ol-subtle-background-color) for .ol-control which is rgba(128,128,128,0.25) - we want ours to be a container */
-  border-radius: 4px; /* Matches .ol-control */
-  padding: 0;
-  box-shadow: none;
+.tracking-control { /* This is an .ol-control, so it inherits some base styles */
+  top: .5em; /* Keep its original position if desired, or adjust */
+  right: 7em;
+  left: auto;
+  /* background-color is inherited from .ol-control general style (rgba(255,255,255,0.4)) */
+  /* border-radius is inherited */
+  /* padding is inherited or can be set to 0 if buttons fill it */
+  padding: 2px; /* Consistent with other .ol-control */
+  box-shadow: none; /* OL controls typically don't have shadow */
   display: flex;
   align-items: center;
 }
 
 .tracking-control button {
-  /* Mimic .ol-control button styles */
-  background-color: var(--ol-background-color, white);
-  color: var(--ol-subtle-foreground-color, #666666);
-  border: none;
-  border-radius: 2px; /* Matches .ol-control button */
-  /* height: 1.375em; From .ol-control button, adjust padding to achieve similar */
-  /* width: 1.375em; From .ol-control button, adjust padding to achieve similar */
-  padding: 4px; /* Adjust to make square-ish with emoji */
-  margin: 1px; /* Matches .ol-control button */
-  font-weight: bold; /* OL default is bold for some text, normal for compass */
-  font-size: 1.2em; /* Keep emoji slightly larger, or adjust to 1em if too big */
-  line-height: 1; /* Adjust for emoji vertical centering */
-  cursor: pointer;
-  min-width: auto; /* Let padding and content define width */
-  text-align: center;
-  order: 2; /* Button will be on the right */
-  /* box-shadow: 0 0 5px rgba(0,0,0,0.2); OL buttons don't have shadow by default */
+  /* This button should now inherit from the general .ol-control button style: */
+  /* - background-color: transparent */
+  /* - color: black */
+  /* - dimensions, border-radius, etc. */
+  /* We might only need to override specifics if they differ, e.g., emoji size or if it's not bold */
+  font-size: 1.2em; /* Retain larger emoji size for this specific button if desired */
+  /* padding: 4px; /* This was specific, check if new general button style is enough */
+  /* margin: 1px; /* General button style has this */
+  /* order: 2; /* If stats are still to its left */
 }
 
-.tracking-control button:hover,
-.tracking-control button:focus {
-  /* Mimic .ol-control button:hover, :focus */
-  text-decoration: none;
-  outline: 1px solid var(--ol-subtle-foreground-color, #666666); /* Or none if it looks better */
-  color: var(--ol-foreground-color, #333333);
-}
+/* Hover and active states will be inherited from general .ol-control button:hover and button.active */
 
 .tracking-stats {
   display: flex; /* This is set by JS, but good to have as default if ever shown by CSS */
