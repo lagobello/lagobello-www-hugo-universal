@@ -142,96 +142,70 @@
 
 /* REMOVED old .ol-tool-control styles */
 
-/* Styling for OpenLayers controls to achieve default OL look and single column layout */
-
-/* This targets the div that OL creates to group controls in the top-left position. */
-/* It might need adjustment if OL's class names/structure for this change. */
-.ol-overlaycontainer-stopevent > div:first-child { /* Assuming top-left is the first group */
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important; /* Align items to the start of the flex container */
-  top: .5em !important;
-  left: .5em !important;
-  /* Remove direct background from this container if controls themselves have backgrounds */
-  background-color: transparent !important;
-}
+/* Styling for OpenLayers controls to achieve default OL look */
 
 /* General style for each control block (Zoom, Info, Length, Area, UnitToggle) */
-.ol-control { /* This is a base class for all OL controls */
-  background-color: rgba(255, 255, 255, 0.5) !important; /* OL default light/semi-transparent */
-  border-radius: 4px !important;
-  margin-bottom: 5px !important; /* Space between controls in the column */
-  padding: 2px !important; /* Minimal padding for the control group */
-  position: static !important; /* Allow flexbox of parent to position, remove explicit top/left if any */
+/* OL controls are typically positioned absolutely by OL itself. We style their appearance. */
+.ol-control {
+  background-color: rgba(255, 255, 255, 0.4); /* Default OL light background */
+  border-radius: 4px;
+  padding: 2px;
 }
 .ol-control:hover {
-    background-color: rgba(255,255,255,0.6) !important;
+    background-color: rgba(255,255,255,0.6);
 }
-
 
 /* Buttons within ANY .ol-control (custom or default like zoom) */
 .ol-control button {
-  background-color: transparent !important; /* Let parent .ol-control provide background */
-  color: black !important; /* Standard OL icon/text color */
-  font-family: 'Arial', sans-serif !important; /* OL uses a common sans-serif */
-  font-size: 1.1em !important; /* Adjust for desired icon/text size */
-  font-weight: bold !important;
-  text-decoration: none !important;
-  text-align: center !important;
-  height: 1.375em !important; /* Standard OL button height */
-  width: 1.375em !important;  /* Standard OL button width for icons */
-  line-height: 1.375em !important;
-  margin: 1px !important;
-  border: none !important;
-  border-radius: 2px !important;
-  padding: 0 !important;
-  cursor: pointer !important;
-  display: flex !important; /* For centering content within button */
-  align-items: center !important;
-  justify-content: center !important;
+  background-color: transparent;
+  color: black;
+  font-family: 'Arial', sans-serif;
+  font-size: 1.14em; /* Matches OL default */
+  font-weight: bold;
+  text-decoration: none;
+  text-align: center;
+  height: 1.375em;
+  width: 1.375em;
+  line-height: 1.375em;
+  margin: 1px;
+  border: none;
+  border-radius: 2px;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .ol-control button:hover {
-  background-color: rgba(0, 0, 0, 0.1) !important; /* Slight darken on hover */
+  background-color: rgba(0, 0, 0, 0.15); /* OL default hover is often a slightly darker background */
 }
 
 .ol-control button.active {
-  background-color: rgba(0, 0, 0, 0.2) !important; /* Darker for active state */
-  color: black !important;
+  background-color: rgba(0, 60, 136, 0.7); /* Using a blue similar to an active state seen before, can adjust to OL default */
+  color: white; /* Text color for active button often contrasts with background */
 }
 
-/* Specifics for OL Zoom control buttons if they behave differently */
+/* OL Zoom control buttons are often just text +/- */
 .ol-zoom button {
-    font-weight: bold !important;
+    font-weight: bold;
 }
 
 /* UnitToggleControl specific layout and button styling */
 .ol-unit-toggle-control {
-  display: flex !important;
-  flex-direction: column !important; /* Stack Imperial over Metric */
-  padding: 2px !important;
+  display: flex;
+  flex-direction: column; /* Stack Imperial over Metric */
+  /* background-color will be inherited from .ol-control */
 }
 
 .ol-unit-toggle-control button {
-  width: auto !important; /* Allow text and emoji to determine width */
-  padding: 0 0.5em !important; /* Horizontal padding for text */
-  justify-content: flex-start !important; /* Align text/emoji to the left */
-  height: 1.5em !important; /* Adjust height if needed for text */
-  line-height: 1.5em !important;
-  font-size: 0.9em !important; /* Slightly smaller text for unit toggle */
+  width: auto; /* Allow text and emoji to determine width */
+  padding: 0 0.5em;
+  justify-content: flex-start; /* Align text/emoji to the left */
+  /* height and line-height can be inherited or slightly adjusted if needed for text */
+  font-size: 0.9em; /* Slightly smaller text for unit toggle is common */
+  font-weight: normal; /* Text buttons are often not bold */
 }
-
-/* Remove individual absolute positioning for controls meant for the column */
-.ol-zoom,
-.ol-info-control,
-.ol-length-control,
-.ol-area-control,
-.ol-unit-toggle-control {
-  top: auto !important;
-  left: auto !important;
-  position: static !important; /* Let the flex container handle layout */
-}
-
 
 /* Custom Tracking Control Styles */
 .tracking-control {
