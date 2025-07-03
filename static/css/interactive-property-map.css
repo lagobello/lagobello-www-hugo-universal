@@ -143,34 +143,42 @@
 /* Custom Tracking Control Styles */
 .tracking-control {
   top: .5em;
-  right: 4em; /* Adjusted to be left of default OL top-right controls */
+  right: 5.5em; /* Further adjusted to clear rotate button: prev 4em */
   left: auto; /* Override default OL if any */
-  background-color: rgba(255,255,255,0.0); /* Make control background transparent initially */
-  border-radius: 4px;
-  padding: 0; /* Remove padding from main control, will add to children */
-  box-shadow: none; /* Remove shadow from main control */
-  display: flex; /* Enable flexbox for horizontal layout */
-  align-items: center; /* Align items vertically */
+  background-color: transparent; /* ol.css uses var(--ol-subtle-background-color) for .ol-control which is rgba(128,128,128,0.25) - we want ours to be a container */
+  border-radius: 4px; /* Matches .ol-control */
+  padding: 0;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
 }
 
 .tracking-control button {
-  background-color: rgba(0,60,136,.7);
-  color: white;
+  /* Mimic .ol-control button styles */
+  background-color: var(--ol-background-color, white);
+  color: var(--ol-subtle-foreground-color, #666666);
   border: none;
-  border-radius: 4px; /* Match OL controls */
-  padding: 5px 8px; /* Adjust padding */
-  margin-left: 5px; /* Add margin if stats are to the left */
-  font-weight: bold;
-  font-size: 1.2em; /* Make emoji slightly larger */
+  border-radius: 2px; /* Matches .ol-control button */
+  /* height: 1.375em; From .ol-control button, adjust padding to achieve similar */
+  /* width: 1.375em; From .ol-control button, adjust padding to achieve similar */
+  padding: 4px; /* Adjust to make square-ish with emoji */
+  margin: 1px; /* Matches .ol-control button */
+  font-weight: bold; /* OL default is bold for some text, normal for compass */
+  font-size: 1.2em; /* Keep emoji slightly larger, or adjust to 1em if too big */
+  line-height: 1; /* Adjust for emoji vertical centering */
   cursor: pointer;
-  min-width: 30px;
+  min-width: auto; /* Let padding and content define width */
   text-align: center;
   order: 2; /* Button will be on the right */
-  box-shadow: 0 0 5px rgba(0,0,0,0.2); /* Add shadow to button */
+  /* box-shadow: 0 0 5px rgba(0,0,0,0.2); OL buttons don't have shadow by default */
 }
 
-.tracking-control button:hover {
-  background-color: rgba(0,60,136,1);
+.tracking-control button:hover,
+.tracking-control button:focus {
+  /* Mimic .ol-control button:hover, :focus */
+  text-decoration: none;
+  outline: 1px solid var(--ol-subtle-foreground-color, #666666); /* Or none if it looks better */
+  color: var(--ol-foreground-color, #333333);
 }
 
 .tracking-stats {

@@ -824,7 +824,16 @@ geolocation.on('change', function () {
     const altitudeAccuracy = geolocation.getAltitudeAccuracy() !== undefined ? geolocation.getAltitudeAccuracy().toFixed(2) : '-';
     const heading = geolocation.getHeading() !== undefined ? geolocation.getHeading().toFixed(2) : '-';
     const speed = geolocation.getSpeed() !== undefined ? geolocation.getSpeed().toFixed(2) : '-';
-    window.trackingControlInstance.updateStats(accuracy, altitude, altitudeAccuracy, heading, speed);
+
+    let currentCoords = {lat: '-', lon: '-'};
+    const position = geolocation.getPosition();
+    if (position) {
+      const lonLat = ol.proj.toLonLat(position); // Transform to EPSG:4326
+      currentCoords.lon = lonLat[0];
+      currentCoords.lat = lonLat[1];
+    }
+
+    window.trackingControlInstance.updateStats(accuracy, altitude, altitudeAccuracy, heading, speed, currentCoords);
   }
   // The custom control now handles these updates.
   // el('accuracy').innerText = geolocation.getAccuracy() + ' [m]';
@@ -840,7 +849,7 @@ geolocation.on('error', function (error) {
   info.innerHTML = error.message;
   info.style.display = '';
   if (window.trackingControlInstance) {
-    window.trackingControlInstance.updateStats('Error', 'Error', 'Error', 'Error', 'Error');
+    window.trackingControlInstance.updateStats('Error', 'Error', 'Error', 'Error', 'Error', {lat: 'Error', lon: 'Error'});
     // Optionally disable tracking or show error state on button
     if (window.trackingControlInstance.trackingOn_) {
         window.trackingControlInstance.handleTrackToggle_(); // Toggle to off state
@@ -933,6 +942,10 @@ class TrackingControl extends ol.control.Control {
     this.speedElement_.innerHTML = 'Speed: -';
     this.statsElement_.appendChild(this.speedElement_);
 
+    this.coordinatesElement_ = document.createElement('div');
+    this.coordinatesElement_.innerHTML = 'Coords: -';
+    this.statsElement_.appendChild(this.coordinatesElement_);
+
     this.button_ = button;
     this.trackingOn_ = false; // To keep track of tracking state
 
@@ -950,18 +963,23 @@ class TrackingControl extends ol.control.Control {
       this.button_.innerHTML = '🛰️'; // Satellite for "off" state / enable tracking
       this.statsElement_.style.display = 'none'; // Hide stats
       // Reset stats display
-      this.updateStats('-', '-', '-', '-', '-');
+      this.updateStats('-', '-', '-', '-', '-', {lat: '-', lon: '-'}); // Add default for coords
       // Potentially change button style to indicate 'off' state
     }
     console.log('Tracking toggled:', this.trackingOn_);
   }
 
-  updateStats(accuracy, altitude, altitudeAccuracy, heading, speed) {
+  updateStats(accuracy, altitude, altitudeAccuracy, heading, speed, coordinates) {
     this.accuracyElement_.innerHTML = `Accuracy: ${accuracy} [m]`;
     this.altitudeElement_.innerHTML = `Altitude: ${altitude} [m]`;
     this.altitudeAccuracyElement_.innerHTML = `Alt. Accuracy: ${altitudeAccuracy} [m]`;
     this.headingElement_.innerHTML = `Heading: ${heading} [rad]`;
     this.speedElement_.innerHTML = `Speed: ${speed} [m/s]`;
+    if (coordinates && coordinates.lat !== '-' && coordinates.lon !== '-') {
+      this.coordinatesElement_.innerHTML = `Coords: ${coordinates.lat.toFixed(4)}, ${coordinates.lon.toFixed(4)}`;
+    } else {
+      this.coordinatesElement_.innerHTML = 'Coords: -';
+    }
   }
 }
 
