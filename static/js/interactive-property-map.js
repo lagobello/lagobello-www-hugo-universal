@@ -898,6 +898,12 @@ class TrackingControl extends ol.control.Control {
     element.className = 'ol-unselectable ol-control tracking-control'; // Added a custom class
     element.appendChild(button);
 
+    // Call super constructor first
+    super({
+      element: element,
+      target: options.target,
+    });
+
     // Create container for stats
     this.statsElement_ = document.createElement('div');
     this.statsElement_.className = 'tracking-stats';
@@ -925,11 +931,6 @@ class TrackingControl extends ol.control.Control {
     this.speedElement_ = document.createElement('div');
     this.speedElement_.innerHTML = 'Speed: -';
     this.statsElement_.appendChild(this.speedElement_);
-
-    super({
-      element: element,
-      target: options.target,
-    });
 
     this.button_ = button;
     this.trackingOn_ = false; // To keep track of tracking state
