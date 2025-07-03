@@ -249,19 +249,9 @@ var source = new ol.source.Vector();
 var layerVectorDrawings = new ol.layer.Vector({
   source: source,
   style: new ol.style.Style({
-    fill: new ol.style.Fill({
-      color: 'rgba(255, 255, 255, 0.2)'
-    }),
-    stroke: new ol.style.Stroke({
-      color: '#ffcc33',
-      width: 2
-    }),
-    image: new ol.style.Circle({
-      radius: 7,
-      fill: new ol.style.Fill({
-        color: '#ffcc33'
-      })
-    })
+    fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 0.1)' }), // Light red fill for areas (DEBUG)
+    stroke: new ol.style.Stroke({ color: 'rgba(255, 0, 0, 1)', width: 4 }), // Bright red, thick stroke (DEBUG)
+    image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 1)' }) }) // Bright red points (DEBUG)
   }),
   zIndex: 100 // Ensure drawing layer is on top
 });
@@ -906,23 +896,9 @@ function addInteraction () {
     source: source,
     type: type,
     style: new ol.style.Style({
-      fill: new ol.style.Fill({
-        color: 'rgba(255, 255, 255, 0.2)'
-      }),
-      stroke: new ol.style.Stroke({
-        color: 'rgba(0, 0, 0, 0.5)',
-        lineDash: [10, 10],
-        width: 2
-      }),
-      image: new ol.style.Circle({
-        radius: 5,
-        stroke: new ol.style.Stroke({
-          color: 'rgba(0, 0, 0, 0.7)'
-        }),
-        fill: new ol.style.Fill({
-          color: 'rgba(255, 255, 255, 0.2)'
-        })
-      })
+      fill: new ol.style.Fill({ color: 'rgba(0, 0, 255, 0.1)' }), // Light blue fill (DEBUG)
+      stroke: new ol.style.Stroke({ color: 'rgba(0, 0, 255, 1)', width: 4, lineDash: [10, 10] }), // Bright blue, thick, dashed stroke (DEBUG)
+      image: new ol.style.Circle({ radius: 5, stroke: new ol.style.Stroke({color: 'rgba(0,0,255,1)'}), fill: new ol.style.Fill({color: 'rgba(0,0,255,0.1)'}) }) // Blue points (DEBUG)
     })
   });
   olMap.addInteraction(draw);

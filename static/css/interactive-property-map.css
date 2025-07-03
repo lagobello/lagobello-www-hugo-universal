@@ -288,7 +288,8 @@
   font-size: 1em !important; /* Let icon scale with this base size */
   display: flex !important;
   align-items: center !important;
-  justify-content: center !important;
+  justify-content: flex-start !important; /* Changed to flex-start for left justification */
+  padding-left: 3px !important; /* Added padding on the left */
   margin: 0 !important;
   box-sizing: border-box !important;
 }
