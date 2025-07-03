@@ -142,88 +142,95 @@
 
 /* REMOVED old .ol-tool-control styles */
 
-/* General Styling for OpenLayers Controls in the top-left column */
+/* Styling for OpenLayers controls to achieve default OL look and single column layout */
+
+/* This targets the div that OL creates to group controls in the top-left position. */
+/* It might need adjustment if OL's class names/structure for this change. */
+.ol-overlaycontainer-stopevent > div:first-child { /* Assuming top-left is the first group */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important; /* Align items to the start of the flex container */
+  top: .5em !important;
+  left: .5em !important;
+  /* Remove direct background from this container if controls themselves have backgrounds */
+  background-color: transparent !important;
+}
+
+/* General style for each control block (Zoom, Info, Length, Area, UnitToggle) */
+.ol-control { /* This is a base class for all OL controls */
+  background-color: rgba(255, 255, 255, 0.5) !important; /* OL default light/semi-transparent */
+  border-radius: 4px !important;
+  margin-bottom: 5px !important; /* Space between controls in the column */
+  padding: 2px !important; /* Minimal padding for the control group */
+  position: static !important; /* Allow flexbox of parent to position, remove explicit top/left if any */
+}
+.ol-control:hover {
+    background-color: rgba(255,255,255,0.6) !important;
+}
+
+
+/* Buttons within ANY .ol-control (custom or default like zoom) */
+.ol-control button {
+  background-color: transparent !important; /* Let parent .ol-control provide background */
+  color: black !important; /* Standard OL icon/text color */
+  font-family: 'Arial', sans-serif !important; /* OL uses a common sans-serif */
+  font-size: 1.1em !important; /* Adjust for desired icon/text size */
+  font-weight: bold !important;
+  text-decoration: none !important;
+  text-align: center !important;
+  height: 1.375em !important; /* Standard OL button height */
+  width: 1.375em !important;  /* Standard OL button width for icons */
+  line-height: 1.375em !important;
+  margin: 1px !important;
+  border: none !important;
+  border-radius: 2px !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  display: flex !important; /* For centering content within button */
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.ol-control button:hover {
+  background-color: rgba(0, 0, 0, 0.1) !important; /* Slight darken on hover */
+}
+
+.ol-control button.active {
+  background-color: rgba(0, 0, 0, 0.2) !important; /* Darker for active state */
+  color: black !important;
+}
+
+/* Specifics for OL Zoom control buttons if they behave differently */
+.ol-zoom button {
+    font-weight: bold !important;
+}
+
+/* UnitToggleControl specific layout and button styling */
+.ol-unit-toggle-control {
+  display: flex !important;
+  flex-direction: column !important; /* Stack Imperial over Metric */
+  padding: 2px !important;
+}
+
+.ol-unit-toggle-control button {
+  width: auto !important; /* Allow text and emoji to determine width */
+  padding: 0 0.5em !important; /* Horizontal padding for text */
+  justify-content: flex-start !important; /* Align text/emoji to the left */
+  height: 1.5em !important; /* Adjust height if needed for text */
+  line-height: 1.5em !important;
+  font-size: 0.9em !important; /* Slightly smaller text for unit toggle */
+}
+
+/* Remove individual absolute positioning for controls meant for the column */
 .ol-zoom,
 .ol-info-control,
 .ol-length-control,
 .ol-area-control,
 .ol-unit-toggle-control {
-  background-color: rgba(0, 0, 0, 0.75) !important; /* Dark background, !important to override potential OL defaults */
-  border-radius: 4px !important;
-  margin-bottom: 5px !important; /* Space between controls in the column */
-  padding: 1px !important; /* Small padding around the control group if it's a single button */
-}
-
-/* Ensure all controls in the default top-left group stack properly and have consistent position */
-.ol-overlaycontainer-stopevent .ol-control.ol-zoom, /* Targeting default OL zoom */
-.ol-overlaycontainer-stopevent .ol-info-control,
-.ol-overlaycontainer-stopevent .ol-length-control,
-.ol-overlaycontainer-stopevent .ol-area-control,
-.ol-overlaycontainer-stopevent .ol-unit-toggle-control {
-  position: relative !important; /* Override absolute if they are individual, allow them to stack in flow */
   top: auto !important;
   left: auto !important;
-  /* The parent (.ol-overlaycontainer-stopevent > div usually at top-left) will handle absolute positioning */
+  position: static !important; /* Let the flex container handle layout */
 }
-
-
-/* Styling for buttons within our custom controls and OL's default controls */
-.ol-control button {
-  background-color: transparent !important; /* Button itself is transparent, parent div has dark bg */
-  color: white !important;
-  border: none !important;
-  border-radius: 2px !important;
-  width: 2em !important; /* Consistent width */
-  height: 2em !important; /* Consistent height */
-  line-height: 2em !important; /* Vertically center emoji/text */
-  padding: 0 !important;
-  margin: 1px !important; /* Small margin if buttons are grouped inside a control, like unit toggle */
-  font-size: 1em !important; /* Adjust for icon/emoji size */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.ol-control button:hover {
-  background-color: rgba(255, 255, 255, 0.2) !important; /* Slight highlight on hover */
-}
-
-.ol-control button.active {
-  background-color: rgba(0, 123, 255, 0.75) !important; /* Blue for active state, similar to previous active */
-  color: white !important;
-}
-
-/* Specific styling for UnitToggleControl buttons if they need to be side-by-side or different */
-.ol-unit-toggle-control {
-  display: flex; /* Make buttons sit side-by-side if that's the layout for Metric/Imperial */
-  flex-direction: row; /* Default is row, explicitly for clarity if a column was intended for the whole group */
-  padding: 2px !important; /* Padding for the control group itself */
-}
-
-.ol-unit-toggle-control button {
-  width: auto !important; /* Allow text to determine width */
-  padding: 0 0.5em !important; /* Padding for text buttons */
-  font-size: 0.9em !important; /* Slightly smaller font for unit toggle text */
-  margin: 1px 2px !important; /* Spacing between metric/imperial buttons */
-}
-
-/* Ensure OL default top-left controls container allows vertical stacking */
-/* OpenLayers uses a div inside .ol-overlaycontainer-stopevent for each control position group */
-/* e.g., .ol-overlaycontainer-stopevent > div:nth-child(1) might be top-left controls */
-/* We need this container to allow its children (the controls) to stack. */
-/* This is often tricky as OL manages these containers. */
-/* A simpler approach might be to ensure each control has top: .5em, left: .5em and then use margin-top for stacking */
-/* However, the request was for them to be in a single column *with zoom controls*. */
-
-/* Resetting default OL control positioning for those we want in the column */
-.ol-zoom { top: 0.5em; left: 0.5em; } /* Standard OL zoom position */
-.ol-info-control { top: calc(0.5em + 2.5em + 5px); left: 0.5em; } /* Below zoom (height ~2em + border/padding + margin-bottom) */
-.ol-length-control { top: calc(0.5em + 2*(2.5em + 5px)); left: 0.5em; } /* Below info */
-.ol-area-control { top: calc(0.5em + 3*(2.5em + 5px)); left: 0.5em; }   /* Below length */
-.ol-unit-toggle-control { top: calc(0.5em + 4*(2.5em + 5px)); left: 0.5em; } /* Below area */
-/* Note: The 2.5em is an estimate for control height + margin. This will need testing and adjustment. */
-/* This explicit positioning is more robust than relying on relative stacking if OL wraps controls weirdly. */
 
 
 /* Custom Tracking Control Styles */
