@@ -376,6 +376,8 @@ var retrieveFeatureInfoTable = function (evt) {
   var feature = retrieveFeature(evt.pixel);
   var area = featureCalculateAreaMeters(feature);
   var tempString;
+
+  // Old style geojson with 'name' and 'status'
   if (feature.get('name') !== undefined) {
     tempString =
  `<table style="width:100%">
@@ -394,41 +396,75 @@ var retrieveFeatureInfoTable = function (evt) {
   <tr>
     <td>Area [m^2]</td>
     <td><code>` +
-    area.toFixed(2) +
+    (area ? area.toFixed(2) : 'N/A') +
     `</code></td>
   </tr>
   <tr>
     <td>Area [ft^2]</td>
     <td><code>` +
-    (10.7639 * area).toFixed(2) +
+    (area ? (10.7639 * area).toFixed(2) : 'N/A') +
     `</code></td>
   </tr>
   </table>`;
-  } else {
+  }
+  // New style geojson with 'EntityHandle'
+  else if (feature.get('EntityHandle') !== undefined) {
     tempString =
     `<table style="width:100%">
   <tr>
     <td>Name</td>
-    <td><code>` +
-    feature.get('legal1') +
-    `</code></td>
+    <td><code>---</code></td> <!-- Placeholder for Name -->
   </tr>
   <tr>
     <td>Parcel ID</td>
     <td><code>` +
-    feature.get('PROP_ID') +
+    feature.get('EntityHandle') +
     `</code></td>
   </tr>
   <tr>
   <td>Area registered [ft^2]</td>
-  <td><code>` +
-  feature.get('Shape_area').toFixed(2) +
-  `</code></td>
+  <td><code>---</code></td> <!-- Placeholder for Area Registered -->
+  </tr>
+  <tr>
+    <td>Area [m^2]</td>
+    <td><code>` +
+    (area ? area.toFixed(2) : 'N/A') +
+    `</code></td>
   </tr>
   <tr>
     <td>Area calculated [ft^2]</td>
     <td><code>` +
-    (10.7639 * area).toFixed(2) +
+    (area ? (10.7639 * area).toFixed(2) : 'N/A') +
+    `</code></td>
+  </tr>
+</table>`;
+  }
+  // Fallback for other feature types or if no specific properties are found
+  else {
+    tempString =
+    `<table style="width:100%">
+  <tr>
+    <td>Layer</td>
+    <td><code>` +
+    (feature.get('Layer') || 'Unknown') + // Display layer name if available
+    `</code></td>
+  </tr>
+   <tr>
+    <td>EntityHandle</td>
+    <td><code>` +
+    (feature.get('EntityHandle') || 'N/A') + // Display EntityHandle if available
+    `</code></td>
+  </tr>
+  <tr>
+    <td>Area [m^2]</td>
+    <td><code>` +
+    (area ? area.toFixed(2) : 'N/A') +
+    `</code></td>
+  </tr>
+  <tr>
+    <td>Area [ft^2]</td>
+    <td><code>` +
+    (area ? (10.7639 * area).toFixed(2) : 'N/A') +
     `</code></td>
   </tr>
 </table>`;
