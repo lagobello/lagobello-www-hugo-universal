@@ -10,7 +10,10 @@ const displayUnits = 'imperial'; // Default unit system: 'imperial' or 'metric'
 var draw;
 
 // Global references to individual tool control instances for managing active state
-let infoControlInstance, lengthControlInstance, areaControlInstance;
+// Explicitly use window object to avoid 'already declared' issues if script is re-processed.
+window.infoControlInstance = window.infoControlInstance || null;
+window.lengthControlInstance = window.lengthControlInstance || null;
+window.areaControlInstance = window.areaControlInstance || null;
 
 
 // -----------------------------
@@ -302,13 +305,16 @@ var viewRot = new ol.View({ center: ol.proj.fromLonLat([-97.553, 26.053]), rotat
 function chooseView () { return (window.innerHeight > window.innerWidth) ? viewDefault : viewRot; }
 
 // Global references to individual tool control instances for managing active state
-let infoControlInstance, lengthControlInstance, areaControlInstance;
+// Explicitly use window object to avoid 'already declared' issues if script is re-processed.
+// window.infoControlInstance = window.infoControlInstance || null; // Already handled at the top
+// window.lengthControlInstance = window.lengthControlInstance || null;
+// window.areaControlInstance = window.areaControlInstance || null;
 
 // Global function to manage active state of tool controls
 function setSelectedTool(toolMode, clickedControlInstance) {
   currentToolMode = toolMode;
 
-  const controls = [infoControlInstance, lengthControlInstance, areaControlInstance];
+  const controls = [window.infoControlInstance, window.lengthControlInstance, window.areaControlInstance];
   controls.forEach(control => {
     if (control && control.element) { // Check if control and its element exist
       if (control === clickedControlInstance) {
@@ -335,7 +341,7 @@ class InfoControl extends ol.control.Control {
     element.appendChild(button);
 
     super({ element: element, target: options.target });
-    infoControlInstance = this; // Store instance for global access
+    window.infoControlInstance = this; // Store instance for global access
 
     button.addEventListener('click', () => {
       setSelectedTool('info', this);
@@ -356,7 +362,7 @@ class LengthControl extends ol.control.Control {
     element.appendChild(button);
 
     super({ element: element, target: options.target });
-    lengthControlInstance = this; // Store instance for global access
+    window.lengthControlInstance = this; // Store instance for global access
 
     button.addEventListener('click', () => {
       setSelectedTool('length', this);
@@ -377,7 +383,7 @@ class AreaControl extends ol.control.Control {
     element.appendChild(button);
 
     super({ element: element, target: options.target });
-    areaControlInstance = this; // Store instance for global access
+    window.areaControlInstance = this; // Store instance for global access
 
     button.addEventListener('click', () => {
       setSelectedTool('area', this);
