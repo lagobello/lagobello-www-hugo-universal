@@ -279,20 +279,19 @@
 }
 
 .layer-switcher button, .ol-layerswitcher button {
-  width: 1.75em !important; /* Ensure button has a defined, reasonable size for an icon */
-  height: 1.75em !important;
+  width: 2em !important; /* Increased width for the button */
+  height: 1.75em !important; /* Kept height, or could be 2em for square */
   line-height: 1.75em !important;
   background-color: transparent !important;
   color: black !important;
-  font-size: 0.9em !important; /* Reduced font-size for the icon character */
-  padding: 2px !important; /* Small, balanced padding */
+  font-size: 0.9em !important; /* Keep reduced font-size for the icon character */
+  padding: 2px !important; /* Keep small, balanced padding */
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important; /* Keep left justification */
-  /* Removed padding-left: 3px !important; */
   margin: 0 !important;
   box-sizing: border-box !important;
-  overflow: visible !important; /* Attempt to prevent clipping if icon is still slightly too big */
+  overflow: visible !important;
 }
 
 /* Ensure the icon itself within the button is not too large or has weird margins */

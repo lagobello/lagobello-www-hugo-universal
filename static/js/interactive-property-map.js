@@ -932,6 +932,10 @@ function addInteraction () {
   draw.on('drawend', function (evt) { // Added evt parameter here
     measureTooltipElement.className = 'ol-tooltip ol-tooltip-static';
     measureTooltip.setOffset([0, -7]);
+    // Ensure the feature uses the layer's style, not the interaction's temporary style
+    if (evt.feature) {
+      evt.feature.setStyle(undefined);
+    }
     // unset sketch
     sketch = null;
     // unset tooltip so that a new one can be created
