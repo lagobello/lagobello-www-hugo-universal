@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   build:
+    if: github.ref == 'refs/heads/master'        # only build on master
     runs-on: ubuntu-latest
     steps:
       
