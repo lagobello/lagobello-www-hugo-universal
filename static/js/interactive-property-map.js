@@ -15,6 +15,8 @@ window.infoControlInstance = window.infoControlInstance || null;
 window.lengthControlInstance = window.lengthControlInstance || null;
 window.areaControlInstance = window.areaControlInstance || null;
 
+let testDrawLayer = null; // For debugging drawing visibility
+
 
 // -----------------------------
 //  Lago Bello Interactive Map
@@ -457,7 +459,8 @@ var olMap = new ol.Map({
     new UnitToggleControl(),
   ],
   overlays: [overlay],
-  layers: [olLayerGroupBasemaps, olLayerGroupDrone, olLayerGroupOverlays],
+  // layers: [olLayerGroupBasemaps, olLayerGroupDrone, olLayerGroupOverlays], // Original
+  layers: [olLayerGroupBasemaps, olLayerGroupDrone, olLayerGroupOverlays /*, layerVectorDrawings TEMPORARILY REMOVED FOR DEBUGGING */],
   view: chooseView()
 });
 
@@ -950,16 +953,43 @@ function addInteraction () {
     createMeasureTooltip();
     ol.Observable.unByKey(listener);
 
-    console.log('drawend event triggered.');
+    // Original console logs for reference
+    console.log('drawend event triggered (original source).');
     if (evt.feature) {
-      console.log('Drawn feature geometry type:', evt.feature.getGeometry().getType());
-      console.log('Drawn feature style:', evt.feature.getStyle()); // Check if it has a style
+      console.log('Original Feature geometry type:', evt.feature.getGeometry().getType());
+      console.log('Original Feature style (after direct set):', evt.feature.getStyle());
     }
-    console.log('Total features on drawing source:', source.getFeatures().length);
-    // Force a re-render of the layer, just in case
-    if (layerVectorDrawings) {
-      layerVectorDrawings.getSource().changed();
+    console.log('Total features on original drawing source:', source.getFeatures().length);
+
+    // --- Test Layer Debugging Logic ---
+    if (!testDrawLayer) {
+        console.log('Creating testDrawLayer.');
+        // Re-use debugRedStyle for consistency in this test
+        const debugStyleForTestLayer = new ol.style.Style({
+            stroke: new ol.style.Stroke({ color: 'rgba(255, 0, 0, 1)', width: 4 }),
+            fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 0.1)' }),
+            image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 1)' }) })
+        });
+        testDrawLayer = new ol.layer.Vector({
+            source: new ol.source.Vector(), // New source for the test layer
+            style: debugStyleForTestLayer,
+            zIndex: 999
+        });
+        olMap.addLayer(testDrawLayer);
     }
+    if (evt.feature) {
+        const clonedFeature = evt.feature.clone();
+        // Explicitly set style on clone too, as it might not be carried over if it was direct
+        const debugStyleForClonedFeature = new ol.style.Style({
+            stroke: new ol.style.Stroke({ color: 'rgba(255, 0, 0, 1)', width: 4 }),
+            fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 0.1)' }),
+            image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 1)' }) })
+        });
+        clonedFeature.setStyle(debugStyleForClonedFeature);
+        testDrawLayer.getSource().addFeature(clonedFeature);
+        console.log('Cloned feature added to testDrawLayer. Total features in testDrawLayer source:', testDrawLayer.getSource().getFeatures().length);
+    }
+    // Commented out: if (layerVectorDrawings) { layerVectorDrawings.getSource().changed(); }
   });
 }
 
