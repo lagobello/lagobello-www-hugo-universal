@@ -298,7 +298,13 @@ class ToolControl extends ol.control.Control {
     const element = document.createElement('div');
     element.className = 'ol-tool-control ol-unselectable ol-control'; // ol-control for base styling
 
-    this.buttons = {};
+    // Call super constructor first with the main element
+    super({
+      element: element,
+      target: options.target,
+    });
+
+    this.buttons = {}; // Initialize this.buttons after super()
     const toolInfo = [
       { id: 'info', text: 'ℹ️', title: 'Info Mode' },
       { id: 'length', text: '📏', title: 'Length Tool' },
@@ -309,20 +315,16 @@ class ToolControl extends ol.control.Control {
       const button = document.createElement('button');
       button.innerHTML = tool.text;
       button.title = tool.title;
+      // 'this' in arrow function will correctly refer to ToolControl instance
       button.addEventListener('click', () => {
         this.setActiveButton(tool.id);
         setActiveToolInteraction(tool.id);
       });
       element.appendChild(button);
-      this.buttons[tool.id] = button;
+      this.buttons[tool.id] = button; // Assign to this.buttons after super()
     });
 
-    super({
-      element: element,
-      target: options.target,
-    });
-
-    // Set initial active button
+    // Set initial active button, this is fine now
     this.setActiveButton(currentToolMode);
   }
 
