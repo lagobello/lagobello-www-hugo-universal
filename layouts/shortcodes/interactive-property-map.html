@@ -11,21 +11,20 @@
   <script type="application/javascript" src="/js/ol-layerswitcher.js"></script>
   <link rel="stylesheet" type="text/css" href="/css/interactive-property-map.css">
   
-  <div id="ol-map" class="map"></div>
+  <div id="ol-map" class="map">
+    <div id="tool-controls" class="ol-control ol-unselectable">
+      <div id="info-tool" class="tool-control-button" title="Info Mode">ℹ️</div>
+      <div id="length-tool" class="tool-control-button" title="Length Tool">📏</div>
+      <div id="area-tool" class="tool-control-button" title="Area Tool">📐</div>
+    </div>
+  </div>
   <div id="popup" class="ol-popup">
     <a href="#" id="popup-closer" class="ol-popup-closer"></a>
     <div id="popup-content"></div>
   </div>
   
 <br>
-<form class="form-inline">
-  <label>Click mode: &nbsp;</label>
-  <select id="type">
-    <option value="info">Info pop-up</option>
-    <option value="length">Length tool [m]</option>
-    <option value="area">Area tool [m^2]</option>
-  </select>
-</form>
+<!-- Removed the old form-inline dropdown -->
 <div id="info" style="display: none;"></div>
 
   <br>
