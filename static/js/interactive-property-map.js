@@ -668,7 +668,13 @@ var continueLineMsg = 'Click to continue drawing the line';
  * @param {import("../src/ol/MapBrowserEvent").default} evt The event.
  */
 var pointerMoveHandler = function (evt) {
-  if (typeSelect.value === 'info') return;
+  // Corrected: typeSelect.value to currentToolMode
+  if (currentToolMode === 'info' || !sketch) { // Also ensure sketch exists before trying to use it for messages
+    if (helpTooltipElement && !helpTooltipElement.classList.contains('hidden')) {
+      helpTooltipElement.classList.add('hidden'); // Hide tooltip if not in draw mode or no sketch
+    }
+    return;
+  }
   if (evt.dragging) {
     return;
   }
