@@ -938,6 +938,17 @@ function addInteraction () {
     measureTooltipElement = null;
     createMeasureTooltip();
     ol.Observable.unByKey(listener);
+
+    console.log('drawend event triggered.');
+    if (evt.feature) {
+      console.log('Drawn feature geometry type:', evt.feature.getGeometry().getType());
+      console.log('Drawn feature style:', evt.feature.getStyle()); // Check if it has a style
+    }
+    console.log('Total features on drawing source:', source.getFeatures().length);
+    // Force a re-render of the layer, just in case
+    if (layerVectorDrawings) {
+      layerVectorDrawings.getSource().changed();
+    }
   });
 }
 

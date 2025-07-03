@@ -282,16 +282,17 @@
   width: 1.75em !important; /* Ensure button has a defined, reasonable size for an icon */
   height: 1.75em !important;
   line-height: 1.75em !important;
-  padding: 0 !important;
   background-color: transparent !important;
   color: black !important;
-  font-size: 1em !important; /* Let icon scale with this base size */
+  font-size: 0.9em !important; /* Reduced font-size for the icon character */
+  padding: 1px !important; /* Minimal padding around the icon */
   display: flex !important;
   align-items: center !important;
-  justify-content: flex-start !important; /* Changed to flex-start for left justification */
-  padding-left: 3px !important; /* Added padding on the left */
+  justify-content: flex-start !important; /* Keep left justification */
+  padding-left: 3px !important; /* Keep existing padding on the left */
   margin: 0 !important;
   box-sizing: border-box !important;
+  overflow: visible !important; /* Attempt to prevent clipping if icon is still slightly too big */
 }
 
 /* Ensure the icon itself within the button is not too large or has weird margins */
