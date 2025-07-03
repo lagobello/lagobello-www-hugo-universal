@@ -2,6 +2,17 @@
 /* globals ol turf */
 /* eslint semi: 2 */
 
+// Global application state variables
+var currentToolMode = 'info'; // Default tool: 'info', 'length', 'area'
+const displayUnits = 'imperial'; // Default unit system: 'imperial' or 'metric'
+
+// Global draw variable for interactions
+var draw;
+
+// Global references to individual tool control instances for managing active state
+let infoControlInstance, lengthControlInstance, areaControlInstance;
+
+
 // -----------------------------
 //  Lago Bello Interactive Map
 //
@@ -803,11 +814,7 @@ olMap.getViewport().addEventListener('mouseout', function () {
 });
 
 // var typeSelect = document.getElementById('type'); // Removed old dropdown
-var currentToolMode = 'info'; // Default tool
-const displayUnits = 'imperial'; // Default unit system: 'imperial' or 'metric'
-
-// Global draw variable
-var draw;
+// currentToolMode, displayUnits, and draw are now defined at the top of the script
 
 // Function to set the active tool and update interactions
 // This function will be called by the new OL control
