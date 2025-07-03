@@ -94,16 +94,16 @@ var layerMapboxSatellite = new ol.layer.Tile({
   opacity: 1.0
 });
 
-var layerWatercolors = new ol.layer.Group({
-  title: 'Watercolors',
-  type: 'base',
-  combine: true,
-  layers: [
-    new ol.layer.Tile({ source: new ol.source.Stamen({ layer: 'watercolor' }) }),
-    new ol.layer.Tile({ source: new ol.source.Stamen({ layer: 'terrain-labels' }) })
-  ],
-  opacity: 1.0
-});
+// var layerWatercolors = new ol.layer.Group({
+//   title: 'Watercolors',
+//   type: 'base',
+//   combine: true,
+//   layers: [
+//     new ol.layer.Tile({ source: new ol.source.Stamen({ layer: 'watercolor' }) }),
+//     new ol.layer.Tile({ source: new ol.source.Stamen({ layer: 'terrain-labels' }) })
+//   ],
+//   opacity: 1.0
+// });
 
 // ------------- Vector overlays
 var layerVectorLake = new ol.layer.Vector({
@@ -253,7 +253,8 @@ var layerVectorDrawings = new ol.layer.Vector({
 
 var olLayerGroupBasemaps = new ol.layer.Group({
   title: 'Base maps',
-  layers: [layerOsmStreet, layerWatercolors, layerMapboxSatellite]
+  layers: [layerOsmStreet,  layerMapboxSatellite] // disabled on port to ol 10.6: layerWatercolors
+
 });
 
 var olLayerGroupDrone = new ol.layer.Group({ title: 'Drone imagery', layers: [] });
