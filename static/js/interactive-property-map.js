@@ -292,15 +292,15 @@ function chooseView () { return (window.innerHeight > window.innerWidth) ? viewD
 
 var olMap = new ol.Map({
   target: 'ol-map',
-  controls: [
-    new ol.control.Attribution(),
+  controls: ol.control.defaults({ attributionOptions: { collapsible: true } }).extend([
     new ol.control.Rotate(),
     new ol.control.Zoom(),
     new ol.control.FullScreen(),
     // new ol.control.ScaleLine(),
-  controlMousePosition,
-  layerSwitcher
-],
+    controlMousePosition,
+    layerSwitcher,
+    new ToolControl() // Add the new custom tool control
+  ]),
   overlays: [overlay],
   layers: [olLayerGroupBasemaps, olLayerGroupDrone, olLayerGroupOverlays],
   view: chooseView()
@@ -651,35 +651,75 @@ olMap.getViewport().addEventListener('mouseout', function () {
 var currentToolMode = 'info'; // Default tool
 const displayUnits = 'imperial'; // Default unit system: 'imperial' or 'metric'
 
-// New tool control elements
-const infoTool = document.getElementById('info-tool');
-const lengthTool = document.getElementById('length-tool');
-const areaTool = document.getElementById('area-tool');
-const toolButtons = [infoTool, lengthTool, areaTool];
+// Global draw variable
+var draw;
 
-function setActiveTool(toolId) {
-  currentToolMode = toolId;
-  toolButtons.forEach(button => {
-    if (button.id === toolId + '-tool') {
-      button.classList.add('active');
-    } else {
-      button.classList.remove('active');
+// Function to set the active tool and update interactions
+// This function will be called by the new OL control
+function setActiveToolInteraction(toolMode) {
+  currentToolMode = toolMode;
+  // console.log("Tool mode set to: " + currentToolMode); // For debugging
+  if (olMap) { // Check if map is initialized
+    if (draw) {
+      olMap.removeInteraction(draw);
     }
-  });
-  olMap.removeInteraction(draw);
-  addInteraction();
+    addInteraction(); // This function now relies on global currentToolMode
+  }
 }
 
-// Set initial active tool
-setActiveTool('info');
+// Custom OpenLayers Control for Tools
+class ToolControl extends ol.control.Control {
+  constructor(opt_options) {
+    const options = opt_options || {};
 
-// Event listeners for new tool controls
-infoTool.addEventListener('click', () => setActiveTool('info'));
-lengthTool.addEventListener('click', () => setActiveTool('length'));
-areaTool.addEventListener('click', () => setActiveTool('area'));
+    const element = document.createElement('div');
+    element.className = 'ol-tool-control ol-unselectable ol-control'; // ol-control for base styling
 
+    this.buttons = {};
+    const toolInfo = [
+      { id: 'info', text: 'ℹ️', title: 'Info Mode' },
+      { id: 'length', text: '📏', title: 'Length Tool' },
+      { id: 'area', text: '📐', title: 'Area Tool' },
+    ];
 
-var draw; // global so we can remove it later
+    toolInfo.forEach(tool => {
+      const button = document.createElement('button');
+      button.innerHTML = tool.text;
+      button.title = tool.title;
+      button.addEventListener('click', () => {
+        this.setActiveButton(tool.id);
+        setActiveToolInteraction(tool.id);
+      });
+      element.appendChild(button);
+      this.buttons[tool.id] = button;
+    });
+
+    super({
+      element: element,
+      target: options.target,
+    });
+
+    // Set initial active button
+    this.setActiveButton(currentToolMode);
+  }
+
+  setActiveButton(toolId) {
+    for (const id in this.buttons) {
+      if (id === toolId) {
+        this.buttons[id].classList.add('active');
+      } else {
+        this.buttons[id].classList.remove('active');
+      }
+    }
+  }
+}
+
+// The old setActiveTool function is replaced by setActiveToolInteraction and logic within ToolControl
+// Removed: infoTool, lengthTool, areaTool variables and their event listeners
+// Removed: toolButtons array
+// Removed: setActiveTool('info') initial call, this is handled by ToolControl constructor
+
+// var draw; // global so we can remove it later - already defined globally
 
 /**
  * Format length output.

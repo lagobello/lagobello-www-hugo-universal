@@ -140,39 +140,41 @@
   border-top-color: #ffcc33;
 }
 
-/* New Tool Controls Styling */
-#tool-controls {
-  top: .5em; /* Align with default OL controls like zoom */
-  left: .5em;
-  background-color: rgba(255, 255, 255, 0.4); /* Semi-transparent background like other OL controls */
-  border-radius: 4px;
-  padding: 2px;
-  display: flex; /* Arrange tool buttons in a row */
-  flex-direction: column; /* Stack tool buttons vertically */
+/* Styling for the new OpenLayers ToolControl */
+.ol-tool-control {
+  top: .5em; /* Default OL control top spacing */
+  left: 2.5em; /* Adjust to be next to zoom controls, assuming zoom is at .5em left */
+  /* If zoom controls are on the right, this might need to be left: .5em; */
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(0,0,0,0); /* Transparent background for the group itself */
 }
 
-.tool-control-button {
-  background-color: rgba(0, 60, 136, 0.5); /* OL blue, semi-transparent */
+.ol-tool-control button {
+  background-color: rgba(0, 60, 136, 0.7); /* OL default blue, slightly more opaque */
   color: white;
-  border: none;
-  border-radius: 2px;
-  padding: 5px;
-  margin: 1px; /* Spacing between buttons */
-  font-size: 1.2em; /* Adjust emoji/icon size */
-  line-height: 1.2; /* Adjust for vertical centering of emoji/icon */
-  cursor: pointer;
+  /* display: block; */ /* Handled by flex-direction on parent */
+  margin: 1px 0; /* Vertical spacing between buttons */
+  padding: 0; /* Reset padding */
+  width: 1.75em; /* OL default control button width */
+  height: 1.75em; /* OL default control button height */
   text-align: center;
-  width: 1.5em; /* Ensure buttons are roughly square */
-  height: 1.5em; /* Ensure buttons are roughly square */
+  line-height: 1.75em; /* Vertically center emoji/text */
+  font-size: 1.14em; /* OL default control font size */
+  font-weight: normal; /* OL default is normal for icons like +/- */
+  text-decoration: none;
+  border: none;
+  border-radius: 2px; /* OL default border radius */
+  cursor: pointer;
 }
 
-.tool-control-button:hover {
-  background-color: rgba(0, 60, 136, 0.7); /* Darker on hover */
+.ol-tool-control button:hover {
+  background-color: rgba(0, 60, 136, 1); /* Darker blue on hover */
 }
 
-.tool-control-button.active {
-  background-color: rgba(0, 60, 136, 1); /* Solid color for active button */
-  color: #fff;
+.ol-tool-control button.active {
+  background-color: #007bff; /* A brighter blue for active state */
+  color: white;
 }
 
 /* Custom Tracking Control Styles */
