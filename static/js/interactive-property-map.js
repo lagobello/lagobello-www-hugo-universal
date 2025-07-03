@@ -292,15 +292,16 @@ function chooseView () { return (window.innerHeight > window.innerWidth) ? viewD
 
 var olMap = new ol.Map({
   target: 'ol-map',
-  controls: ol.control.defaults({ attributionOptions: { collapsible: true } }).extend([
+  controls: [
+    new ol.control.Attribution({collapsible: true}), // Assuming this was the intent of attributionOptions
     new ol.control.Rotate(),
     new ol.control.Zoom(),
     new ol.control.FullScreen(),
-    // new ol.control.ScaleLine(),
-    controlMousePosition,
-    layerSwitcher,
+    // new ol.control.ScaleLine(), // This was commented out before
+    controlMousePosition, // This is an instance of ol.control.MousePosition
+    layerSwitcher, // This is an instance of ol.control.LayerSwitcher
     new ToolControl() // Add the new custom tool control
-  ]),
+  ],
   overlays: [overlay],
   layers: [olLayerGroupBasemaps, olLayerGroupDrone, olLayerGroupOverlays],
   view: chooseView()
