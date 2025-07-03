@@ -384,14 +384,14 @@ function addDownloadLinksToLayerSwitcher() {
         if (isGeoJSONFormat || (typeof url === 'string' && url.toLowerCase().endsWith('.geojson'))) {
           const downloadLink = document.createElement('a');
           downloadLink.href = url;
-          downloadLink.innerHTML = '💾'; // Download icon
+          downloadLink.innerHTML = '📥'; // Updated Download icon (Inbox Tray)
           downloadLink.title = `Download ${layerTitle}`;
           downloadLink.className = 'download-geojson-link';
 
           let filename = layerTitle.replace(/[^\w\s.-]/gi, '_').replace(/\s+/g, '_').toLowerCase();
-          if (!filename) filename = "layer";
-          if (!filename.endsWith('.geojson')) filename += ".geojson";
-          downloadLink.download = filename;
+          if (!filename) filename = "layer"; // Fallback filename
+          if (!filename.endsWith('.geojson')) filename += ".geojson"; // Ensure .geojson extension
+          downloadLink.download = filename; // This attribute is key for download behavior
 
           // Append after the label, within the li but ensure it doesn't break flex layouts if any
           li.appendChild(downloadLink); // Simpler append, styling will handle positioning
