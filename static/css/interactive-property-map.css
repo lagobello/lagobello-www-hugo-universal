@@ -298,32 +298,33 @@
 
 
 /* Layer Switcher specific styling */
+/*
 .layer-switcher, .ol-layerswitcher {
-  /* Inherits from .ol-control for background, border-radius */
-  min-width: 3.5em !important; /* Aggressively increase container width */
-  min-height: 2.7em !important; /* Aggressively increase container height */
+  min-width: 3.5em !important;
+  min-height: 2.7em !important;
   padding: 0 !important;
   display: flex !important;
   align-items: center !important;
-  justify-content: center !important; /* Center the button within this larger container */
+  justify-content: center !important;
   line-height: normal !important;
 }
 
 .layer-switcher button, .ol-layerswitcher button {
-  width: 3.0em !important; /* Aggressively increase button width */
-  height: 2.2em !important; /* Aggressively increase button height */
-  line-height: 2.2em !important; /* Match height */
+  width: 3.0em !important;
+  height: 2.2em !important;
+  line-height: 2.2em !important;
   background-color: transparent !important;
   color: black !important;
-  font-size: 0.9em !important; /* Keep font-size for icon relatively small */
+  font-size: 0.9em !important;
   padding: 2px !important;
   display: flex !important;
   align-items: center !important;
-  justify-content: flex-start !important; /* Left justify icon within the button */
+  justify-content: flex-start !important;
   margin: 0 !important;
   box-sizing: border-box !important;
   overflow: visible !important;
 }
+*/
 
 /* Ensure the icon itself within the button is not too large or has weird margins */
 .layer-switcher button i, .ol-layerswitcher button i,
