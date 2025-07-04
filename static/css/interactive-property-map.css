@@ -317,8 +317,9 @@
   margin-left: 4px; /* Reduced space between layer title and download icon */
   text-decoration: none;
   color: green; /* Green color for the download icon */
-  font-size: 0.9em; /* Slightly smaller than layer title if needed */
+  font-size: 1.8em; /* Increased size (was 0.9em) */
   cursor: pointer;
+  line-height: 1; /* Adjust line-height to prevent excessive vertical space */
 }
 
 .download-geojson-link:hover {
@@ -345,7 +346,7 @@
     color: #007bff;
     font-size: 0.9em;
     cursor: pointer;
-    vertical-align: baseline;
+    vertical-align: middle; /* Changed from baseline for better centering with a larger sibling */
     /* No outline/red border */
 }
 .copy-url-button + .download-geojson-link,
@@ -360,12 +361,17 @@
      If not, we can add a specific one here too: e.g., outline: 1px dotted #007bff; */
 }
 
+.download-geojson-link {
+  /* Existing styles: margin-left, text-decoration, color, font-size, cursor, line-height */
+  vertical-align: middle; /* Ensure consistent alignment method */
+}
+
 .download-geojson-link:hover,
 .download-geojson-link:focus {
   color: darkgreen; /* Existing hover for download */
   text-decoration: none; /* Keep no underline */
   outline: 1px dotted #007bff; /* Mimic button focus/hover appearance */
-  outline-offset: 1px; /* Give a little space between icon and outline */
+  outline-offset: 2px; /* Increased offset for larger icon */
 }
 
 
