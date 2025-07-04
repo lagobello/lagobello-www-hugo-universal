@@ -436,18 +436,10 @@ function addDownloadLinksToLayerSwitcher() {
       }
 
       // Append the icon container to the list item after the label
-      if (iconContainer && label.parentNode === li) { // Ensure label is a direct child of li
-        // Insert the container after the label.
-        // If there are other elements after the label (like the checkbox input itself if it's not first),
-        // this will place the icons between the label and those elements.
-        // OpenLayers LayerSwitcher typically has <input type="checkbox"><label>text</label>
-        // So, appending to li or inserting after label should achieve a similar result outside the checkbox mechanism.
-        // A more robust way is to ensure it's the last element or specifically after the label.
-        if (label.nextSibling) {
-            li.insertBefore(iconContainer, label.nextSibling);
-        } else {
-            li.appendChild(iconContainer);
-        }
+      if (iconContainer && label && label.parentNode === li) { // Ensure label exists and is a direct child of li
+        // Use label.after() to insert the icon container immediately after the label element.
+        // This is a more direct and modern way to ensure correct placement.
+        label.after(iconContainer);
       }
     }
   }
