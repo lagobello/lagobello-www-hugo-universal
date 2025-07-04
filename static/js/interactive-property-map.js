@@ -371,7 +371,6 @@ function addDownloadLinksToLayerSwitcher() {
 
       // Determine URL and type
       if (source instanceof ol.source.Vector && typeof source.getUrl === 'function' && source.getUrl()) {
-        // GeoJSON Layer
         const rawUrl = source.getUrl();
         const format = source.getFormat();
         const isGeoJSONFormat = format && typeof format.getType === 'function' && format.getType().toLowerCase() === 'geojson';
@@ -380,34 +379,35 @@ function addDownloadLinksToLayerSwitcher() {
           urlToCopy = rawUrl;
         }
       } else if (source instanceof ol.source.XYZ) {
-        // Tile Layer (includes Drone and Basemaps like Mapbox)
-        urlToCopy = source.getUrls()[0]; // Typically the first URL is representative
+        urlToCopy = source.getUrls()[0];
         if (urlToCopy && urlToCopy.includes(mapboxKey)) {
-          // Sanitize Mapbox URL
           const urlObj = new URL(urlToCopy);
           urlObj.searchParams.set('access_token', 'YOUR_MAPBOX_API_KEY');
           urlToCopy = urlObj.toString();
-        } else if (targetLayer.get('title') && olLayerGroupDrone.getLayers().getArray().includes(targetLayer)) {
-          // Drone layers (already have URLs from source.getUrls()[0])
-          // No specific sanitization needed unless they start using API keys
         }
-      } else if (source instanceof ol.source.OSM) {
-        // OSM Layer - no single URL to copy in the same way, could construct a template
-        // For now, we won't add a copy URL button for OSM.
       }
+      // OSM layers are intentionally skipped for copy URL as they don't have a simple one.
 
+      // Create a container for the icons if we have any actions
+      let iconContainer = null;
+      if (urlToCopy || (isGeoJSON && urlToCopy)) {
+        iconContainer = document.createElement('span');
+        iconContainer.className = 'layer-action-icons';
+        // Basic styling for the container - can be refined in CSS
+        iconContainer.style.marginLeft = '8px'; // Space it from the label
+        iconContainer.style.display = 'inline-flex';
+        iconContainer.style.alignItems = 'center';
+      }
 
       // Add Copy URL button
       if (urlToCopy) {
         const copyButton = document.createElement('button');
-        copyButton.innerHTML = '🔗'; // Link icon
+        copyButton.innerHTML = '🔗';
         copyButton.title = `Copy URL for ${layerTitle}`;
         copyButton.className = 'copy-url-button';
-        copyButton.style.marginLeft = '5px'; // Add some spacing
+        // copyButton.style.marginLeft = '5px'; // Spacing now handled by container or individual button margins
         copyButton.onclick = function() {
           navigator.clipboard.writeText(urlToCopy).then(function() {
-            // console.log(`URL for ${layerTitle} copied to clipboard: ${urlToCopy}`);
-            // Optionally, provide user feedback (e.g., change icon, show tooltip)
             const originalText = copyButton.innerHTML;
             copyButton.innerHTML = '✅';
             setTimeout(() => { copyButton.innerHTML = originalText; }, 1500);
@@ -415,25 +415,39 @@ function addDownloadLinksToLayerSwitcher() {
             console.error(`Failed to copy URL for ${layerTitle}: `, err);
           });
         };
-        li.appendChild(copyButton);
+        iconContainer.appendChild(copyButton);
       }
 
       // Add Download link for GeoJSON
-      if (isGeoJSON && urlToCopy) { // urlToCopy here ensures we only add download if URL is valid
+      if (isGeoJSON && urlToCopy) {
         const downloadLink = document.createElement('a');
-        downloadLink.href = urlToCopy; // Use the determined (and possibly sanitized for display) URL
+        downloadLink.href = urlToCopy;
         downloadLink.innerHTML = '⭳';
         downloadLink.title = `Download ${layerTitle}`;
         downloadLink.className = 'download-geojson-link';
-        downloadLink.style.marginLeft = '5px';
-
+        // downloadLink.style.marginLeft = '5px'; // Spacing now handled by container or individual button margins
 
         let filename = layerTitle.replace(/[^\w\s.-]/gi, '_').replace(/\s+/g, '_').toLowerCase();
         if (!filename) filename = "layer";
         if (!filename.endsWith('.geojson')) filename += ".geojson";
         downloadLink.download = filename;
 
-        li.appendChild(downloadLink);
+        iconContainer.appendChild(downloadLink);
+      }
+
+      // Append the icon container to the list item after the label
+      if (iconContainer && label.parentNode === li) { // Ensure label is a direct child of li
+        // Insert the container after the label.
+        // If there are other elements after the label (like the checkbox input itself if it's not first),
+        // this will place the icons between the label and those elements.
+        // OpenLayers LayerSwitcher typically has <input type="checkbox"><label>text</label>
+        // So, appending to li or inserting after label should achieve a similar result outside the checkbox mechanism.
+        // A more robust way is to ensure it's the last element or specifically after the label.
+        if (label.nextSibling) {
+            li.insertBefore(iconContainer, label.nextSibling);
+        } else {
+            li.appendChild(iconContainer);
+        }
       }
     }
   }
