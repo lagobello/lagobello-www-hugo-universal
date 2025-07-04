@@ -326,16 +326,29 @@
   text-decoration: none; /* Keep no underline on hover, or add if preferred */
 }
 
+/* Container for Layer Action Icons */
+.layer-action-icons {
+  /* display: inline-flex; and align-items: center; are set inline in JS */
+  /* margin-left: 8px; is set inline in JS to space from label */
+  /* No additional specific styles needed here for now unless further refinement is required */
+}
+
 /* Styling for the Copy URL button in the LayerSwitcher */
 .copy-url-button {
-  margin-left: 4px; /* Space from previous item (label or download icon) */
+  /* margin-left is removed as items are now in a flex container */
   text-decoration: none;
   color: #007bff; /* A standard blue for links/actions */
-  font-size: 0.9em;
+  font-size: 0.9em; /* Consistent with download link */
   cursor: pointer;
   background: none;
   border: none;
-  padding: 0;
+  padding: 0; /* Remove default button padding */
+  display: inline-flex; /* Helps align emoji icon if needed */
+  align-items: center;
+}
+.copy-url-button + .download-geojson-link,
+.download-geojson-link + .copy-url-button {
+  margin-left: 5px; /* Add space between copy and download icons if both are present */
 }
 
 .copy-url-button:hover {
