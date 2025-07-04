@@ -88,6 +88,30 @@
 /* Note: .ol-zoom positioning is part of the restored Top-Left Control Column */
 .ol-zoom button {
     font-weight: bold;
+    /* Standard OL buttons have no border, only outline on hover/focus.
+       If a border is desired for all buttons, it would be added to .ol-control button */
+}
+
+/* Styling for active state and click feedback on control buttons */
+.ol-control button.active {
+    background-color: rgba(0, 60, 136, 0.15); /* Subtle blue background for active state */
+    border: 2px solid rgba(0, 60, 136, 0.7) !important; /* Thicker, darker blue border for active state */
+    /* Adjust padding if border throws off size, e.g., padding: 0; if buttons had 1px margin and now border is 2px */
+    /* Standard OL buttons have margin: 1px. A 2px border will make them slightly larger. */
+    /* To maintain size, could use outline instead of border, or adjust margins/padding. */
+    /* Using border for now as requested for "thicker border". */
+    outline: none; /* Remove default focus outline if we use a border for active state */
+}
+
+.ol-control button:active {
+    background-color: rgba(0, 60, 136, 0.3); /* Slightly darker background for immediate click feedback */
+}
+
+/* Specific styling for buttons within the unit toggle control when active */
+.ol-unit-toggle-control button.active {
+    background-color: rgba(0, 60, 136, 0.2);
+    border: 2px solid rgba(0, 60, 136, 0.8);
+    /* Ensure text color contrasts if needed, e.g., color: white; if background is dark */
 }
 
 /* === Top-Left Control Column Styling (Restored) === */
@@ -112,9 +136,11 @@
 .ol-zoom {
   top: 0.5em !important;
 }
+/* Adjusted multipliers for tighter spacing between info, length, area tools */
 .ol-info-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 0.5) !important; }
-.ol-length-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 1.5) !important; }
-.ol-area-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 2.5) !important; }
+.ol-length-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 1.4) !important; } /* Reduced from 1.5 */
+.ol-area-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 2.3) !important; } /* Reduced from 2.5 */
+/* Unit toggle control's original multiplier maintained to preserve its relative spacing from the tools above it */
 .ol-unit-toggle-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 3.5) !important; }
 
 /* UnitToggleControl specific layout (Restored for positioning) */
@@ -152,6 +178,31 @@
 /* If .tracking-control button needs specific styling for its default look (e.g. emoji size):
    .tracking-control button { font-size: 1.2em; }
 */
+
+/* Restored Tracking Statistics Styling (including background) */
+.tracking-stats {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: rgba(255,255,255,0.8); /* Semi-transparent white background */
+  padding: 3px 8px;
+  border-radius: 4px;
+  /* margin-right: 0px; /* Assuming tracking-control handles spacing if needed */
+  /* order: 1; /* This was for layout within tracking-control, should be fine if structure is simple */
+  box-shadow: 0 0 5px rgba(0,0,0,0.2); /* Subtle shadow */
+  color: #333; /* Default text color for stats */
+}
+
+.tracking-stats div { /* Individual stat item */
+  padding: 2px 5px;
+  font-size: 0.75em;
+  white-space: nowrap;
+}
+
+.tracking-stats div:not(:last-child) {
+  border-right: 1px solid #ccc; /* Separator lines between stats */
+}
+
 
 /* Layer Switcher icon styling */
 .layer-switcher button i, .ol-layerswitcher button i,
