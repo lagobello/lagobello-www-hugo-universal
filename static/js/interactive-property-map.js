@@ -316,28 +316,24 @@ function setSelectedTool(toolMode, clickedControlInstance) {
   setActiveToolInteraction(toolMode); // This handles map interactions
 }
 
-// Function to add download links to GeoJSON layers in the LayerSwitcher
+// Function to add download/copy links to layers in the LayerSwitcher
 function addDownloadLinksToLayerSwitcher() {
   if (!layerSwitcher || !layerSwitcher.panel) {
-    // console.warn('LayerSwitcher panel not found or layerSwitcher not ready.');
     return;
   }
 
   const panelUl = layerSwitcher.panel.querySelector('ul');
   if (!panelUl) {
-    // console.warn('LayerSwitcher panel UL element not found.');
     return;
   }
 
-  // Iterate over layer list items. LayerSwitcher creates LIs with a label and input.
-  // We need to find the corresponding OL layer to check its source.
   const listItems = panelUl.getElementsByTagName('li');
 
   for (let i = 0; i < listItems.length; i++) {
     const li = listItems[i];
 
-    // Prevent adding multiple download links
-    if (li.querySelector('a.download-geojson-link')) {
+    // Prevent adding multiple sets of links
+    if (li.querySelector('a.download-geojson-link') || li.querySelector('button.copy-url-button')) {
       continue;
     }
 
@@ -349,53 +345,95 @@ function addDownloadLinksToLayerSwitcher() {
 
     let targetLayer = null;
 
-    // Helper function to recursively find layer by title
     function findLayerByTitle(layerCollection, title) {
-        let foundLayer = null;
-        layerCollection.forEach(function(layer) {
-            if (foundLayer) return; // Already found
-            if (layer.get('title') === title && !(layer instanceof ol.layer.Group)) {
-                foundLayer = layer;
-            } else if (layer instanceof ol.layer.Group) {
-                // Check if this group itself is the target (if LayerSwitcher allows group downloads)
-                // For now, only targeting non-group layers. Recurse if needed.
-                // foundLayer = findLayerByTitle(layer.getLayers(), title); // Simple recursion
-                // More robust: LayerSwitcher.forEachRecursive might be better if available globally
-                // or we can use its logic. For now, this simple recursion should work for a few levels.
-                 layer.getLayers().forEach(function(subLayer){ // Basic one-level recursion for groups
-                    if(subLayer.get('title') === title && !(subLayer instanceof ol.layer.Group)){
-                        foundLayer = subLayer;
-                    }
-                 });
+      let foundLayer = null;
+      layerCollection.forEach(function(layer) {
+        if (foundLayer) return;
+        if (layer.get('title') === title && !(layer instanceof ol.layer.Group)) {
+          foundLayer = layer;
+        } else if (layer instanceof ol.layer.Group) {
+          layer.getLayers().forEach(function(subLayer) {
+            if (subLayer.get('title') === title && !(subLayer instanceof ol.layer.Group)) {
+              foundLayer = subLayer;
             }
-        });
-        return foundLayer;
+          });
+        }
+      });
+      return foundLayer;
     }
 
     targetLayer = findLayerByTitle(olMap.getLayers(), layerTitle);
 
     if (targetLayer) {
       const source = targetLayer.getSource();
+      let urlToCopy = null;
+      let isGeoJSON = false;
+
+      // Determine URL and type
       if (source instanceof ol.source.Vector && typeof source.getUrl === 'function' && source.getUrl()) {
-        const url = source.getUrl();
+        // GeoJSON Layer
+        const rawUrl = source.getUrl();
         const format = source.getFormat();
         const isGeoJSONFormat = format && typeof format.getType === 'function' && format.getType().toLowerCase() === 'geojson';
-
-        if (isGeoJSONFormat || (typeof url === 'string' && url.toLowerCase().endsWith('.geojson'))) {
-          const downloadLink = document.createElement('a');
-          downloadLink.href = url;
-          downloadLink.innerHTML = '⭳'; // Updated Download icon (U+2B73)
-          downloadLink.title = `Download ${layerTitle}`;
-          downloadLink.className = 'download-geojson-link';
-
-          let filename = layerTitle.replace(/[^\w\s.-]/gi, '_').replace(/\s+/g, '_').toLowerCase();
-          if (!filename) filename = "layer"; // Fallback filename
-          if (!filename.endsWith('.geojson')) filename += ".geojson"; // Ensure .geojson extension
-          downloadLink.download = filename; // This attribute is key for download behavior
-
-          // Append after the label, within the li but ensure it doesn't break flex layouts if any
-          li.appendChild(downloadLink); // Simpler append, styling will handle positioning
+        if (isGeoJSONFormat || (typeof rawUrl === 'string' && rawUrl.toLowerCase().endsWith('.geojson'))) {
+          isGeoJSON = true;
+          urlToCopy = rawUrl;
         }
+      } else if (source instanceof ol.source.XYZ) {
+        // Tile Layer (includes Drone and Basemaps like Mapbox)
+        urlToCopy = source.getUrls()[0]; // Typically the first URL is representative
+        if (urlToCopy && urlToCopy.includes(mapboxKey)) {
+          // Sanitize Mapbox URL
+          const urlObj = new URL(urlToCopy);
+          urlObj.searchParams.set('access_token', 'YOUR_MAPBOX_API_KEY');
+          urlToCopy = urlObj.toString();
+        } else if (targetLayer.get('title') && olLayerGroupDrone.getLayers().getArray().includes(targetLayer)) {
+          // Drone layers (already have URLs from source.getUrls()[0])
+          // No specific sanitization needed unless they start using API keys
+        }
+      } else if (source instanceof ol.source.OSM) {
+        // OSM Layer - no single URL to copy in the same way, could construct a template
+        // For now, we won't add a copy URL button for OSM.
+      }
+
+
+      // Add Copy URL button
+      if (urlToCopy) {
+        const copyButton = document.createElement('button');
+        copyButton.innerHTML = '🔗'; // Link icon
+        copyButton.title = `Copy URL for ${layerTitle}`;
+        copyButton.className = 'copy-url-button';
+        copyButton.style.marginLeft = '5px'; // Add some spacing
+        copyButton.onclick = function() {
+          navigator.clipboard.writeText(urlToCopy).then(function() {
+            // console.log(`URL for ${layerTitle} copied to clipboard: ${urlToCopy}`);
+            // Optionally, provide user feedback (e.g., change icon, show tooltip)
+            const originalText = copyButton.innerHTML;
+            copyButton.innerHTML = '✅';
+            setTimeout(() => { copyButton.innerHTML = originalText; }, 1500);
+          }).catch(function(err) {
+            console.error(`Failed to copy URL for ${layerTitle}: `, err);
+          });
+        };
+        li.appendChild(copyButton);
+      }
+
+      // Add Download link for GeoJSON
+      if (isGeoJSON && urlToCopy) { // urlToCopy here ensures we only add download if URL is valid
+        const downloadLink = document.createElement('a');
+        downloadLink.href = urlToCopy; // Use the determined (and possibly sanitized for display) URL
+        downloadLink.innerHTML = '⭳';
+        downloadLink.title = `Download ${layerTitle}`;
+        downloadLink.className = 'download-geojson-link';
+        downloadLink.style.marginLeft = '5px';
+
+
+        let filename = layerTitle.replace(/[^\w\s.-]/gi, '_').replace(/\s+/g, '_').toLowerCase();
+        if (!filename) filename = "layer";
+        if (!filename.endsWith('.geojson')) filename += ".geojson";
+        downloadLink.download = filename;
+
+        li.appendChild(downloadLink);
       }
     }
   }
