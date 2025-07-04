@@ -10,30 +10,7 @@
     bottom: 10px;
 }
 
-.ol-mouse-position span{
-    display: block;
-    margin: 1px;
-    padding: 0;
-    color: #fff;
-    font-size: 1.0em;
-    background-color: rgba(0,60,136,.5);
-    border: none;
-    border-radius: 2px;
-
-}
-
-.ol-rotate {
-    right: 50px
-}
-
-.layer-switcher button {
-    background-color: rgba(0,60,136,.5);
-}
-
-.layer-switcher .panel {
-    background-color: rgba(255,255,255,.9);
-}
-
+/* Popup styles - Unchanged */
 .ol-popup {
   position: absolute;
   background-color: white;
@@ -76,257 +53,33 @@
 .ol-popup-closer:after {
   content: "✖";
 }
+.popup-section { margin-bottom: 10px; }
+.popup-section-title { font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #eee; padding-bottom: 3px; }
+.inferred-data { }
+.popup-toggle-button { background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 4px; padding: 5px 10px; cursor: pointer; display: block; margin: 10px auto 5px; text-align: center; }
+.popup-toggle-button:hover { background-color: #e0e0e0; }
 
-.popup-section {
-  margin-bottom: 10px;
-}
-
-.popup-section-title {
-  font-weight: bold;
-  margin-bottom: 5px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 3px;
-}
-
-.inferred-data {
-  /* Initially hidden - JS will toggle display: block; */
-}
-
-.popup-toggle-button {
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 5px 10px;
-  cursor: pointer;
-  display: block; /* Make it a block to take full width or center easily */
-  margin: 10px auto 5px; /* Auto margins for centering if block */
-  text-align: center;
-}
-
-.popup-toggle-button:hover {
-  background-color: #e0e0e0;
-}
-
-
-#lot-table {
-  height: 300px;
-  overflow:auto;
-}
-
-.lot-table {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
-  height: 200px;
-  overflow:auto;
-}
-
-.lot-table td, .lot-table th {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
+/* Table styles - Unchanged */
+#lot-table { height: 300px; overflow:auto; }
+.lot-table { font-family: "Trebuchet MS", Arial, Helvetica, sans-serif; border-collapse: collapse; height: 200px; overflow:auto; }
+.lot-table td, .lot-table th { border: 1px solid #ddd; padding: 8px; }
 .lot-table tr:nth-child(even){background-color: #f2f2f2;}
-
 .lot-table tr:hover {background-color: #ddd;}
+.lot-table th { padding-top: 12px; padding-bottom: 12px; text-align: left; background-color: rgba(0,60,136,.7); color: white; }
 
-.lot-table th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
-  background-color: rgba(0,60,136,.7);
-  color: white;
-}
+/* Tooltip styles - Unchanged */
+.ol-tooltip { position: relative; background: rgba(0, 0, 0, 0.5); border-radius: 4px; color: white; padding: 4px 8px; opacity: 0.7; white-space: nowrap; font-size: 12px; }
+.ol-tooltip-measure { opacity: 1; font-weight: bold; }
+.ol-tooltip-static { background-color: #ffcc33; color: black; border: 1px solid white; }
+.ol-tooltip-measure:before, .ol-tooltip-static:before { border-top: 6px solid rgba(0, 0, 0, 0.5); border-right: 6px solid transparent; border-left: 6px solid transparent; content: ""; position: absolute; bottom: -6px; margin-left: -7px; left: 50%; }
+.ol-tooltip-static:before { border-top-color: #ffcc33; }
 
-.ol-tooltip {
-  position: relative;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 4px;
-  color: white;
-  padding: 4px 8px;
-  opacity: 0.7;
-  white-space: nowrap;
-  font-size: 12px;
-}
-.ol-tooltip-measure {
-  opacity: 1;
-  font-weight: bold;
-}
-.ol-tooltip-static {
-  background-color: #ffcc33;
-  color: black;
-  border: 1px solid white;
-}
-.ol-tooltip-measure:before,
-.ol-tooltip-static:before {
-  border-top: 6px solid rgba(0, 0, 0, 0.5);
-  border-right: 6px solid transparent;
-  border-left: 6px solid transparent;
-  content: "";
-  position: absolute;
-  bottom: -6px;
-  margin-left: -7px;
-  left: 50%;
-}
-.ol-tooltip-static:before {
-  border-top-color: #ffcc33;
-}
-
-/* REMOVED old .ol-tool-control styles */
-
-/* Styling for OpenLayers controls to achieve default OL look */
-
-/* General style for each control block (Zoom, Info, Length, Area, UnitToggle) */
-/* OL controls are typically positioned absolutely by OL itself. We style their appearance. */
-.ol-control {
-  background-color: rgba(255, 255, 255, 0.4); /* Default OL light background */
-  border-radius: 4px;
-  padding: 2px;
-  /* Default OL controls are position: absolute already. We'll override top/left for the column group. */
-}
-.ol-control:hover {
-    background-color: rgba(255,255,255,0.6);
-}
-
-/* Buttons within ANY .ol-control (custom or default like zoom) */
-.ol-control button {
-  background-color: transparent;
-  /* color: black; /* Removed to allow emoji native colors. Specific controls can set color if needed. */
-  font-family: 'Arial', sans-serif; /* Fallback, OL might use its own stack */
-  font-size: 1.14em; /* Matches OL default for icon buttons, emojis might render based on this too */
-  font-weight: bold;
-  text-decoration: none;
-  text-align: center;
-  height: 1.375em;
-  width: 1.375em;
-  line-height: 1.375em;
-  margin: 1px;
-  border: none;
-  border-radius: 2px;
-  padding: 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ol-control button:hover {
-  background-color: rgba(0, 0, 0, 0.15); /* OL default hover is often a slightly darker background */
-}
-
-.ol-control button.active {
-  background-color: rgba(0, 60, 136, 0.7); /* Using a blue similar to an active state seen before, can adjust to OL default */
-  color: white; /* Text color for active button often contrasts with background */
-}
-
-/* OL Zoom control buttons are often just text +/- */
+/* OL Zoom control button styling */
 .ol-zoom button {
     font-weight: bold;
-    color: black !important; /* Ensure zoom +/- are black if general color was removed for emojis */
 }
 
-/* === Top-Left Control Column Styling === */
-:root {
-  /* Assuming a single button control like Info, Length, Area, UnitToggle (single button height) */
-  /* Button height 1.375em + internal margins/padding ~0.2em + control padding ~0.2em + margin-bottom 5px */
-  --ol-single-button-control-slot-height: 2.2em; /* Estimate for one custom control + space below it */
-  /* OL Zoom control has two buttons, so it's taller. */
-  /* (1.375em * 2) for buttons + 1px internal margin + 4px padding + 5px margin-bottom = ~2.75em + 10px */
-  --ol-zoom-control-total-height: 3.4em; /* Adjusted estimate for zoom control height + its margin-bottom */
-}
-
-.ol-zoom,
-.ol-info-control,
-.ol-length-control,
-.ol-area-control,
-.ol-unit-toggle-control {
-  position: absolute !important;
-  left: 0.5em !important;
-  /* margin-bottom is effectively handled by the 'slot height' in top calculations */
-}
-
-.ol-zoom {
-  top: 0.5em !important;
-  /* Default OL zoom has its own margin-bottom if it's part of ol-control. */
-  /* We'll use --ol-zoom-control-total-height for spacing *after* it. */
-}
-/* Add an additional slot height after zoom before info control */
-.ol-info-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 0.5) !important; } /* Adding half for now, can be a full slot */
-.ol-length-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 1.5) !important; }
-.ol-area-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 2.5) !important; }
-.ol-unit-toggle-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 3.5) !important; }
-/* Note: UnitToggleControl itself has two buttons vertically, so its actual height will be more than one slot. */
-/* This will make the spacing after UnitToggleControl seem larger if anything followed it using single slot logic. */
-/* For now, it's the last in the column. */
-
-/* === End Top-Left Column Styling === */
-
-
-/* UnitToggleControl specific layout and button styling */
-.ol-unit-toggle-control {
-  display: flex;
-  flex-direction: column; /* Stack Imperial over Metric */
-  /* background-color will be inherited from .ol-control */
-}
-
-.ol-unit-toggle-control button {
-  width: auto; /* Allow text and emoji to determine width */
-  padding: 0 0.5em;
-  justify-content: flex-start; /* Align text/emoji to the left */
-  /* height and line-height can be inherited or slightly adjusted if needed for text */
-  font-size: 0.9em; /* Slightly smaller text for unit toggle is common */
-  font-weight: normal; /* Text buttons are often not bold */
-}
-
-/* Styling for the Mouse Position (Cursor Position) control */
-.ol-mouse-position {
-  /* Inherits .ol-control for background, padding, border-radius if it has that class. */
-  /* If not, or to ensure consistency: */
-  background-color: rgba(255, 255, 255, 0.4) !important; /* Default OL light background */
-  border-radius: 4px !important;
-  padding: 3px 5px !important; /* Typical padding for text-based controls */
-  color: black !important; /* Text color */
-  font-size: 0.85em !important; /* OL default mouse position font size is often smaller */
-  /* Its default position is bottom-center, which is fine. */
-  /* Remove any custom background from its internal span if it exists from old styles */
-}
-.ol-mouse-position span { /* If spans inside have their own conflicting styles */
-    background-color: transparent !important;
-    color: black !important;
-    border: none !important;
-    padding: 0 2px !important; /* Minimal padding between coordinate parts */
-}
-
-
-/* Layer Switcher specific styling */
-/*
-.layer-switcher, .ol-layerswitcher {
-  min-width: 3.5em !important;
-  min-height: 2.7em !important;
-  padding: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  line-height: normal !important;
-}
-
-.layer-switcher button, .ol-layerswitcher button {
-  width: 3.0em !important;
-  height: 2.2em !important;
-  line-height: 2.2em !important;
-  background-color: transparent !important;
-  color: black !important;
-  font-size: 0.9em !important;
-  padding: 2px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  margin: 0 !important;
-  box-sizing: border-box !important;
-  overflow: visible !important;
-}
-*/
-
-/* Ensure the icon itself within the button is not too large or has weird margins */
+/* Layer Switcher icon styling */
 .layer-switcher button i, .ol-layerswitcher button i,
 .layer-switcher button svg, .ol-layerswitcher button svg {
   max-width: 100%;
@@ -335,42 +88,42 @@
   margin: auto;
 }
 
-/* The panel itself needs to be styled if it's not already */
+/* Layer Switcher Panel styling */
 .layer-switcher .panel, .ol-layerswitcher .panel {
-    background-color: rgba(255,255,255,0.9) !important;
-    border: 1px solid #ccc !important;
+    background-color: rgb(255, 255, 255) !important;
+    border: 4px solid rgb(238, 238, 238) !important;
     color: black !important;
-    z-index: 1050 !important; /* Ensure panel is above other map elements */
-    /* OL LayerSwitcher JS handles display:none/block for opening/closing */
+    z-index: 1050 !important;
 }
 
-/* Styling for the GeoJSON download link in the LayerSwitcher */
+/* GeoJSON download link in LayerSwitcher */
 .download-geojson-link {
-  margin-left: 4px; /* Reduced space between layer title and download icon */
+  margin-left: 4px;
   text-decoration: none;
-  color: green; /* Green color for the download icon */
-  font-size: 1.8em; /* Increased size (was 0.9em) */
+  color: green;
+  font-size: 1.8em;
   cursor: pointer;
-  line-height: 1; /* Adjust line-height to prevent excessive vertical space */
+  line-height: 1;
+  vertical-align: middle;
 }
-
 .download-geojson-link:hover {
-  color: darkgreen; /* Darker green on hover */
-  text-decoration: none; /* Keep no underline on hover, or add if preferred */
+  color: darkgreen;
+  text-decoration: none;
+}
+.download-geojson-link:focus {
+  color: darkgreen;
+  outline: 1px dotted #007bff;
+  outline-offset: 2px;
 }
 
-/* Container for Layer Action Icons */
-.layer-action-icons {
-  /* display: inline-flex; and align-items: center; are set inline in JS */
-  /* margin-left: 8px; is set inline in JS to space from label */
-  /* No additional specific styles needed here for now unless further refinement is required */
-}
+/* Layer Action Icons container - no specific styles */
+.layer-action-icons { }
 
-/* Styling for the Copy URL button in the LayerSwitcher */
+/* Copy URL button in LayerSwitcher */
 .copy-url-button {
-    display: inline !important; /* Critical for placement */
-    float: none !important;    /* Critical for placement */
-    position: static !important;/* Critical for placement */
+    display: inline !important;
+    float: none !important;
+    position: static !important;
     margin: 0;
     padding: 0;
     background: none;
@@ -378,82 +131,15 @@
     color: #007bff;
     font-size: 0.9em;
     cursor: pointer;
-    vertical-align: middle; /* Changed from baseline for better centering with a larger sibling */
-    /* No outline/red border */
+    vertical-align: middle;
 }
 .copy-url-button + .download-geojson-link,
 .download-geojson-link + .copy-url-button {
-  margin-left: 3px; /* Reduced spacing */
+  margin-left: 3px;
 }
-
 .copy-url-button:hover,
 .copy-url-button:focus {
   color: #0056b3;
-  /* Assuming the browser provides a default focus outline for buttons that you like.
-     If not, we can add a specific one here too: e.g., outline: 1px dotted #007bff; */
-}
-
-.download-geojson-link {
-  /* Existing styles: margin-left, text-decoration, color, font-size, cursor, line-height */
-  vertical-align: middle; /* Ensure consistent alignment method */
-}
-
-.download-geojson-link:hover,
-.download-geojson-link:focus {
-  color: darkgreen; /* Existing hover for download */
-  text-decoration: none; /* Keep no underline */
-  outline: 1px dotted #007bff; /* Mimic button focus/hover appearance */
-  outline-offset: 2px; /* Increased offset for larger icon */
-}
-
-
-/* Custom Tracking Control Styles */
-.tracking-control { /* This is an .ol-control, so it inherits some base styles */
-  top: .5em; /* Keep its original position if desired, or adjust */
-  right: 7em;
-  left: auto;
-  /* background-color is inherited from .ol-control general style (rgba(255,255,255,0.4)) */
-  /* border-radius is inherited */
-  /* padding is inherited or can be set to 0 if buttons fill it */
-  padding: 2px; /* Consistent with other .ol-control */
-  box-shadow: none; /* OL controls typically don't have shadow */
-  display: flex;
-  align-items: center;
-}
-
-.tracking-control button {
-  /* This button should now inherit from the general .ol-control button style: */
-  /* - background-color: transparent */
-  /* - color: black */
-  /* - dimensions, border-radius, etc. */
-  /* We might only need to override specifics if they differ, e.g., emoji size or if it's not bold */
-  font-size: 1.2em; /* Retain larger emoji size for this specific button if desired */
-  /* padding: 4px; /* This was specific, check if new general button style is enough */
-  /* margin: 1px; /* General button style has this */
-  /* order: 2; /* If stats are still to its left */
-}
-
-/* Hover and active states will be inherited from general .ol-control button:hover and button.active */
-
-.tracking-stats {
-  display: flex; /* This is set by JS, but good to have as default if ever shown by CSS */
-  flex-direction: row; /* Stats in a row */
-  align-items: center; /* Align stat items */
-  background-color: rgba(255,255,255,0.8); /* Background for stats area */
-  padding: 3px 8px;
-  border-radius: 4px;
-  margin-right: 0px; /* No margin needed if button has margin-left */
-  order: 1; /* Stats will be on the left */
-  box-shadow: 0 0 5px rgba(0,0,0,0.2); /* Add shadow to stats block */
-}
-
-.tracking-stats div { /* Individual stat item */
-  padding: 2px 5px;
-  font-size: 0.75em; /* Slightly smaller font for stats */
-  color: #333;
-  white-space: nowrap; /* Prevent wrapping of individual stat lines */
-}
-
-.tracking-stats div:not(:last-child) {
-  border-right: 1px solid #ccc; /* Separator lines */
+  outline: 1px dotted #007bff;
+  outline-offset: 1px;
 }
