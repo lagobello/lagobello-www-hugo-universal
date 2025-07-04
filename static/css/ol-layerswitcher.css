@@ -18,7 +18,10 @@
 }
 
 .layer-switcher button {
-  float: right;
+  /* float: right; */
+  position: absolute; /* Added */
+  right: 0; /* Corrected: Should be flush with parent's right edge */
+  top: 0; /* Added for explicit vertical positioning within parent */
   z-index: 1;
   width: 38px;
   height: 38px;
@@ -61,8 +64,8 @@
 .layer-switcher.shown.layer-switcher-activation-mode-click > button {
   display: block;
   background-image: unset;
-  right: 2px;
-  position: absolute;
+  /* right: 2px; */ /* Removed */
+  /* position: absolute; */ /* Removed */
   background-color: #eee;
   margin: 1px;
 }
@@ -172,7 +175,7 @@ li.layer-switcher-base-group > label {
   padding-left: 34px;
 }
 .layer-switcher.shown.layer-switcher-activation-mode-click > button {
-  left: 0;
+  /* left: 0; */ /* Removed as positioning is handled by .layer-switcher button */
   border-right: 0;
 }
 
