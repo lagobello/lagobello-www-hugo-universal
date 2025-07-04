@@ -326,6 +326,22 @@
   text-decoration: none; /* Keep no underline on hover, or add if preferred */
 }
 
+/* Styling for the Copy URL button in the LayerSwitcher */
+.copy-url-button {
+  margin-left: 4px; /* Space from previous item (label or download icon) */
+  text-decoration: none;
+  color: #007bff; /* A standard blue for links/actions */
+  font-size: 0.9em;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.copy-url-button:hover {
+  color: #0056b3; /* Darker blue on hover */
+}
+
 
 /* Custom Tracking Control Styles */
 .tracking-control { /* This is an .ol-control, so it inherits some base styles */
