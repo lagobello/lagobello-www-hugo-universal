@@ -335,9 +335,9 @@
 
 /* Styling for the Copy URL button in the LayerSwitcher */
 .copy-url-button {
-    display: inline;
-    float: none; /* Keep to be safe from other global button styles */
-    position: static; /* Keep to be safe */
+    display: inline !important; /* Critical for placement */
+    float: none !important;    /* Critical for placement */
+    position: static !important;/* Critical for placement */
     margin: 0;
     padding: 0;
     background: none;
@@ -346,6 +346,7 @@
     font-size: 0.9em;
     cursor: pointer;
     vertical-align: baseline;
+    /* No outline/red border */
 }
 .copy-url-button + .download-geojson-link,
 .download-geojson-link + .copy-url-button {
