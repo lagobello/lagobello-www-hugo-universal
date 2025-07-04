@@ -6,8 +6,18 @@
 .ol-mouse-position{
     top: unset;
     right: unset;
-    left: 8px;
-    bottom: 10px;
+    left: 8px; /* Custom positioning from original file */
+    bottom: 10px; /* Custom positioning from original file */
+    background-color: rgba(255, 255, 255, 0.8); /* Default OL control background */
+    color: black; /* Default OL control text color */
+    padding: 3px 5px; /* Typical padding for OL text controls */
+    border-radius: 4px; /* Default OL control border radius */
+}
+
+/* Ensure spans within mouse position also use black text if not inheriting */
+.ol-mouse-position span {
+    color: black;
+    background-color: transparent; /* Remove any prior custom span backgrounds */
 }
 
 /* Popup styles - Unchanged */
@@ -75,9 +85,73 @@
 .ol-tooltip-static:before { border-top-color: #ffcc33; }
 
 /* OL Zoom control button styling */
+/* Note: .ol-zoom positioning is part of the restored Top-Left Control Column */
 .ol-zoom button {
     font-weight: bold;
 }
+
+/* === Top-Left Control Column Styling (Restored) === */
+:root {
+  --ol-single-button-control-slot-height: 2.2em;
+  --ol-zoom-control-total-height: 3.4em;
+}
+
+.ol-zoom,
+.ol-info-control,
+.ol-length-control,
+.ol-area-control,
+.ol-unit-toggle-control {
+  position: absolute !important;
+  left: 0.5em !important;
+  /* General .ol-control background, padding, etc. are mostly removed for OL defaults.
+     If these controls need a specific background for visibility, it might need to be added here
+     or via a general .ol-control rule if that's desired for all controls.
+     For now, focusing on restoring position. */
+}
+
+.ol-zoom {
+  top: 0.5em !important;
+}
+.ol-info-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 0.5) !important; }
+.ol-length-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 1.5) !important; }
+.ol-area-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 2.5) !important; }
+.ol-unit-toggle-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 3.5) !important; }
+
+/* UnitToggleControl specific layout (Restored for positioning) */
+.ol-unit-toggle-control {
+  display: flex;
+  flex-direction: column;
+  /* Previous button styles like padding/font might be needed if they affect overall size for stacking.
+     For now, assuming flex-direction is the key for its layout within the column.
+     If buttons inside .ol-unit-toggle-control need specific styling for their default look:
+     .ol-unit-toggle-control button { font-size: 0.9em; font-weight: normal; padding: 0 0.5em; etc. }
+  */
+}
+/* === End Top-Left Column Styling === */
+
+/* OL Rotate Control Positioning (Restored) */
+.ol-rotate {
+    right: 50px;
+    /* top will be default OL (usually top-right corner along with other controls) */
+}
+
+/* Custom Tracking Control Positioning (Restored) */
+.tracking-control {
+  top: .5em;
+  right: 7em;
+  left: auto;
+  /* The following are from its original styling and might be needed for its appearance/size.
+     If they conflict with a desired minimal .ol-control look, they might need adjustment.
+     For now, restoring them as they were with positioning. */
+  padding: 2px;
+  display: flex; /* This is important for internal layout if it has multiple elements like stats + button */
+  align-items: center;
+  /* box-shadow: none; was present, usually good for default OL look */
+  /* background-color will be inherited or use OL default if not specified here */
+}
+/* If .tracking-control button needs specific styling for its default look (e.g. emoji size):
+   .tracking-control button { font-size: 1.2em; }
+*/
 
 /* Layer Switcher icon styling */
 .layer-switcher button i, .ol-layerswitcher button i,
