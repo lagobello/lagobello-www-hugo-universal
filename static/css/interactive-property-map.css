@@ -335,16 +335,18 @@
 
 /* Styling for the Copy URL button in the LayerSwitcher */
 .copy-url-button {
-  /* margin-left is removed as items are now in a flex container */
-  text-decoration: none;
-  color: #007bff; /* A standard blue for links/actions */
-  font-size: 0.9em; /* Consistent with download link */
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0; /* Remove default button padding */
-  display: inline-flex; /* Helps align emoji icon if needed */
-  align-items: center;
+    outline: 1px solid red !important;
+    display: inline !important;
+    float: none !important;
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: none !important;
+    border: none !important;
+    color: #007bff !important;
+    font-size: 0.9em !important;
+    cursor: pointer !important;
+    vertical-align: baseline !important;
 }
 .copy-url-button + .download-geojson-link,
 .download-geojson-link + .copy-url-button {
@@ -352,7 +354,7 @@
 }
 
 .copy-url-button:hover {
-  color: #0056b3; /* Darker blue on hover */
+  color: #0056b3 !important; /* Ensure hover color also has important if base color does */
 }
 
 
