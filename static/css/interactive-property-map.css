@@ -77,6 +77,37 @@
   content: "✖";
 }
 
+.popup-section {
+  margin-bottom: 10px;
+}
+
+.popup-section-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 3px;
+}
+
+.inferred-data {
+  /* Initially hidden - JS will toggle display: block; */
+}
+
+.popup-toggle-button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  display: block; /* Make it a block to take full width or center easily */
+  margin: 10px auto 5px; /* Auto margins for centering if block */
+  text-align: center;
+}
+
+.popup-toggle-button:hover {
+  background-color: #e0e0e0;
+}
+
+
 #lot-table {
   height: 300px;
   overflow:auto;

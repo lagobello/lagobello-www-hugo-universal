@@ -667,90 +667,116 @@ var retrieveFeature = function (pixel) {
 var retrieveFeatureInfoTable = function (evt) {
   var feature = retrieveFeature(evt.pixel);
   var area = featureCalculateAreaMeters(feature);
-  var tempString;
+  var name = feature.get('name') || 'N/A';
+  var status = feature.get('status') || 'N/A';
+  var entityHandle = feature.get('EntityHandle') || 'N/A';
+  var layerName = feature.get('Layer') || 'Unknown';
 
-  // Old style geojson with 'name' and 'status'
-  var areaString = '';
+  var areaString = 'N/A';
   if (area) {
     if (displayUnits === 'imperial') {
       var areaSqFt = area * 10.7639;
       if (areaSqFt > 43560) { // If larger than an acre
-        areaString = `<td>Area</td><td><code>${(areaSqFt / 43560).toFixed(2)} acres</code></td>`;
+        areaString = `${(areaSqFt / 43560).toFixed(2)} acres`;
       } else {
-        areaString = `<td>Area</td><td><code>${areaSqFt.toFixed(2)} ft<sup>2</sup></code></td>`;
+        areaString = `${areaSqFt.toFixed(2)} ft<sup>2</sup>`;
       }
     } else { // Metric
-      if (area > 10000) {
-        areaString = `<td>Area</td><td><code>${(area / 1000000).toFixed(2)} km<sup>2</sup></code></td>`;
+      if (area > 10000) { // if larger than 1 hectare (10,000 m^2) show as km^2
+        areaString = `${(area / 1000000).toFixed(2)} km<sup>2</sup>`;
       } else {
-        areaString = `<td>Area</td><td><code>${area.toFixed(2)} m<sup>2</sup></code></td>`;
+        areaString = `${area.toFixed(2)} m<sup>2</sup>`;
       }
     }
-  } else {
-    areaString = '<td>Area</td><td><code>N/A</code></td>';
   }
 
-  if (feature.get('name') !== undefined) {
-    tempString =
- `<table style="width:100%">
-  <tr>
-    <td>Name</td>
-    <td><code>${feature.get('name')}</code></td>
-  </tr>
-  <tr>
-    <td>Status</td>
-    <td><code>${feature.get('status')}</code></td>
-  </tr>
-  <tr>${areaString}</tr>
-  </table>`;
-  }
-  // New style geojson with 'EntityHandle'
-  else if (feature.get('EntityHandle') !== undefined) {
-    // Assuming 'Area registered' might be a property in the future, if not, it shows N/A
-    var registeredAreaFt2 = feature.get('AREA_REGISTERED_FT2') || '---'; // Example property name
+  var linkedDataHtml = `
+    <div class="popup-section">
+      <div class="popup-section-title">Linked Data</div>
+      <table style="width:100%">
+        <tr><td>Name</td><td><code>${name}</code></td></tr>
+        <tr><td>Status</td><td><code>${status}</code></td></tr>
+      </table>
+    </div>
+  `;
+
+  var inferredDataHtml = `
+    <div class="popup-section inferred-data" style="display:none;">
+      <div class="popup-section-title">Inferred/Calculated Data</div>
+      <table style="width:100%">
+        <tr><td>Area</td><td><code>${areaString}</code></td></tr>
+      </table>
+    </div>
+  `;
+
+  // Handling for features with EntityHandle (new style geojson)
+  if (feature.get('EntityHandle') !== undefined) {
+    var registeredAreaFt2 = feature.get('AREA_REGISTERED_FT2') || '---';
     var registeredAreaString = `<td>Area registered</td><td><code>${registeredAreaFt2} ${displayUnits === 'imperial' ? "ft<sup>2</sup>" : ""}</code></td>`;
     if (displayUnits === 'metric' && registeredAreaFt2 !== '---') {
-        // Convert if necessary, or state units clearly if mixed display is intended for registered values
-        // For now, assumes registered area is always in ft2 and we just display it.
-        // A more robust solution would involve knowing the unit of registeredAreaFt2 or having it in both.
          registeredAreaString = `<td>Area registered (ft<sup>2</sup>)</td><td><code>${registeredAreaFt2}</code></td>`;
     }
 
+    // Overwrite linkedDataHtml and inferredDataHtml for EntityHandle features
+    linkedDataHtml = `
+      <div class="popup-section">
+        <div class="popup-section-title">Linked Data</div>
+        <table style="width:100%">
+          <tr><td>Entity ID</td><td><code>${entityHandle}</code></td></tr>
+          <tr><td>Parcel ID</td><td><code>---</code></td></tr> <!-- Placeholder -->
+        </table>
+      </div>
+    `;
+    inferredDataHtml = `
+      <div class="popup-section inferred-data" style="display:none;">
+        <div class="popup-section-title">Inferred/Calculated Data</div>
+        <table style="width:100%">
+          <tr>${registeredAreaString}</tr>
+          <tr><td>Area calculated</td><td><code>${areaString}</code></td></tr>
+        </table>
+      </div>
+    `;
+  }
+  // Fallback for other feature types (e.g. park, lake, street)
+  else if (feature.get('name') === undefined && feature.get('status') === undefined && feature.get('EntityHandle') === undefined) {
+      linkedDataHtml = `
+      <div class="popup-section">
+        <div class="popup-section-title">Feature Info</div>
+        <table style="width:100%">
+          <tr><td>Layer</td><td><code>${layerName}</code></td></tr>
+        </table>
+      </div>
+    `;
+    // For these types, area might still be relevant for the inferred section
+    inferredDataHtml = `
+      <div class="popup-section inferred-data" style="display:none;">
+        <div class="popup-section-title">Inferred/Calculated Data</div>
+        <table style="width:100%">
+          <tr><td>Area</td><td><code>${areaString}</code></td></tr>
+        </table>
+      </div>
+    `;
+  }
 
-    tempString =
-    `<table style="width:100%">
-  <tr>
-    <td>Name</td>
-    <td><code>---</code></td> <!-- Placeholder for Name -->
-  </tr>
-  <tr>
-    <td>Parcel ID</td>
-    <td><code>---</code></td> <!-- Placeholder for Parcel ID -->
-  </tr>
-  <tr>
-    <td>Entity ID</td>
-    <td><code>${feature.get('EntityHandle')}</code></td>
-  </tr>
-  <tr>${registeredAreaString}</tr>
-  <tr>${areaString.replace('Area', 'Area calculated')}</tr>
-</table>`;
+
+  var toggleButtonHtml = `
+    <button onclick="toggleInferredData(this)" class="popup-toggle-button">Show more</button>
+  `;
+
+  return linkedDataHtml + toggleButtonHtml + inferredDataHtml;
+};
+
+// Make sure this function is accessible globally for the inline onclick
+window.toggleInferredData = function(button) {
+  var popupContent = button.closest('#popup-content');
+  var inferredDataSection = popupContent.querySelector('.inferred-data');
+  if (inferredDataSection.style.display === 'none') {
+    inferredDataSection.style.display = 'block';
+    button.textContent = 'Show less';
+  } else {
+    inferredDataSection.style.display = 'none';
+    button.textContent = 'Show more';
   }
-  // Fallback for other feature types or if no specific properties are found
-  else {
-    tempString =
-    `<table style="width:100%">
-  <tr>
-    <td>Layer</td>
-    <td><code>${(feature.get('Layer') || 'Unknown')}</code></td>
-  </tr>
-   <tr>
-    <td>EntityHandle</td>
-    <td><code>${(feature.get('EntityHandle') || 'N/A')}</code></td>
-  </tr>
-  <tr>${areaString}</tr>
-</table>`;
-  }
-  return tempString;
 };
 
 var retrieveLotTable = function (url) {
