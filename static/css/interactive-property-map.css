@@ -353,8 +353,19 @@
   margin-left: 3px; /* Reduced spacing */
 }
 
-.copy-url-button:hover {
+.copy-url-button:hover,
+.copy-url-button:focus {
   color: #0056b3;
+  /* Assuming the browser provides a default focus outline for buttons that you like.
+     If not, we can add a specific one here too: e.g., outline: 1px dotted #007bff; */
+}
+
+.download-geojson-link:hover,
+.download-geojson-link:focus {
+  color: darkgreen; /* Existing hover for download */
+  text-decoration: none; /* Keep no underline */
+  outline: 1px dotted #007bff; /* Mimic button focus/hover appearance */
+  outline-offset: 1px; /* Give a little space between icon and outline */
 }
 
 
