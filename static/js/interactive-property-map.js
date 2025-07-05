@@ -1086,32 +1086,24 @@ var retrieveFeatureInfoTable = function (evt) {
     // For UNMATCHED features
     let titleForUnmatched = "Feature Information"; // Default title
 
-    if (friendlyLayerName) {
-      const lowerFriendlyLayerName = friendlyLayerName.toLowerCase();
-      if (lowerFriendlyLayerName.includes("section 1")) {
-        titleForUnmatched = "Section 1 Lot";
-      } else if (lowerFriendlyLayerName.includes("section 2")) {
-        titleForUnmatched = "Section 2 Lot";
-      } else if (lowerFriendlyLayerName.includes("section 3")) {
-        titleForUnmatched = "Section 3 Lot";
-      } else if (friendlyLayerName !== 'Unknown Layer' && friendlyLayerName !== 'Unnamed Layer') {
-        titleForUnmatched = geoJsonFeatureIdentifier || friendlyLayerName;
-      } else if (geoJsonFeatureIdentifier) {
-        titleForUnmatched = geoJsonFeatureIdentifier;
-      }
-    } else if (geoJsonFeatureIdentifier) {
+    // Prioritize friendlyLayerName if it's specific
+    if (friendlyLayerName && friendlyLayerName !== 'Unknown Layer' && friendlyLayerName !== 'Unnamed Layer') {
+        titleForUnmatched = friendlyLayerName;
+    }
+    // If friendlyLayerName is generic, try geoJsonFeatureIdentifier
+    else if (geoJsonFeatureIdentifier && geoJsonFeatureIdentifier !== 'N/A') {
         titleForUnmatched = geoJsonFeatureIdentifier;
     }
-
-    if (titleForUnmatched === 'Unknown Layer' || titleForUnmatched === 'Unnamed Layer') {
-        titleForUnmatched = geoJsonFeatureIdentifier || "Feature Information";
-    }
+    // If both are generic or unavailable, title remains "Feature Information"
 
     let genericHeaderHtml = `
       <div class="popup-section">
         <div class="popup-section-title main-title">${titleForUnmatched}</div>`;
 
-        if (friendlyLayerName && friendlyLayerName !== 'Unknown Layer' && friendlyLayerName !== 'Unnamed Layer' && titleForUnmatched !== friendlyLayerName) {
+        // If the title ended up being the geoJsonFeatureIdentifier, and a more friendly (but generic) layer name exists, show it as sub-info.
+        // Or, if the title is "Feature Information" but we have a friendlyLayerName, show that.
+        if ( (titleForUnmatched === geoJsonFeatureIdentifier && friendlyLayerName && friendlyLayerName !== 'Unknown Layer' && friendlyLayerName !== 'Unnamed Layer' && friendlyLayerName !== titleForUnmatched) ||
+             (titleForUnmatched === "Feature Information" && friendlyLayerName && friendlyLayerName !== 'Unknown Layer' && friendlyLayerName !== 'Unnamed Layer') ) {
           genericHeaderHtml += `<table style="width:100%"><tr><td>Layer</td><td><code>${friendlyLayerName}</code></td></tr></table>`;
         }
     genericHeaderHtml += `</div>`;
