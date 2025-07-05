@@ -110,17 +110,6 @@ var layerMapboxSatellite = new ol.layer.Tile({
   opacity: 1.0
 });
 
-// var layerWatercolors = new ol.layer.Group({
-//   title: 'Watercolors',
-//   type: 'base',
-//   combine: true,
-//   layers: [
-//     new ol.layer.Tile({ source: new ol.source.Stamen({ layer: 'watercolor' }) }),
-//     new ol.layer.Tile({ source: new ol.source.Stamen({ layer: 'terrain-labels' }) })
-//   ],
-//   opacity: 1.0
-// });
-
 // ------------- Vector overlays
 var layerVectorLake = new ol.layer.Vector({
   title: 'Lake layer',
@@ -298,22 +287,22 @@ var layerVectorStreetAccess = new ol.layer.Vector({
   opacity: 0.8
 });
 
-var genericSource = new ol.source.Vector(); // Renamed from 'source' in case it's used elsewhere
-var drawingLayerSource = new ol.source.Vector(); // Dedicated source for drawings
+var genericSource = new ol.source.Vector();
+var drawingLayerSource = new ol.source.Vector();
 
 var layerVectorDrawings = new ol.layer.Vector({
-  source: drawingLayerSource, // Use dedicated source
+  source: drawingLayerSource,
   style: new ol.style.Style({
-    fill: new ol.style.Fill({ color: 'rgba(255, 255, 255, 0.2)' }), // Original fill
-    stroke: new ol.style.Stroke({ color: '#ffcc33', width: 3 }),    // Original color, slightly thicker width
-    image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({ color: '#ffcc33' }) }) // Original image style
+    fill: new ol.style.Fill({ color: 'rgba(255, 255, 255, 0.2)' }),
+    stroke: new ol.style.Stroke({ color: '#ffcc33', width: 3 }),
+    image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({ color: '#ffcc33' }) })
   }),
-  zIndex: 100 // Ensure drawing layer is on top
+  zIndex: 100
 });
 
 var olLayerGroupBasemaps = new ol.layer.Group({
   title: 'Base maps',
-  layers: [layerOsmStreet,  layerMapboxSatellite] // disabled on port to ol 10.6: layerWatercolors
+  layers: [layerOsmStreet,  layerMapboxSatellite]
 
 });
 
@@ -339,7 +328,7 @@ var olLayerGroupOverlays = new ol.layer.Group({
   layerVectorStreetAccess
 
     ],
-  zIndex: 10 // Ensure this group is below the drawing layer (zIndex 100)
+  zIndex: 10
 });
 
 var layerSwitcher = new ol.control.LayerSwitcher({ tipLabel: 'Legend' });
@@ -357,27 +346,23 @@ var viewDefault = new ol.View({ center: ol.proj.fromLonLat([-97.553, 26.053]), z
 var viewRot = new ol.View({ center: ol.proj.fromLonLat([-97.553, 26.053]), rotation: Math.PI / 2.17, zoom: 17 });
 function chooseView () { return (window.innerHeight > window.innerWidth) ? viewDefault : viewRot; }
 
-// Global references to individual tool control instances for managing active state
-// window.infoControlInstance, window.lengthControlInstance, window.areaControlInstance are initialized at the top.
 
-// Global function to manage active state of tool controls
 function setSelectedTool(toolMode, clickedControlInstance) {
   currentToolMode = toolMode;
 
   const controls = [window.infoControlInstance, window.lengthControlInstance, window.areaControlInstance];
   controls.forEach(control => {
-    if (control && control.element) { // Check if control and its element exist
+    if (control && control.element) {
       if (control === clickedControlInstance) {
-        control.element.firstChild.classList.add('active'); // Assuming button is firstChild
+        control.element.firstChild.classList.add('active');
       } else {
         control.element.firstChild.classList.remove('active');
       }
     }
   });
-  setActiveToolInteraction(toolMode); // This handles map interactions
+  setActiveToolInteraction(toolMode);
 }
 
-// Function to add download/copy links to layers in the LayerSwitcher
 function addDownloadLinksToLayerSwitcher() {
   if (!layerSwitcher || !layerSwitcher.panel) {
     return;
@@ -393,7 +378,6 @@ function addDownloadLinksToLayerSwitcher() {
   for (let i = 0; i < listItems.length; i++) {
     const li = listItems[i];
 
-    // Prevent adding multiple sets of links
     if (li.querySelector('a.download-geojson-link') || li.querySelector('button.copy-url-button')) {
       continue;
     }
@@ -430,7 +414,6 @@ function addDownloadLinksToLayerSwitcher() {
       let urlToCopy = null;
       let isGeoJSON = false;
 
-      // Determine URL and type
       if (source instanceof ol.source.Vector && typeof source.getUrl === 'function' && source.getUrl()) {
         const rawUrl = source.getUrl();
         const format = source.getFormat();
@@ -447,26 +430,21 @@ function addDownloadLinksToLayerSwitcher() {
           urlToCopy = urlObj.toString();
         }
       }
-      // OSM layers are intentionally skipped for copy URL as they don't have a simple one.
 
-      // Create a container for the icons if we have any actions
       let iconContainer = null;
       if (urlToCopy || (isGeoJSON && urlToCopy)) {
         iconContainer = document.createElement('span');
         iconContainer.className = 'layer-action-icons';
-        // Basic styling for the container - can be refined in CSS
-        iconContainer.style.marginLeft = '8px'; // Space it from the label
+        iconContainer.style.marginLeft = '8px';
         iconContainer.style.display = 'inline-flex';
         iconContainer.style.alignItems = 'center';
       }
 
-      // Add Copy URL button
       if (urlToCopy) {
         const copyButton = document.createElement('button');
         copyButton.innerHTML = '🔗';
         copyButton.title = `Copy URL for ${layerTitle}`;
         copyButton.className = 'copy-url-button';
-        // copyButton.style.marginLeft = '5px'; // Spacing now handled by container or individual button margins
         copyButton.onclick = function() {
           navigator.clipboard.writeText(urlToCopy).then(function() {
             const originalText = copyButton.innerHTML;
@@ -479,14 +457,12 @@ function addDownloadLinksToLayerSwitcher() {
         iconContainer.appendChild(copyButton);
       }
 
-      // Add Download link for GeoJSON
       if (isGeoJSON && urlToCopy) {
         const downloadLink = document.createElement('a');
         downloadLink.href = urlToCopy;
         downloadLink.innerHTML = '⭳';
         downloadLink.title = `Download ${layerTitle}`;
         downloadLink.className = 'download-geojson-link';
-        // downloadLink.style.marginLeft = '5px'; // Spacing now handled by container or individual button margins
 
         let filename = layerTitle.replace(/[^\w\s.-]/gi, '_').replace(/\s+/g, '_').toLowerCase();
         if (!filename) filename = "layer";
@@ -496,18 +472,13 @@ function addDownloadLinksToLayerSwitcher() {
         iconContainer.appendChild(downloadLink);
       }
 
-      // Append the icon container to the list item after the label
-      if (iconContainer && label && label.parentNode === li) { // Ensure label exists and is a direct child of li
-        // Use label.after() to insert the icon container immediately after the label element.
-        // This is a more direct and modern way to ensure correct placement.
+      if (iconContainer && label && label.parentNode === li) {
         label.after(iconContainer);
       }
     }
   }
 }
 
-
-// --- InfoControl ---
 class InfoControl extends ol.control.Control {
   constructor(opt_options) {
     const options = opt_options || {};
@@ -520,7 +491,7 @@ class InfoControl extends ol.control.Control {
     element.appendChild(button);
 
     super({ element: element, target: options.target });
-    window.infoControlInstance = this; // Store instance for global access
+    window.infoControlInstance = this;
 
     button.addEventListener('click', () => {
       setSelectedTool('info', this);
@@ -528,7 +499,6 @@ class InfoControl extends ol.control.Control {
   }
 }
 
-// --- LengthControl ---
 class LengthControl extends ol.control.Control {
   constructor(opt_options) {
     const options = opt_options || {};
@@ -541,7 +511,7 @@ class LengthControl extends ol.control.Control {
     element.appendChild(button);
 
     super({ element: element, target: options.target });
-    window.lengthControlInstance = this; // Store instance for global access
+    window.lengthControlInstance = this;
 
     button.addEventListener('click', () => {
       setSelectedTool('length', this);
@@ -549,7 +519,6 @@ class LengthControl extends ol.control.Control {
   }
 }
 
-// --- AreaControl ---
 class AreaControl extends ol.control.Control {
   constructor(opt_options) {
     const options = opt_options || {};
@@ -562,7 +531,7 @@ class AreaControl extends ol.control.Control {
     element.appendChild(button);
 
     super({ element: element, target: options.target });
-    window.areaControlInstance = this; // Store instance for global access
+    window.areaControlInstance = this;
 
     button.addEventListener('click', () => {
       setSelectedTool('area', this);
@@ -570,7 +539,6 @@ class AreaControl extends ol.control.Control {
   }
 }
 
-// --- UnitToggleControl ---
 class UnitToggleControl extends ol.control.Control {
   constructor(opt_options) {
     const options = opt_options || {};
@@ -583,23 +551,22 @@ class UnitToggleControl extends ol.control.Control {
     this.imperialButton.innerHTML = '👑';
     this.imperialButton.title = 'Use Imperial Units';
     this.imperialButton.addEventListener('click', () => this.setUnit('imperial'));
-    element.appendChild(this.imperialButton); // Imperial button first
+    element.appendChild(this.imperialButton);
 
     this.metricButton = document.createElement('button');
     this.metricButton.innerHTML = '⚙️';
     this.metricButton.title = 'Use Metric Units';
     this.metricButton.addEventListener('click', () => this.setUnit('metric'));
-    element.appendChild(this.metricButton); // Metric button second
+    element.appendChild(this.metricButton);
 
-    // Set initial active state based on global displayUnits
     this.updateButtonActiveState();
   }
 
   setUnit(unit) {
-    if (displayUnits === unit) return; // No change
+    if (displayUnits === unit) return;
     displayUnits = unit;
     this.updateButtonActiveState();
-    refreshMapMeasurements(); // Call global function to update UI
+    refreshMapMeasurements();
   }
 
   updateButtonActiveState() {
@@ -613,28 +580,19 @@ class UnitToggleControl extends ol.control.Control {
   }
 }
 
-// Placeholder for the function that will refresh UI elements when units change
 function refreshMapMeasurements() {
   console.log(`Unit system changed to: ${displayUnits}. UI refresh needed.`);
-  // Implementation will be in Phase 2
-  // This function will need to update:
-  // - Active drawing tooltips (length/area)
-  // - Feature info pop-up (if open)
-  // - Lot table
 }
 
 
 var olMap = new ol.Map({
   target: 'ol-map',
   controls: [
-    // Standard controls that might be positioned elsewhere by default by OL
     new ol.control.Attribution({collapsible: true}),
     new ol.control.Rotate(),
     new ol.control.FullScreen(),
     controlMousePosition,
     layerSwitcher,
-
-    // Controls intended for the single top-left column
     new ol.control.Zoom(),
     new InfoControl(),
     new LengthControl(),
@@ -642,26 +600,17 @@ var olMap = new ol.Map({
     new UnitToggleControl(),
   ],
   overlays: [overlay],
-  layers: [olLayerGroupBasemaps, olLayerGroupDrone, olLayerGroupOverlays, layerVectorDrawings], // Restored layerVectorDrawings
+  layers: [olLayerGroupBasemaps, olLayerGroupDrone, olLayerGroupOverlays, layerVectorDrawings],
   view: chooseView()
 });
 
-// After map is initialized and layer switcher is added, listen for its panel updates
 if (layerSwitcher && layerSwitcher.panel) {
   layerSwitcher.panel.addEventListener('rendercomplete', addDownloadLinksToLayerSwitcher);
-  // Also call it once initially in case the panel is already rendered (e.g. if startActive is true)
-  // or if the event isn't caught reliably on first load.
-  // A small timeout ensures the DOM elements are likely available.
   setTimeout(addDownloadLinksToLayerSwitcher, 500);
 } else {
   console.warn('LayerSwitcher or its panel is not available to attach rendercomplete listener.');
 }
 
-
-// =============================
-//  3.  Dynamic XYZ drone layers
-// =============================
-// ============================= Dynamic XYZ loader =============================
 (function loadDroneLayers () {
   const GH_API = 'https://api.github.com/repos/lagobello/lagobello-tiles/contents/zxy?ref=master';
   const TILE_ROOT = 'https://lagobello.github.io/lagobello-tiles/zxy/';
@@ -681,7 +630,6 @@ if (layerSwitcher && layerSwitcher.panel) {
         lyr.set('title', folder);
         lyr.set('type', 'overlay');
         olLayerGroupDrone.getLayers().push(lyr);
-        // latest flight visible by default
         if (idx === folders.length - 1) lyr.setVisible(true);
       });
       layerSwitcher.renderPanel();
@@ -689,11 +637,8 @@ if (layerSwitcher && layerSwitcher.panel) {
     .catch(console.error);
 })();
 
-// =============================
-//  Load lots.json data
-// =============================
 (function loadLotsData() {
-  fetch('/data/lots.json') // Restoring correct path as per user feedback
+  fetch('/data/lots.json')
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok for lots.json');
@@ -702,12 +647,12 @@ if (layerSwitcher && layerSwitcher.panel) {
     })
     .then(data => {
       lotsData = data;
-      console.log('lots.json loaded successfully.'); // Simplified log
+      console.log('lots.json loaded successfully.');
     })
     .catch(error => {
       console.error('CRITICAL: Error loading lots.json:', error.message);
       console.warn('lots.json fetch failed. Pop-up information linked to this file will be unavailable. Check file path and server logs.');
-      lotsData = []; // Initialize as empty array on error to prevent other parts from breaking
+      lotsData = [];
     });
 })();
 
@@ -747,16 +692,10 @@ var retrieveFeature = function (pixel) {
   return feature;
 };
 
-// Helper function to find the friendly layer name (title)
 function getFriendlyLayerName(clickedFeature) {
   if (!clickedFeature || !olMap) return 'Unknown Layer';
 
   let featureLayer = null;
-  // Find the layer the feature belongs to. This is a bit complex as features don't directly store their layer.
-  // We iterate over layers and see if the feature is in its source.
-  // This assumes vector layers. For other layer types, this approach might need adjustment.
-
-  // Check top-level layers first
   const mapLayers = olMap.getLayers().getArray();
   for (const layer of mapLayers) {
     if (layer instanceof ol.layer.Vector) {
@@ -767,19 +706,16 @@ function getFriendlyLayerName(clickedFeature) {
           break;
         }
       }
-      // If source is a Cluster source, check its source's features
       if (source instanceof ol.source.Cluster) {
         const clusterSource = source.getSource();
          if (clusterSource && typeof clusterSource.getFeatures === 'function') {
             if (clusterSource.getFeatures().includes(clickedFeature)) {
-                // We found the feature in the source of a cluster. Use the cluster layer's title.
                 featureLayer = layer;
                 break;
             }
         }
       }
     } else if (layer instanceof ol.layer.Group) {
-      // Check layers within groups
       const groupLayers = layer.getLayers().getArray();
       for (const subLayer of groupLayers) {
         if (subLayer instanceof ol.layer.Vector) {
@@ -794,7 +730,7 @@ function getFriendlyLayerName(clickedFeature) {
             const clusterSource = source.getSource();
             if (clusterSource && typeof clusterSource.getFeatures === 'function') {
                 if (clusterSource.getFeatures().includes(clickedFeature)) {
-                    featureLayer = subLayer; // Use the subLayer (vector layer) title
+                    featureLayer = subLayer;
                     break;
                 }
             }
@@ -807,30 +743,24 @@ function getFriendlyLayerName(clickedFeature) {
 
   if (featureLayer) {
     const title = featureLayer.get('title');
-    return title || 'Unnamed Layer'; // Return title or a placeholder if title is missing
+    return title || 'Unnamed Layer';
   }
 
-  // Fallback if layer not easily found by feature instance (e.g. complex scenarios or non-vector layers)
-  // This part may need more sophisticated handling if features come from diverse layer types not covered above.
-  return clickedFeature.get('Layer') || 'Unknown Layer'; // Original fallback
+  return clickedFeature.get('Layer') || 'Unknown Layer';
 }
 
 
 var retrieveFeatureInfoTable = function (evt) {
   var feature = retrieveFeature(evt.pixel);
-  // geoJsonName will be determined by spatial matching later or feature properties.
-  var geoJsonFeatureIdentifier = feature.get('EntityHandle') || feature.get('name'); // Fallback for display if no spatial match
+  var geoJsonFeatureIdentifier = feature.get('EntityHandle') || feature.get('name');
 
   var area = featureCalculateAreaMeters(feature);
-  var entityHandle = feature.get('EntityHandle') || 'N/A'; // Retain for GeoJSON section
+  var entityHandle = feature.get('EntityHandle') || 'N/A';
   var rawLayerName = feature.get('Layer') || 'Unknown';
   var friendlyLayerName = getFriendlyLayerName(feature);
 
-  // Spatial Matching Logic
   var matchedLot = null;
   const featureGeometry = feature.getGeometry();
-
-  // Heuristic to identify lot layers for spatial matching
   const isLotLayer = friendlyLayerName && (friendlyLayerName.toLowerCase().includes('lot') || friendlyLayerName.toLowerCase().includes('plat'));
 
   if (isLotLayer && lotsData && featureGeometry && typeof featureGeometry.intersectsCoordinate === 'function') {
@@ -842,25 +772,18 @@ var retrieveFeatureInfoTable = function (evt) {
           const lon = parseFloat(parts[1].trim());
 
           if (!isNaN(lat) && !isNaN(lon)) {
-            // Location is WGS84, transform to map view projection (EPSG:3857)
-            const lotPointWGS84 = [lon, lat]; // ol.proj.transform expects [lon, lat]
+            const lotPointWGS84 = [lon, lat];
             try {
               const lotPointInViewProj = ol.proj.transform(lotPointWGS84, 'EPSG:4326', 'EPSG:3857');
-
-              // Check if the feature's geometry contains the lot's point
               if (featureGeometry.intersectsCoordinate(lotPointInViewProj)) {
                 matchedLot = lotRecord;
                 console.log("Spatial match found for feature with lot record:", matchedLot.Name);
-                break; // Found a match, no need to check further
+                break;
               }
             } catch (e) {
               console.error("Error transforming lot location for spatial match:", lotRecord.Location, e);
             }
-          } else {
-            // console.warn("Could not parse lat/lon from lotRecord.Location:", lotRecord.Location);
           }
-        } else {
-          // console.warn("LotRecord.Location format incorrect:", lotRecord.Location);
         }
       }
     }
@@ -869,10 +792,6 @@ var retrieveFeatureInfoTable = function (evt) {
     }
   }
 
-
-  // --- Top Level Information (only for matched lots) ---
-  // parcelLegalDesc will be updated after spatial matching.
-  // For now, it uses the feature's identifier or a generic N/A.
   var parcelLegalDesc = (matchedLot && matchedLot.Name) ? matchedLot.Name : (geoJsonFeatureIdentifier || 'N/A');
   var status = matchedLot && matchedLot["Lot Status"] ? matchedLot["Lot Status"] : (feature.get('status') || 'N/A');
   var listPrice = matchedLot && matchedLot["List Price"] ? `$${parseFloat(matchedLot["List Price"]).toLocaleString()}` : 'N/A';
@@ -901,17 +820,16 @@ var retrieveFeatureInfoTable = function (evt) {
     }
   }
 
-  var areaString = 'N/A'; // This is for metric display or general fallback
+  var areaString = 'N/A';
   if (area) {
     if (displayUnits === 'imperial') {
       var areaSqFt_calc = area * 10.7639;
-      // For areaString (used in metric or if imperial doesn't specify format)
       if (areaSqFt_calc > 43560) {
         areaString = `${(areaSqFt_calc / 43560).toFixed(2)} acres`;
       } else {
         areaString = `${areaSqFt_calc.toFixed(2)} ft<sup>2</sup>`;
       }
-    } else { // Metric
+    } else {
       if (area > 10000) {
         areaString = `${(area / 1000000).toFixed(2)} km<sup>2</sup>`;
       } else {
@@ -939,11 +857,10 @@ var retrieveFeatureInfoTable = function (evt) {
 
   var toggleButtonsHtml = '';
 
-  // --- Linked Data (from lots.json) Section ---
   var linkedDataContent = '<table style="width:100%">';
   let hasLinkedProps = false;
   if (matchedLot) {
-    const topLevelKeys = ["Name", "Lot Status", "List Price", "Size [sqft]", "Listing Agent", "Listing Agent Phone Number", "Listing Link"];
+    const topLevelKeys = ["Name", "Lot Status", "List Price", "Size [sqft]", "Listing Agent", "Listing Agent Phone Number", "Listing Link", "Location"]; // Added Location to exclude
     for (const key in matchedLot) {
       if (matchedLot.hasOwnProperty(key) && !topLevelKeys.includes(key)) {
         linkedDataContent += `<tr><td>${key}</td><td><code>${matchedLot[key] !== null && matchedLot[key] !== undefined ? matchedLot[key] : 'N/A'}</code></td></tr>`;
@@ -951,15 +868,15 @@ var retrieveFeatureInfoTable = function (evt) {
       }
     }
   }
-  if (!hasLinkedProps && matchedLot) { // Show message only if it's a matched lot but no *extra* props
+  if (!hasLinkedProps && matchedLot) {
     linkedDataContent += '<tr><td colspan="2">No additional linked data found.</td></tr>';
-  } else if (!matchedLot) { // Clear content if not a matched lot (section won't be shown anyway)
+  } else if (!matchedLot) {
      linkedDataContent = '';
   }
   linkedDataContent += '</table>';
 
   var linkedDataDumpHtml = '';
-  if (matchedLot) { // Only build this section if there's a matched lot
+  if (matchedLot) {
     linkedDataDumpHtml = `
       <div class="popup-section collapsible-section" style="display:none;" id="linked-data-section">
         <div class="popup-section-title">Linked Data (lots.json)</div>
@@ -968,7 +885,6 @@ var retrieveFeatureInfoTable = function (evt) {
     `;
   }
 
-  // --- Calculated Data Section ---
   var areaSqFtImperial_display = '';
   var areaAcresImperial_display = '';
   if (displayUnits === 'imperial' && area) {
@@ -980,20 +896,14 @@ var retrieveFeatureInfoTable = function (evt) {
   var centroidString = 'N/A';
   try {
     var turfFormatForCentroid = new ol.format.GeoJSON();
-    const featureForTurf = feature.clone(); // Clone to avoid altering the original feature
-    const geometryInEPSG3857 = featureForTurf.getGeometry(); // This geometry is in EPSG:3857
-
-    // Create a GeoJSON geometry object with EPSG:3857 coordinates for turf.
-    // turf.js typically expects GeoJSON, and while GeoJSON standard is WGS84,
-    // for planar calculations, it uses the coordinate values as-is.
+    const featureForTurf = feature.clone();
+    const geometryInEPSG3857 = featureForTurf.getGeometry();
     const turfInputGeometry = JSON.parse(turfFormatForCentroid.writeGeometry(geometryInEPSG3857));
 
-    // console.log("Input Geometry for turf.centroid (coords are EPSG:3857):", JSON.stringify(turfInputGeometry)); // Removed diagnostic
-    var centroidProjected = turf.centroid(turfInputGeometry); // turf calculates centroid, result coords are EPSG:3857
+    var centroidProjected = turf.centroid(turfInputGeometry);
 
     if (centroidProjected && centroidProjected.geometry && centroidProjected.geometry.coordinates) {
-      // console.log("Raw turf.centroid output (coords are EPSG:3857):", centroidProjected.geometry.coordinates); // Removed diagnostic
-      var lonLatCentroid = ol.proj.transform(centroidProjected.geometry.coordinates, 'EPSG:3857', 'EPSG:4326'); // Transform to WGS84
+      var lonLatCentroid = ol.proj.transform(centroidProjected.geometry.coordinates, 'EPSG:3857', 'EPSG:4326');
 
       const threshold = 0.01;
       if (Math.abs(lonLatCentroid[1]) < threshold && Math.abs(lonLatCentroid[0]) < threshold) {
@@ -1001,7 +911,7 @@ var retrieveFeatureInfoTable = function (evt) {
         const featureCenter = ol.extent.getCenter(featureExtent);
         const featureCenterWGS84 = ol.proj.transform(featureCenter, 'EPSG:3857', 'EPSG:4326');
         if (Math.abs(featureCenterWGS84[1]) > 1 && Math.abs(featureCenterWGS84[0]) > 1) {
-            console.warn("Calculated WGS84 centroid is suspiciously close to (0,0) for feature:", geoJsonFeatureIdentifier); // Retained this important warning
+            console.warn("Calculated WGS84 centroid is suspiciously close to (0,0) for feature:", geoJsonFeatureIdentifier);
             centroidString = 'N/A (Invalid Calc)';
         } else {
              centroidString = `${lonLatCentroid[1].toFixed(5)}, ${lonLatCentroid[0].toFixed(5)}`;
@@ -1010,27 +920,26 @@ var retrieveFeatureInfoTable = function (evt) {
         centroidString = `${lonLatCentroid[1].toFixed(5)}, ${lonLatCentroid[0].toFixed(5)}`;
       }
     } else {
-      console.warn("turf.centroid did not return valid coordinates for feature:", geoJsonFeatureIdentifier); // Used geoJsonFeatureIdentifier
+      console.warn("turf.centroid did not return valid coordinates for feature:", geoJsonFeatureIdentifier);
     }
   } catch (e) {
-    console.error("Error calculating centroid for feature:", geoJsonFeatureIdentifier, e); // Added feature identifier to error
+    console.error("Error calculating centroid for feature:", geoJsonFeatureIdentifier, e);
     centroidString = 'Error';
   }
 
   var calculatedDataContent = `<table style="width:100%">`;
   if (displayUnits === 'imperial') {
-    if (area) { // Only show area if calculated
+    if (area) {
         calculatedDataContent += `<tr><td>Area (sqft)</td><td><code>${areaSqFtImperial_display}</code></td></tr>`;
         calculatedDataContent += `<tr><td>Area (acres)</td><td><code>${areaAcresImperial_display}</code></td></tr>`;
     }
-  } else { // Metric
+  } else {
     calculatedDataContent += `<tr><td>Area (calculated)</td><td><code>${areaString}</code></td></tr>`;
   }
   calculatedDataContent += `<tr><td>Centroid (Lat, Lon WGS84)</td><td><code>${centroidString}</code></td></tr>`;
 
-  // Add Clicked Coordinates
   var clickedCoordWGS84 = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
-  var clickedCoordString = `${clickedCoordWGS84[1].toFixed(5)}, ${clickedCoordWGS84[0].toFixed(5)}`; // Lat, Lon
+  var clickedCoordString = `${clickedCoordWGS84[1].toFixed(5)}, ${clickedCoordWGS84[0].toFixed(5)}`;
   calculatedDataContent += `<tr><td>Clicked (Lat, Lon WGS84)</td><td><code>${clickedCoordString}</code></td></tr>`;
 
   calculatedDataContent += `</table>`;
@@ -1042,7 +951,6 @@ var retrieveFeatureInfoTable = function (evt) {
     </div>
   `;
 
-  // --- GeoJSON Metadata Section ---
   var geoJsonMetadataContent = '<table style="width:100%">';
   const geoJsonProps = feature.getProperties();
   let hasGeoJsonProps = false;
@@ -1064,10 +972,9 @@ var retrieveFeatureInfoTable = function (evt) {
     </div>
   `;
 
-  // --- Toggle Buttons ---
   var buttonsArray = [];
   if (hasGeoJsonProps) {
-    buttonsArray.push(`<button onclick="toggleSection('geojson-metadata-section', this)" class="popup-toggle-button">GeoJSON Details</button>`);
+    buttonsArray.push(`<button onclick="toggleSection('geojson-metadata-section', this)" class="popup-toggle-button popup-toggle-button-subtle">[+] Raw Data</button>`);
   }
   buttonsArray.push(`<button onclick="toggleSection('calculated-data-section', this)" class="popup-toggle-button">Calculated</button>`);
 
@@ -1080,20 +987,38 @@ var retrieveFeatureInfoTable = function (evt) {
     toggleButtonsHtml = `<div class="popup-toggle-buttons">${buttonsArray.join('')}</div>`;
   }
 
-  // Assemble the final HTML
   if (matchedLot) {
     return topLevelHtml + toggleButtonsHtml + geoJsonMetadataHtml + calculatedDataHtml + linkedDataDumpHtml;
   } else {
-    let titleForUnmatched = parcelLegalDesc !== 'N/A' ? parcelLegalDesc : friendlyLayerName;
-    if (titleForUnmatched === 'Unknown Layer' && parcelLegalDesc === 'N/A') {
-        titleForUnmatched = "Feature Information";
+    // For UNMATCHED features
+    let titleForUnmatched = "Feature Information"; // Default title
+
+    if (friendlyLayerName) {
+      const lowerFriendlyLayerName = friendlyLayerName.toLowerCase();
+      if (lowerFriendlyLayerName.includes("section 1")) {
+        titleForUnmatched = "Section 1 Lot";
+      } else if (lowerFriendlyLayerName.includes("section 2")) {
+        titleForUnmatched = "Section 2 Lot";
+      } else if (lowerFriendlyLayerName.includes("section 3")) {
+        titleForUnmatched = "Section 3 Lot";
+      } else if (friendlyLayerName !== 'Unknown Layer' && friendlyLayerName !== 'Unnamed Layer') {
+        titleForUnmatched = geoJsonFeatureIdentifier || friendlyLayerName;
+      } else if (geoJsonFeatureIdentifier) {
+        titleForUnmatched = geoJsonFeatureIdentifier;
+      }
+    } else if (geoJsonFeatureIdentifier) {
+        titleForUnmatched = geoJsonFeatureIdentifier;
+    }
+
+    if (titleForUnmatched === 'Unknown Layer' || titleForUnmatched === 'Unnamed Layer') {
+        titleForUnmatched = geoJsonFeatureIdentifier || "Feature Information";
     }
 
     let genericHeaderHtml = `
       <div class="popup-section">
         <div class="popup-section-title main-title">${titleForUnmatched}</div>`;
 
-        if (friendlyLayerName !== 'Unknown Layer' && titleForUnmatched !== friendlyLayerName) {
+        if (friendlyLayerName && friendlyLayerName !== 'Unknown Layer' && friendlyLayerName !== 'Unnamed Layer' && titleForUnmatched !== friendlyLayerName) {
           genericHeaderHtml += `<table style="width:100%"><tr><td>Layer</td><td><code>${friendlyLayerName}</code></td></tr></table>`;
         }
     genericHeaderHtml += `</div>`;
@@ -1102,7 +1027,6 @@ var retrieveFeatureInfoTable = function (evt) {
   }
 };
 
-// Make sure this function is accessible globally for the inline onclick
 window.toggleSection = function(sectionId, button) {
   var section = document.getElementById(sectionId);
   if (section) {
@@ -1131,19 +1055,19 @@ var retrieveLotTable = function (url) {
       `<tr><th><b>Lot ID</b></th><th><b>Lot Status</b></th><th><b>${areaHeader}</b></th></tr>`
     );
     $.each(data.features, function (key, val) {
-      var areaM2 = turf.area(val); // Area in square meters
+      var areaM2 = turf.area(val);
       var displayArea;
       if (displayUnits === 'imperial') {
         var areaSqFt = areaM2 * 10.7639;
-        if (areaSqFt > 43560) { // acre
+        if (areaSqFt > 43560) {
             displayArea = (areaSqFt / 43560).toFixed(2);
         } else {
             displayArea = areaSqFt.toFixed(2);
         }
-      } else { // Metric
-        if (areaM2 > 10000) { // km2
+      } else {
+        if (areaM2 > 10000) {
             displayArea = (areaM2 / 1000000).toFixed(2);
-        } else { // m2
+        } else {
             displayArea = areaM2.toFixed(2);
         }
       }
@@ -1161,8 +1085,6 @@ var retrieveLotTable = function (url) {
 };
 retrieveLotTable('/files/lots.geojson');
 
-/* Event call-backs */
-
 olMap.on('pointermove', function (evt) {
   if (evt.dragging) {
     console.debug('dragging detected');
@@ -1171,7 +1093,6 @@ olMap.on('pointermove', function (evt) {
   var pixel = olMap.getEventPixel(evt.originalEvent);
   var feature = retrieveFeature(pixel);
 
-  /* feature can be null */
   if (typeof feature === 'undefined') {
     console.debug('no feature found on mouse-over');
     return;
@@ -1192,14 +1113,12 @@ function movePoint10mDown(Point){
   }
 
 olMap.on('click', function (evt) {
-  // Corrected: typeSelect.value to currentToolMode
   if (currentToolMode !== 'info') {
     return;
   }
 
   var feature = retrieveFeature(evt.pixel);
 
-  /* feature can be null */
   if (typeof feature === 'undefined') {
     console.log('no feature found under click or tap');
     return;
@@ -1217,8 +1136,6 @@ olMap.on('click', function (evt) {
 });
 
 window.addEventListener('orientationchange', function () {
-  // console.log("the orientation of the device is now " + screen.orientation.angle);
-
   if (screen.orientation.angle === 0) {
     console.log('rotating map to portrait mode');
     olMap.setView(olView);
@@ -1228,64 +1145,24 @@ window.addEventListener('orientationchange', function () {
   }
 });
 
-/**
- * Currently drawn feature.
- * @type {import("../src/ol/Feature.js").default}
- */
 var sketch;
-
-/**
- * The help tooltip element.
- * @type {HTMLElement}
- */
 var helpTooltipElement;
-
-/**
- * Overlay to show the help messages.
- * @type {Overlay}
- */
 var helpTooltip;
-
-/**
- * The measure tooltip element.
- * @type {HTMLElement}
- */
 var measureTooltipElement;
-
-/**
- * Overlay to show the measurement.
- * @type {Overlay}
- */
 var measureTooltip;
-
-/**
- * Message to show when the user is drawing a polygon.
- * @type {string}
- */
 var continuePolygonMsg = 'Click to continue drawing the polygon';
-
-/**
- * Message to show when the user is drawing a line.
- * @type {string}
- */
 var continueLineMsg = 'Click to continue drawing the line';
 
-/**
- * Handle pointer move.
- * @param {import("../src/ol/MapBrowserEvent").default} evt The event.
- */
 var pointerMoveHandler = function (evt) {
-  // Corrected: typeSelect.value to currentToolMode
-  if (currentToolMode === 'info' || !sketch) { // Also ensure sketch exists before trying to use it for messages
+  if (currentToolMode === 'info' || !sketch) {
     if (helpTooltipElement && !helpTooltipElement.classList.contains('hidden')) {
-      helpTooltipElement.classList.add('hidden'); // Hide tooltip if not in draw mode or no sketch
+      helpTooltipElement.classList.add('hidden');
     }
     return;
   }
   if (evt.dragging) {
     return;
   }
-  /** @type {string} */
   var helpMsg = 'Click to start drawing';
 
   if (sketch) {
@@ -1306,14 +1183,10 @@ var pointerMoveHandler = function (evt) {
 olMap.on('pointermove', pointerMoveHandler);
 
 olMap.getViewport().addEventListener('mouseout', function () {
-  if (currentToolMode === 'info') return; // Updated
+  if (currentToolMode === 'info') return;
   helpTooltipElement.classList.add('hidden');
 });
 
-// Global variables currentToolMode, displayUnits, and draw are defined at the top of the script.
-
-// Function to set the active tool and update interactions.
-// Called by the individual tool controls.
 function setActiveToolInteraction(toolMode) {
   currentToolMode = toolMode;
   if (olMap) {
@@ -1324,22 +1197,17 @@ function setActiveToolInteraction(toolMode) {
   }
 }
 
-/**
- * Format length output.
- * @param {LineString} line The line.
- * @return {string} The formatted length.
- */
 var formatLength = function (line) {
-  var length = ol.sphere.getLength(line); // Length in meters
+  var length = ol.sphere.getLength(line);
   var output;
   if (displayUnits === 'imperial') {
     var lengthFeet = length * 3.28084;
-    if (lengthFeet > 5280) { // If longer than a mile
+    if (lengthFeet > 5280) {
       output = (lengthFeet / 5280).toFixed(2) + ' ' + 'mi';
     } else {
       output = lengthFeet.toFixed(2) + ' ' + 'ft';
     }
-  } else { // Metric
+  } else {
     if (length > 100) {
       output = (length / 1000).toFixed(2) + ' ' + 'km';
     } else {
@@ -1349,22 +1217,17 @@ var formatLength = function (line) {
   return output;
 };
 
-/**
- * Format area output.
- * @param {Polygon} polygon The polygon.
- * @return {string} Formatted area.
- */
 var formatArea = function (polygon) {
-  var area = ol.sphere.getArea(polygon); // Area in square meters
+  var area = ol.sphere.getArea(polygon);
   var output;
   if (displayUnits === 'imperial') {
     var areaSqFt = area * 10.7639;
-    if (areaSqFt > 43560) { // If larger than an acre
+    if (areaSqFt > 43560) {
       output = (areaSqFt / 43560).toFixed(2) + ' ' + 'acres';
     } else {
       output = areaSqFt.toFixed(2) + ' ' + 'ft<sup>2</sup>';
     }
-  } else { // Metric
+  } else {
     if (area > 10000) {
       output = (area / 1000000).toFixed(2) + ' ' + 'km<sup>2</sup>';
     } else {
@@ -1375,32 +1238,31 @@ var formatArea = function (polygon) {
 };
 
 function addInteraction () {
-  if (currentToolMode === 'info') { // Updated
-    olMap.removeInteraction(draw); // Ensure draw interaction is removed when in info mode
+  if (currentToolMode === 'info') {
+    olMap.removeInteraction(draw);
     return;
   }
-  var type = currentToolMode === 'area' ? 'Polygon' : 'LineString'; // Updated
-  // No need for: if (type === 'info') return; as it's handled above
+  var type = currentToolMode === 'area' ? 'Polygon' : 'LineString';
 
   draw = new ol.interaction.Draw({
-    source: drawingLayerSource, // Use dedicated drawing source
+    source: drawingLayerSource,
     type: type,
     style: new ol.style.Style({
       fill: new ol.style.Fill({
-        color: 'rgba(255, 255, 255, 0.2)' // Original fill
+        color: 'rgba(255, 255, 255, 0.2)'
       }),
       stroke: new ol.style.Stroke({
-        color: 'rgba(0, 0, 0, 0.5)', // Original stroke color
+        color: 'rgba(0, 0, 0, 0.5)',
         lineDash: [10, 10],
-        width: 2 // Original width
+        width: 2
       }),
       image: new ol.style.Circle({
         radius: 5,
         stroke: new ol.style.Stroke({
-          color: 'rgba(0, 0, 0, 0.7)' // Original image stroke
+          color: 'rgba(0, 0, 0, 0.7)'
         }),
         fill: new ol.style.Fill({
-          color: 'rgba(255, 255, 255, 0.2)' // Original image fill
+          color: 'rgba(255, 255, 255, 0.2)'
         })
       })
     })
@@ -1412,12 +1274,8 @@ function addInteraction () {
 
   var listener;
   draw.on('drawstart', function (evt) {
-    // set sketch
     sketch = evt.feature;
-
-    /** @type {import("../src/ol/coordinate.js").Coordinate|undefined} */
     var tooltipCoord = evt.coordinate;
-
     listener = sketch.getGeometry().on('change', function (evt) {
       var geom = evt.target;
       var output;
@@ -1433,42 +1291,32 @@ function addInteraction () {
     });
   });
 
-  draw.on('drawend', function (evt) { // Added evt parameter here
+  draw.on('drawend', function (evt) {
     measureTooltipElement.className = 'ol-tooltip ol-tooltip-static';
     measureTooltip.setOffset([0, -7]);
-    // Ensure the feature uses the layer's style, not the interaction's temporary style
     if (evt.feature) {
-      // evt.feature.setStyle(undefined); // Previous attempt
       const debugRedStyle = new ol.style.Style({
-          stroke: new ol.style.Stroke({ color: 'rgba(255, 0, 0, 1)', width: 4 }), // Bright solid red, width 4
+          stroke: new ol.style.Stroke({ color: 'rgba(255, 0, 0, 1)', width: 4 }),
           fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 0.1)' }),
           image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 1)' }) })
       });
       evt.feature.setStyle(debugRedStyle);
       console.log('Applied direct RED debug style to feature in drawend.');
     }
-    // unset sketch
     sketch = null;
-    // unset tooltip so that a new one can be created
     measureTooltipElement = null;
     createMeasureTooltip();
     ol.Observable.unByKey(listener);
 
-    // Console logs for debugging drawing persistence
     console.log('drawend event triggered.');
     if (evt.feature) {
       console.log('Drawn feature geometry type:', evt.feature.getGeometry().getType());
     }
     console.log('Total features on drawingLayerSource:', drawingLayerSource.getFeatures().length);
-
-    // Ensure the drawingLayerSource (and thus layerVectorDrawings) refreshes
     drawingLayerSource.changed();
   });
 }
 
-/**
- * Creates a new help tooltip
- */
 function createHelpTooltip () {
   if (helpTooltipElement) {
     helpTooltipElement.parentNode.removeChild(helpTooltipElement);
@@ -1483,9 +1331,6 @@ function createHelpTooltip () {
   olMap.addOverlay(helpTooltip);
 }
 
-/**
- * Creates a new measure tooltip
- */
 function createMeasureTooltip () {
   if (measureTooltipElement) {
     measureTooltipElement.parentNode.removeChild(measureTooltipElement);
@@ -1500,10 +1345,9 @@ function createMeasureTooltip () {
   olMap.addOverlay(measureTooltip);
 }
 
-addInteraction(); // Initial call to set up interaction based on default currentToolMode
+addInteraction();
 
 var geolocation = new ol.Geolocation({
-  // enableHighAccuracy must be set to true to have the heading value.
   trackingOptions: {
     enableHighAccuracy: true
   },
@@ -1514,15 +1358,6 @@ function el (id) {
   return document.getElementById(id);
 }
 
-// The old el('track') listener will be removed as the new control handles this.
-// el('track').addEventListener('change', function () {
-//   geolocation.setTracking(this.checked);
-// });
-
-// update the HTML page when the position changes.
-// This assumes 'trackingControlInstance' will be the instance of our new control.
-// This instance needs to be created before this part of the script runs,
-// or this callback needs to be set after the control is instantiated.
 geolocation.on('change', function () {
   if (window.trackingControlInstance && window.trackingControlInstance.trackingOn_) {
     const accuracy = geolocation.getAccuracy() !== undefined ? geolocation.getAccuracy().toFixed(2) : '-';
@@ -1532,39 +1367,30 @@ geolocation.on('change', function () {
     const speed = geolocation.getSpeed() !== undefined ? geolocation.getSpeed().toFixed(2) : '-';
 
     let currentCoords = {lat: '-', lon: '-'};
-    const position = geolocation.getPosition(); // This is in view projection
+    const position = geolocation.getPosition();
     if (position) {
-      const lonLat = ol.proj.toLonLat(position); // Transform to EPSG:4326 for display
+      const lonLat = ol.proj.toLonLat(position);
       currentCoords.lon = lonLat[0];
       currentCoords.lat = lonLat[1];
 
-      // Center map if needsCentering_ flag is true
       if (window.trackingControlInstance.needsCentering_) {
         olMap.getView().animate({ center: position, zoom: Math.max(olMap.getView().getZoom(), 17), rotation: 0, duration: 500 });
-        window.trackingControlInstance.needsCentering_ = false; // Reset flag after centering
+        window.trackingControlInstance.needsCentering_ = false;
       }
     }
 
     window.trackingControlInstance.updateStats(accuracy, altitude, altitudeAccuracy, heading, speed, currentCoords);
   }
-  // The custom control now handles these updates.
-  // el('accuracy').innerText = geolocation.getAccuracy() + ' [m]';
-  // el('altitude').innerText = geolocation.getAltitude() + ' [m]';
-  // el('altitudeAccuracy').innerText = geolocation.getAltitudeAccuracy() + ' [m]';
-  // el('heading').innerText = geolocation.getHeading() + ' [rad]';
-  // el('speed').innerText = geolocation.getSpeed() + ' [m/s]';
 });
 
-// handle geolocation error.
 geolocation.on('error', function (error) {
   var info = document.getElementById('info');
   info.innerHTML = error.message;
   info.style.display = '';
   if (window.trackingControlInstance) {
     window.trackingControlInstance.updateStats('Error', 'Error', 'Error', 'Error', 'Error', {lat: 'Error', lon: 'Error'});
-    // Optionally disable tracking or show error state on button
     if (window.trackingControlInstance.trackingOn_) {
-        window.trackingControlInstance.handleTrackToggle_(); // Toggle to off state
+        window.trackingControlInstance.handleTrackToggle_();
     }
   }
 });
@@ -1600,40 +1426,28 @@ var layerPositionMarker = new ol.layer.Vector({
   })
 });
 
-
-// =============================
-//  Custom Tracking Control
-// =============================
-// Make sure this class definition is before its instantiation
 class TrackingControl extends ol.control.Control {
-  /**
-   * @param {Object} [opt_options] Control options.
-   */
   constructor(opt_options) {
     const options = opt_options || {};
 
     const button = document.createElement('button');
-    button.innerHTML = '🛰️'; // Satellite emoji for "off" state / enable tracking
+    button.innerHTML = '🛰️';
     button.title = 'Toggle GPS Tracking';
 
     const element = document.createElement('div');
-    element.className = 'ol-unselectable ol-control tracking-control'; // Added a custom class
+    element.className = 'ol-unselectable ol-control tracking-control';
     element.appendChild(button);
 
-    // Call super constructor first
     super({
       element: element,
       target: options.target,
     });
 
-    // Create container for stats
     this.statsElement_ = document.createElement('div');
     this.statsElement_.className = 'tracking-stats';
-    // Initially hide stats or show placeholder text
     this.statsElement_.style.display = 'none';
     element.appendChild(this.statsElement_);
 
-    // Create individual stat elements
     this.accuracyElement_ = document.createElement('div');
     this.accuracyElement_.innerHTML = 'Accuracy: -';
     this.statsElement_.appendChild(this.accuracyElement_);
@@ -1659,8 +1473,8 @@ class TrackingControl extends ol.control.Control {
     this.statsElement_.appendChild(this.coordinatesElement_);
 
     this.button_ = button;
-    this.trackingOn_ = false; // To keep track of tracking state
-    this.needsCentering_ = false; // Flag to control centering on first fix
+    this.trackingOn_ = false;
+    this.needsCentering_ = false;
 
     this.button_.addEventListener('click', this.handleTrackToggle_.bind(this), false);
   }
@@ -1671,18 +1485,17 @@ class TrackingControl extends ol.control.Control {
     if (this.trackingOn_) {
       this.button_.innerHTML = '📡';
       this.statsElement_.style.display = 'flex';
-      this.needsCentering_ = true; // Set flag to center on next position update
-      // Attempt to center immediately if position is already available
+      this.needsCentering_ = true;
       const currentPosition = geolocation.getPosition();
       if (currentPosition && this.needsCentering_) {
         olMap.getView().animate({ center: currentPosition, zoom: Math.max(olMap.getView().getZoom(), 17), rotation: 0, duration: 500 });
-        this.needsCentering_ = false; // Centered, so reset flag
+        this.needsCentering_ = false;
       }
     } else {
       this.button_.innerHTML = '🛰️';
       this.statsElement_.style.display = 'none';
       this.updateStats('-', '-', '-', '-', '-', {lat: '-', lon: '-'});
-      this.needsCentering_ = false; // Tracking off, no need to center
+      this.needsCentering_ = false;
     }
     console.log('Tracking toggled:', this.trackingOn_);
   }
@@ -1701,12 +1514,5 @@ class TrackingControl extends ol.control.Control {
   }
 }
 
-// Instantiate the custom control
 window.trackingControlInstance = new TrackingControl();
-
-// Add the custom control to the map
-// Need to ensure olMap is defined before this line.
-// Typically, map initialization code is wrapped in a DOMContentLoaded or similar event,
-// or this part of the script is placed after the map div and OL map instantiation.
-// For this file structure, olMap is defined much earlier.
 olMap.addControl(window.trackingControlInstance);
