@@ -693,7 +693,7 @@ if (layerSwitcher && layerSwitcher.panel) {
 //  Load lots.json data
 // =============================
 (function loadLotsData() {
-  fetch('/static/data/lots.json') // Reverted path for testing
+  fetch('/data/lots.json') // Restoring correct path as per user feedback
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok for lots.json');
@@ -958,7 +958,25 @@ var retrieveFeatureInfoTable = function (evt) {
     if (centroid && centroid.geometry && centroid.geometry.coordinates) {
       console.log("Raw turf.centroid coordinates (EPSG:3857):", centroid.geometry.coordinates); // Log raw centroid
       var lonLatCentroid = ol.proj.transform(centroid.geometry.coordinates, 'EPSG:3857', 'EPSG:4326');
-      centroidString = `${lonLatCentroid[1].toFixed(5)}, ${lonLatCentroid[0].toFixed(5)}`;
+
+      // Check for suspicious (0,0)-like WGS84 coordinates if the original geometry wasn't expected to be there
+      // Threshold can be adjusted. 0.001 degrees is roughly 111 meters.
+      const threshold = 0.01; // Approx 1.1 km, if centroid is this close to 0,0 lat/lon, it's suspicious for typical data
+      if (Math.abs(lonLatCentroid[1]) < threshold && Math.abs(lonLatCentroid[0]) < threshold) {
+        // Heuristic: if original feature extent is far from 0,0 then a 0,0 centroid is likely an error
+        const featureExtent = feature.getGeometry().getExtent(); // EPSG:3857
+        const featureCenter = ol.extent.getCenter(featureExtent);
+        const featureCenterWGS84 = ol.proj.transform(featureCenter, 'EPSG:3857', 'EPSG:4326');
+        // If feature center is far from (0,0) but centroid is very close, then treat centroid as invalid.
+        if (Math.abs(featureCenterWGS84[1]) > 1 && Math.abs(featureCenterWGS84[0]) > 1) { // e.g. if feature is more than ~1 deg from Null Island
+            console.warn("Calculated WGS84 centroid is suspiciously close to (0,0):", lonLatCentroid, "Original feature center (WGS84):", featureCenterWGS84);
+            centroidString = 'N/A (Invalid Calc)';
+        } else {
+             centroidString = `${lonLatCentroid[1].toFixed(5)}, ${lonLatCentroid[0].toFixed(5)}`; // Lat, Lon
+        }
+      } else {
+        centroidString = `${lonLatCentroid[1].toFixed(5)}, ${lonLatCentroid[0].toFixed(5)}`; // Lat, Lon
+      }
     } else {
       console.warn("turf.centroid did not return valid coordinates for feature:", feature.get('name'), turfGeom);
     }
