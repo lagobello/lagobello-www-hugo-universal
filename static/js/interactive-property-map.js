@@ -1050,7 +1050,7 @@ var retrieveFeatureInfoTable = function (evt) {
   for (const key in geoJsonProps) {
     if (key !== 'geometry' && geoJsonProps.hasOwnProperty(key)) {
         geoJsonMetadataContent += `<tr><td>${key}</td><td><code>${geoJsonProps[key]}</code></td></tr>`;
-        hasGeoJsonProps = true;
+        hasLinkedProps = true;
     }
   }
   if (!hasGeoJsonProps) {
@@ -1170,231 +1170,73 @@ var makeListingsTable = function (url) {
           <th>Agent Phone</th>
           <th>Listing</th>
           <th>Location</th>
-          <th>Close To</th>
+          <th>Close To <br><select id="header-filter-location" class="header-filter" style="width: 90%; margin-top: 4px; padding: 0.15rem 0.5rem; font-size: 0.85em; height: auto;">${closeToOptionsHtml}</select></th>
         </tr>
-      </thead>`
-    );
-    // Filter for Section 2 lots that are Available or Listed
-    var filteredLots = data.filter(function(lot) {
-      return lot.Subdivision === "Section 2" && (lot["Lot Status"] === "Available" || lot["Lot Status"] === "Listed");
-    });
+      </thead>`;
 
-    // Default sort by List Price (ascending, nulls/N.A. last)
-    filteredLots.sort(function(a, b) {
-      var priceA = parseFloat(a["List Price"]);
-      var priceB = parseFloat(b["List Price"]);
-
-      if (isNaN(priceA) && isNaN(priceB)) return 0;
-      if (isNaN(priceA)) return 1; // Put NaNs at the end
-      if (isNaN(priceB)) return -1; // Put NaNs at the end
-      return priceA - priceB;
-    });
-
-    items.push('<tbody>');
-    $.each(filteredLots, function (key, val) {
-      var listPrice = val["List Price"] ? `$${parseFloat(val["List Price"]).toLocaleString()}` : 'N/A';
-      var sizeSqft = val["Size [sqft]"] ? `${parseFloat(val["Size [sqft]"]).toLocaleString()} sqft` : 'N/A';
-      var listingLink = val["Listing Link"] && val["Listing Link"].toLowerCase().startsWith('http') ? `<a href="${val["Listing Link"]}" target="_blank" rel="noopener noreferrer">View</a>` : (val["Listing Link"] || 'N/A');
-
-      var agentPhoneStr = val["Listing Agent Phone Number"] ? String(val["Listing Agent Phone Number"]).replace(/\D/g, '') : '';
-      var callNowButton = '';
-      if (agentPhoneStr) {
-        callNowButton = `<button class="btn btn-sm btn-success call-now-btn" data-phone="${agentPhoneStr}">Call</button>`;
-      }
-      var agentPhoneDisplay = val["Listing Agent Phone Number"] ? String(val["Listing Agent Phone Number"]) : 'N/A';
-
-      items.push(
-        // Added data-lot-name for click handling and cursor style
-        `<tr data-lot-name="${val.Name}" style="cursor:pointer;">
-          <td>${val.Name || 'N/A'}</td>
-          <td>${val["Lot Status"] || 'N/A'}</td>
-          <td>${listPrice}</td>
-          <td>${sizeSqft}</td>
-          <td>${val["Street Address"] || 'N/A'}</td>
-          <td>${val["Listing Agent"] || 'N/A'}</td>
-          <td>${agentPhoneDisplay} ${callNowButton}</td>
-          <td>${listingLink}</td>
-          <td>${val.Location || 'N/A'}</td>
-          <td>${val["Close-to"] || 'N/A'}</td>
-        </tr>`
-      );
-    });
-    items.push('</tbody>');
+    items.push(tableHeadersHtml); // Push headers to items
+    items.push('<tbody></tbody>'); // Empty tbody, populated by applyFiltersAndSortAndRender
 
     var tableElement = $('<table/>', {
       class: 'lot-table table table-striped table-hover',
       html: items.join('')
     });
 
-    // Clear existing table content and append new table
+    // Clear existing table content and append new table structure
     $('#lot-table').empty().append(tableElement);
 
-    // Add click event listener to table rows
-    $('#lot-table tbody tr').on('click', function() {
-      var lotName = $(this).data('lot-name');
-      if (!lotName) return;
+    // Set initial values for dropdowns if they exist in tableDisplayState (e.g. from previous interaction before a full reload)
+    if (tableDisplayState.filters.status) {
+        $('#header-filter-status').val(tableDisplayState.filters.status);
+    }
+    if (tableDisplayState.filters.location) {
+        $('#header-filter-location').val(tableDisplayState.filters.location);
+    }
 
-      $('#lot-table tbody tr').removeClass('table-info');
-      $(this).addClass('table-info');
+    applyFiltersAndSortAndRender(); // Initial render which also sets up sort indicators
 
-      var targetFeature = null;
-      var lotDataEntry = lotsData.find(ld => ld.Name === lotName);
-
-      if (lotDataEntry && lotDataEntry.Location) {
-        const parts = lotDataEntry.Location.split(',');
-        if (parts.length === 2) {
-          const lat = parseFloat(parts[0].trim());
-          const lon = parseFloat(parts[1].trim());
-          if (!isNaN(lat) && !isNaN(lon)) {
-            const lotPointWGS84 = [lon, lat];
-            const lotPointInViewProj = ol.proj.transform(lotPointWGS84, 'EPSG:4326', olMap.getView().getProjection());
-
-            // Iterate over features at the transformed coordinate
-            // This relies on the lot polygons being present on one of the plat layers
-            var featuresAtPixel = olMap.getFeaturesAtPixel(olMap.getPixelFromCoordinate(lotPointInViewProj), {
-                layerFilter: function(layer) {
-                    // Check if the layer is one of the plat layers
-                    return [layerVectorLotsPlatS1, layerVectorLotsPlatS2, layerVectorLotsPlatS3].includes(layer);
-                },
-                hitTolerance: 5 // Optional: add a hit tolerance
-            });
-
-            if (featuresAtPixel && featuresAtPixel.length > 0) {
-                // Assuming the first feature found is the correct one.
-                // If features can overlap, more specific matching (e.g., by a property) might be needed.
-                targetFeature = featuresAtPixel[0];
-            }
-          }
-        }
-      }
-
-      if (targetFeature) {
-        var featureCenter = ol.extent.getCenter(targetFeature.getGeometry().getExtent());
-        olMap.getView().animate({
-          center: featureCenter,
-          zoom: 19, // Adjust zoom level as needed
-          duration: 500
-        });
-
-        // Create a pseudo event object for retrieveFeatureInfoTable
-        // retrieveFeatureInfoTable expects an event object with 'pixel' and 'coordinate'
-        // We also pass the feature directly to avoid re-fetching it if retrieveFeatureInfoTable is modified to accept it
-        var pseudoEvt = {
-            pixel: olMap.getPixelFromCoordinate(featureCenter),
-            coordinate: featureCenter,
-            // Custom property to pass the already found feature, if retrieveFeatureInfoTable is adapted
-            // This avoids issues if retrieveFeature(pixel) doesn't find the exact same feature instance
-            // For now, retrieveFeatureInfoTable internally calls retrieveFeature(evt.pixel)
-        };
-        content.innerHTML = retrieveFeatureInfoTable(pseudoEvt); // Original uses evt, which has pixel.
-        overlay.setPosition(featureCenter);
-        featureHighlight(targetFeature);
-
-      } else {
-        console.warn("Could not find feature on map for lot: " + lotName + ". Or lot has no location data.");
-      }
-    });
-
-    // Add click listener for "Call Now" buttons (event delegation for dynamically added buttons)
-    $('#lot-table').on('click', '.call-now-btn', function(e) {
-        e.stopPropagation(); // Prevent row click event
+    // Event listeners (use .off().on() to prevent multiple bindings if makeListingsTable is ever recalled)
+    $('#lot-table').off('click', '.call-now-btn').on('click', '.call-now-btn', function(e) {
+        e.stopPropagation();
         var phone = $(this).data('phone');
         if (phone) {
             window.location.href = 'tel:' + phone;
         }
     });
 
-    // Add sorting functionality to table headers
-    // Store current sort state
-    var currentSort = { column: 'List Price', order: 'asc' };
-
-    $('#lot-table thead th').on('click', function() {
-      var column = $(this).text(); // Or use a data-column attribute for robustness
-      var order = 'asc';
-
-      // Determine column key for lotsData
+    $('#lot-table thead th').off('click').on('click', function(e) {
+      if ($(e.target).is('select.header-filter')) {
+          e.stopPropagation(); // Prevent sorting when clicking on the select dropdown itself
+          return;
+      }
+      // Use clone to get text without children like select or span.sort-arrow
+      var columnText = $(this).clone().children().remove().end().text().trim();
       var columnKey;
-      switch (column) {
+      switch (columnText) {
         case 'Lot ID': columnKey = 'Name'; break;
         case 'Size (sqft)': columnKey = 'Size [sqft]'; break;
         case 'Price': columnKey = 'List Price'; break;
-        default: return; // Not a sortable column
+        // Status and Close To are handled by their select, not direct th click for sorting
+        default: return;
       }
 
-      if (currentSort.column === columnKey) {
-        order = currentSort.order === 'asc' ? 'desc' : 'asc';
+      if (tableDisplayState.sort.column === columnKey) {
+        tableDisplayState.sort.order = tableDisplayState.sort.order === 'asc' ? 'desc' : 'asc';
+      } else {
+        tableDisplayState.sort.column = columnKey;
+        tableDisplayState.sort.order = 'asc'; // Default to asc on new column
       }
-      currentSort = { column: columnKey, order: order };
-
-      // Re-sort and re-render table (simplified, assumes makeListingsTable can be recalled with sort params or lotsData is accessible)
-      // For a cleaner approach, lotsData should be accessible here, or makeListingsTable refactored.
-      // Let's assume lotsData is available in this scope for now for sorting.
-      if (lotsData) {
-        var sortedData = sortLotsData(lotsData, currentSort.column, currentSort.order);
-        // This part needs to re-trigger the table rendering logic within makeListingsTable
-        // For now, let's call a new function that just renders the table body from sorted data.
-        // Or, modify makeListingsTable to accept sorted data directly.
-        // To avoid major refactor now, this will re-fetch and re-process, then sort.
-        // This is inefficient but fits current structure.
-        // A better way is to have a global or passed 'filteredAndSortedLots' and a dedicated renderTable(lots) function.
-
-        // Re-filter and sort data (as makeListingsTable does internally)
-        var newlyFilteredLots = lotsData.filter(function(lot) {
-          return lot.Subdivision === "Section 2" && (lot["Lot Status"] === "Available" || lot["Lot Status"] === "Listed");
-        });
-
-        var finalSortedLots = sortLotsData(newlyFilteredLots, currentSort.column, currentSort.order);
-
-        // Rebuild and replace table body
-        var newTableBodyItems = [];
-        $.each(finalSortedLots, function (key, val) {
-          var listPrice = val["List Price"] ? `$${parseFloat(val["List Price"]).toLocaleString()}` : 'N/A';
-          var sizeSqft = val["Size [sqft]"] ? `${parseFloat(val["Size [sqft]"]).toLocaleString()} sqft` : 'N/A';
-          var listingLink = val["Listing Link"] && val["Listing Link"].toLowerCase().startsWith('http') ? `<a href="${val["Listing Link"]}" target="_blank" rel="noopener noreferrer">View</a>` : (val["Listing Link"] || 'N/A');
-          var agentPhoneStr = val["Listing Agent Phone Number"] ? String(val["Listing Agent Phone Number"]).replace(/\D/g, '') : '';
-          var callNowButton = agentPhoneStr ? `<button class="btn btn-sm btn-success call-now-btn" data-phone="${agentPhoneStr}">Call</button>` : '';
-          var agentPhoneDisplay = val["Listing Agent Phone Number"] ? String(val["Listing Agent Phone Number"]) : 'N/A';
-
-          newTableBodyItems.push(
-            `<tr data-lot-name="${val.Name}" style="cursor:pointer;">
-              <td>${val.Name || 'N/A'}</td>
-              <td>${val["Lot Status"] || 'N/A'}</td>
-              <td>${listPrice}</td>
-              <td>${sizeSqft}</td>
-              <td>${val["Street Address"] || 'N/A'}</td>
-              <td>${val["Listing Agent"] || 'N/A'}</td>
-              <td>${agentPhoneDisplay} ${callNowButton}</td>
-              <td>${listingLink}</td>
-              <td>${val.Location || 'N/A'}</td>
-              <td>${val["Close-to"] || 'N/A'}</td>
-            </tr>`
-          );
-        });
-        $('#lot-table tbody').html(newTableBodyItems.join(''));
-        // Re-attach row click listeners as the rows are new
-         $('#lot-table tbody tr').on('click', function() {
-            var lotName = $(this).data('lot-name');
-            if (!lotName) return;
-
-            $('#lot-table tbody tr').removeClass('table-info');
-            $(this).addClass('table-info');
-            // ... (rest of the row click logic from previous step, simplified here)
-            var lotDataEntry = lotsData.find(ld => ld.Name === lotName);
-            if (lotDataEntry && lotDataEntry.Location) {
-                 // Simplified: Find feature and show popup
-                const targetFeature = findFeatureByLotName(lotName); // Using existing helper
-                if (targetFeature) {
-                    var featureCenter = ol.extent.getCenter(targetFeature.getGeometry().getExtent());
-                    olMap.getView().animate({ center: featureCenter, zoom: 19, duration: 500 });
-                    var pseudoEvt = { pixel: olMap.getPixelFromCoordinate(featureCenter), coordinate: featureCenter };
-                    content.innerHTML = retrieveFeatureInfoTable(pseudoEvt);
-                    overlay.setPosition(featureCenter);
-                    featureHighlight(targetFeature);
-                }
-            }
-        });
-      }
+      applyFiltersAndSortAndRender();
     });
+
+    // Filter dropdown listeners
+    $('#header-filter-status, #header-filter-location').off('change').on('change', function(e) {
+        e.stopPropagation(); // Prevent th click event if selects are inside th
+        tableDisplayState.filters.status = $('#header-filter-status').val();
+        tableDisplayState.filters.location = $('#header-filter-location').val();
+        applyFiltersAndSortAndRender();
+    });
+
   });
   return true;
 };
