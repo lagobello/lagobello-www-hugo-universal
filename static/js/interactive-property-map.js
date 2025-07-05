@@ -693,7 +693,7 @@ if (layerSwitcher && layerSwitcher.panel) {
 //  Load lots.json data
 // =============================
 (function loadLotsData() {
-  fetch('/data/lots.json')
+  fetch('/static/data/lots.json') // Reverted path for testing
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok for lots.json');
@@ -705,7 +705,8 @@ if (layerSwitcher && layerSwitcher.panel) {
       console.log('lots.json loaded successfully:', lotsData); // Log the data itself
     })
     .catch(error => {
-      console.error('Error loading lots.json:', error);
+      console.error('CRITICAL: Error loading lots.json:', error.message);
+      console.warn('lots.json fetch failed. Pop-up information linked to this file will be unavailable. Check file path and server logs.');
       lotsData = []; // Initialize as empty array on error to prevent other parts from breaking
     });
 })();
@@ -952,10 +953,14 @@ var retrieveFeatureInfoTable = function (evt) {
   try {
     var turfFormat = new ol.format.GeoJSON(); // Use a different var name to avoid conflict
     var turfGeom = turfFormat.writeFeatureObject(feature, { featureProjection: 'EPSG:3857' });
+    console.log("Feature for turf.centroid:", JSON.stringify(turfGeom)); // Log the feature
     var centroid = turf.centroid(turfGeom);
     if (centroid && centroid.geometry && centroid.geometry.coordinates) {
+      console.log("Raw turf.centroid coordinates (EPSG:3857):", centroid.geometry.coordinates); // Log raw centroid
       var lonLatCentroid = ol.proj.transform(centroid.geometry.coordinates, 'EPSG:3857', 'EPSG:4326');
       centroidString = `${lonLatCentroid[1].toFixed(5)}, ${lonLatCentroid[0].toFixed(5)}`;
+    } else {
+      console.warn("turf.centroid did not return valid coordinates for feature:", feature.get('name'), turfGeom);
     }
   } catch (e) {
     console.error("Error calculating centroid:", e);
