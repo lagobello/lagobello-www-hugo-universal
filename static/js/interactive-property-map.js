@@ -203,9 +203,7 @@ var dynamicLotStyleFunction = function(feature) {
       }
     }
   }
-  // Create a new style instance for each feature.
-  // This is important if styles can vary significantly per feature beyond color.
-  // For simple color changes, caching styles is more performant (see optimization note in plan).
+
   return new ol.style.Style({
     fill: new ol.style.Fill({
       color: chosenColor
@@ -214,24 +212,9 @@ var dynamicLotStyleFunction = function(feature) {
   });
 };
 
-// The old styleFunctionPlatLots is now replaced by dynamicLotStyleFunction for plat layers.
-// var styleFunctionPlatLots = function (feature) {
-//   return lotStyles['FOR SALE'];
-// };
-
-var layerVectorLots = new ol.layer.Vector({
-  title: 'Lot layer',
-  source: new ol.source.Vector({
-    format: new ol.format.GeoJSON(),
-    url: '/files/lots.geojson'
-  }),
-  style: styleFunction,
-  visible: false,
-  opacity: 0.4
-});
 
 var layerVectorLotsPlatS1 = new ol.layer.Vector({
-  title: 'Lot Layer - Plat Section 1',
+  title: 'Lots - Plat Section 1',
   source: new ol.source.Vector({
     format: new ol.format.GeoJSON(),
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S1.geojson'
@@ -241,7 +224,7 @@ var layerVectorLotsPlatS1 = new ol.layer.Vector({
 });
 
 var layerVectorLotsPlatS2 = new ol.layer.Vector({
-  title: 'Lot Layer - Plat Section 2',
+  title: 'Lots - Plat Section 2',
   source: new ol.source.Vector({
     format: new ol.format.GeoJSON(),
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S2.geojson'
@@ -251,7 +234,7 @@ var layerVectorLotsPlatS2 = new ol.layer.Vector({
 });
 
 var layerVectorLotsPlatS3 = new ol.layer.Vector({
-  title: 'Lot Layer - Plat Section 3 (future)',
+  title: 'Lots - Plat Section 3 (future)',
   source: new ol.source.Vector({
     format: new ol.format.GeoJSON(),
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S3.geojson'
@@ -261,7 +244,7 @@ var layerVectorLotsPlatS3 = new ol.layer.Vector({
 });
 
 var layerVectorLotsCameronAppraisalDistrict = new ol.layer.Vector({
-  title: 'Lot layer - Cameron Appraisal District',
+  title: 'Lots - Cameron Appraisal District',
   source: new ol.source.Vector({
     format: new ol.format.GeoJSON(),
     url: '/files/lots_cameron_appraisal_district.geojson'
@@ -278,7 +261,6 @@ var layerVectorFountain = new ol.layer.Vector({
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-FOUNTAIN.geojson'
   }),
   style: stylePark,
-  visible: false,
   opacity: 0.4
 });
 
@@ -289,7 +271,6 @@ var layerVectorCommonArea = new ol.layer.Vector({
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-COMMONAREA-S3.geojson'
   }),
   style: stylePark,
-  visible: true,
   opacity: 0.4
 });
 
@@ -362,7 +343,6 @@ var layerVectorStreetReserved = new ol.layer.Vector({
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-ROW-RESERVE.geojson'
   }),
   style: styleStreet,
-  visible: true,
   opacity: 0.8
 });
 
@@ -373,7 +353,6 @@ var layerVectorStreetAccess = new ol.layer.Vector({
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-ROW-ACCESS.geojson'
   }),
   style: styleStreet,
-  visible: false,
   opacity: 0.8
 });
 
@@ -401,19 +380,19 @@ var olLayerGroupDrone = new ol.layer.Group({ title: 'Drone imagery', layers: [] 
 var olLayerGroupOverlays = new ol.layer.Group({
   title: 'Overlays',
   layers: [
-  layerVectorCaminataS1,
   layerVectorCaminataS2,
+  layerVectorCaminataS1,
   layerVectorCaminataProposed,
   layerVectorLake,
-  layerVectorLotsPlatS1,
-  layerVectorLotsPlatS2,
   layerVectorLotsPlatS3,
+  layerVectorLotsPlatS2,
+  layerVectorLotsPlatS1,
   layerVectorLotsCameronAppraisalDistrict,
   layerVectorFountain,
   layerVectorCommonArea,
-  layerVectorStreetS1,
-  layerVectorStreetS2,
   layerVectorStreetS3,
+  layerVectorStreetS2,
+  layerVectorStreetS1,
   layerVectorStreetReserved,
   layerVectorStreetAccess
 
@@ -757,14 +736,11 @@ if (layerSwitcher && layerSwitcher.panel) {
     })
     .then(data => {
       lotsData = data;
-      // console.log('lots.json loaded successfully.'); // Removed
-      // Refresh lot layers to apply new styles
+
       if (layerVectorLotsPlatS1) layerVectorLotsPlatS1.changed();
       if (layerVectorLotsPlatS2) layerVectorLotsPlatS2.changed();
       if (layerVectorLotsPlatS3) layerVectorLotsPlatS3.changed();
-      // Also, if layerVectorLots is ever made visible and uses dynamic styling:
-      // if (layerVectorLots) layerVectorLots.changed();
-      // console.log('Lot layers refreshed for styling after lots.json load.'); // Removed
+
     })
     .catch(error => {
       console.error('CRITICAL: Error loading lots.json:', error.message);
@@ -1377,8 +1353,6 @@ function applyFiltersAndSortAndRender() {
     // 5. Render
     renderTableBody(currentLots);
 
-    // Update filter UI elements if they are not the source of the change (e.g. initial load)
-    // This is more for if filters were set programmatically, not strictly needed for user input driven changes here.
 
     // Update sort indicators in table headers
     $('#lot-table thead th').each(function() {
@@ -1414,31 +1388,6 @@ function applyFiltersAndSortAndRender() {
     });
 }
 
-
-// Initial setup of filter UI and event listeners (No longer needed as makeListingsTable handles this)
-// function setupTableControls() { ... }
-
-
-// Refactor makeListingsTable to use tableDisplayState and call applyFiltersAndSortAndRender
-// Original makeListingsTable structure:
-// - Fetches data
-// - Sets up table headers
-// - Processes ALL data for Section 2, Available/Listed (initial sort by price)
-// - Renders table
-// - Sets up row click listeners
-// - Sets up call now button listeners
-// - Sets up sort click listeners (which then re-filter, re-sort, re-render body)
-
-// New approach:
-// makeListingsTable:
-//  - Fetches data, stores in lotsData
-//  - Sets up table headers (once)
-//  - Sets up filter controls via setupTableControls() (once)
-//  - Sets up sort click listeners (once) - these will update tableDisplayState.sort & call applyFiltersAndSortAndRender
-//  - Calls applyFiltersAndSortAndRender() for initial render.
-
-// (Modification within makeListingsTable where sorting is handled)
-
 // Helper sort function
 function sortLotsData(lotsArray, columnKey, order) {
   return lotsArray.sort(function(a, b) {
@@ -1466,14 +1415,7 @@ function sortLotsData(lotsArray, columnKey, order) {
   });
 }
 
-// Initial call to makeListingsTable which now sets up everything
 makeListingsTable('/data/lots.json');
-
-// Call setupTableControls after the DOM is ready and table structure might be in place
-// However, makeListingsTable now handles its own controls setup internally for filters/sorting.
-// $(document).ready(function() {
-//    setupTableControls(); // This might be redundant if makeListingsTable does it.
-// });
 
 
 // Helper function to find a feature by its 'Name' property from lots.json
