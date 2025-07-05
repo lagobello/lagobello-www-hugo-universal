@@ -9,6 +9,9 @@ let displayUnits = 'imperial'; // Default unit system: 'imperial' or 'metric' (c
 // Global draw variable for interactions
 var draw;
 
+// Global variable to store lots.json data
+var lotsData = null;
+
 // Global references to individual tool control instances
 window.infoControlInstance = window.infoControlInstance || null;
 window.lengthControlInstance = window.lengthControlInstance || null;
@@ -62,6 +65,18 @@ var styleHighlight = new ol.style.Style({
   stroke: new ol.style.Stroke({ color: 'blue', width: 3 })
 });
 
+// Status to Color Mapping for dynamic lot styling
+const lotStatusColors = {
+  'SOLD': 'gray',
+  'LISTED': 'green',
+  'AVAILABLE': 'green', // Assuming Available is similar to Listed
+  'UNDER CONTRACT': 'yellow',
+  'PENDING': 'yellow',    // Assuming Pending is similar to Under Contract
+  'RESERVED': 'purple',
+  'FUTURE': 'lightgray',
+  'DEFAULT': 'rgba(0, 60, 136, 0.4)' // A light blue, similar to default OpenLayers fill but with alpha
+};
+
 // =============================
 //  1.  Map controls & overlays
 // =============================
@@ -107,17 +122,6 @@ var layerMapboxSatellite = new ol.layer.Tile({
   opacity: 1.0
 });
 
-// var layerWatercolors = new ol.layer.Group({
-//   title: 'Watercolors',
-//   type: 'base',
-//   combine: true,
-//   layers: [
-//     new ol.layer.Tile({ source: new ol.source.Stamen({ layer: 'watercolor' }) }),
-//     new ol.layer.Tile({ source: new ol.source.Stamen({ layer: 'terrain-labels' }) })
-//   ],
-//   opacity: 1.0
-// });
-
 // ------------- Vector overlays
 var layerVectorLake = new ol.layer.Vector({
   title: 'Lake layer',
@@ -130,12 +134,63 @@ var layerVectorLake = new ol.layer.Vector({
 });
 
 var styleFunction = function (feature) {
-  return lotStyles[feature.get('status')];
+  return lotStyles[feature.get('status')]; // This might be for a different layer or an old setup.
 };
 
-var styleFunctionPlatLots = function (feature) {
-  return lotStyles['FOR SALE'];
+// New dynamic style function for lot layers based on lots.json status via spatial matching
+var dynamicLotStyleFunction = function(feature) {
+  let chosenColor = lotStatusColors.DEFAULT; // Default color
+
+  if (lotsData && lotsData.length > 0) {
+    const featureGeometry = feature.getGeometry();
+    if (featureGeometry && typeof featureGeometry.intersectsCoordinate === 'function') {
+      let spatiallyMatchedLot = null;
+      for (const lotRecord of lotsData) {
+        if (lotRecord.Location && typeof lotRecord.Location === 'string') {
+          const parts = lotRecord.Location.split(',');
+          if (parts.length === 2) {
+            const lat = parseFloat(parts[0].trim());
+            const lon = parseFloat(parts[1].trim());
+
+            if (!isNaN(lat) && !isNaN(lon)) {
+              const lotPointWGS84 = [lon, lat];
+              try {
+                const lotPointInViewProj = ol.proj.transform(lotPointWGS84, 'EPSG:4326', 'EPSG:3857');
+                if (featureGeometry.intersectsCoordinate(lotPointInViewProj)) {
+                  spatiallyMatchedLot = lotRecord;
+                  break;
+                }
+              } catch (e) { /* ignore transform errors for styling */ }
+            }
+          }
+        }
+      }
+
+      if (spatiallyMatchedLot) {
+        const status = spatiallyMatchedLot["Lot Status"] ? spatiallyMatchedLot["Lot Status"].toUpperCase() : null;
+        if (status && lotStatusColors[status]) {
+          chosenColor = lotStatusColors[status];
+        } else if (status) {
+          console.warn(`No color mapping for status: ${status}. Using default.`);
+        }
+      }
+    }
+  }
+  // Create a new style instance for each feature.
+  // This is important if styles can vary significantly per feature beyond color.
+  // For simple color changes, caching styles is more performant (see optimization note in plan).
+  return new ol.style.Style({
+    fill: new ol.style.Fill({
+      color: chosenColor
+    }),
+    stroke: new ol.style.Stroke({ color: '#D3D3D3', width: 2 }) // Consistent stroke
+  });
 };
+
+// The old styleFunctionPlatLots is now replaced by dynamicLotStyleFunction for plat layers.
+// var styleFunctionPlatLots = function (feature) {
+//   return lotStyles['FOR SALE'];
+// };
 
 var layerVectorLots = new ol.layer.Vector({
   title: 'Lot layer',
@@ -154,7 +209,7 @@ var layerVectorLotsPlatS1 = new ol.layer.Vector({
     format: new ol.format.GeoJSON(),
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S1.geojson'
   }),
-  style: styleFunctionPlatLots,
+  style: dynamicLotStyleFunction,
   opacity: 0.4
 });
 
@@ -164,7 +219,7 @@ var layerVectorLotsPlatS2 = new ol.layer.Vector({
     format: new ol.format.GeoJSON(),
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S2.geojson'
   }),
-  style: styleFunctionPlatLots,
+  style: dynamicLotStyleFunction,
   opacity: 0.4
 });
 
@@ -174,7 +229,7 @@ var layerVectorLotsPlatS3 = new ol.layer.Vector({
     format: new ol.format.GeoJSON(),
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S3.geojson'
   }),
-  style: styleFunctionPlatLots,
+  style: dynamicLotStyleFunction,
   opacity: 0.4
 });
 
@@ -295,22 +350,22 @@ var layerVectorStreetAccess = new ol.layer.Vector({
   opacity: 0.8
 });
 
-var genericSource = new ol.source.Vector(); // Renamed from 'source' in case it's used elsewhere
-var drawingLayerSource = new ol.source.Vector(); // Dedicated source for drawings
+var genericSource = new ol.source.Vector();
+var drawingLayerSource = new ol.source.Vector();
 
 var layerVectorDrawings = new ol.layer.Vector({
-  source: drawingLayerSource, // Use dedicated source
+  source: drawingLayerSource,
   style: new ol.style.Style({
-    fill: new ol.style.Fill({ color: 'rgba(255, 255, 255, 0.2)' }), // Original fill
-    stroke: new ol.style.Stroke({ color: '#ffcc33', width: 3 }),    // Original color, slightly thicker width
-    image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({ color: '#ffcc33' }) }) // Original image style
+    fill: new ol.style.Fill({ color: 'rgba(255, 255, 255, 0.2)' }),
+    stroke: new ol.style.Stroke({ color: '#ffcc33', width: 3 }),
+    image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({ color: '#ffcc33' }) })
   }),
-  zIndex: 100 // Ensure drawing layer is on top
+  zIndex: 100
 });
 
 var olLayerGroupBasemaps = new ol.layer.Group({
   title: 'Base maps',
-  layers: [layerOsmStreet,  layerMapboxSatellite] // disabled on port to ol 10.6: layerWatercolors
+  layers: [layerOsmStreet,  layerMapboxSatellite]
 
 });
 
@@ -336,7 +391,7 @@ var olLayerGroupOverlays = new ol.layer.Group({
   layerVectorStreetAccess
 
     ],
-  zIndex: 10 // Ensure this group is below the drawing layer (zIndex 100)
+  zIndex: 10
 });
 
 var layerSwitcher = new ol.control.LayerSwitcher({ tipLabel: 'Legend' });
@@ -354,27 +409,23 @@ var viewDefault = new ol.View({ center: ol.proj.fromLonLat([-97.553, 26.053]), z
 var viewRot = new ol.View({ center: ol.proj.fromLonLat([-97.553, 26.053]), rotation: Math.PI / 2.17, zoom: 17 });
 function chooseView () { return (window.innerHeight > window.innerWidth) ? viewDefault : viewRot; }
 
-// Global references to individual tool control instances for managing active state
-// window.infoControlInstance, window.lengthControlInstance, window.areaControlInstance are initialized at the top.
 
-// Global function to manage active state of tool controls
 function setSelectedTool(toolMode, clickedControlInstance) {
   currentToolMode = toolMode;
 
   const controls = [window.infoControlInstance, window.lengthControlInstance, window.areaControlInstance];
   controls.forEach(control => {
-    if (control && control.element) { // Check if control and its element exist
+    if (control && control.element) {
       if (control === clickedControlInstance) {
-        control.element.firstChild.classList.add('active'); // Assuming button is firstChild
+        control.element.firstChild.classList.add('active');
       } else {
         control.element.firstChild.classList.remove('active');
       }
     }
   });
-  setActiveToolInteraction(toolMode); // This handles map interactions
+  setActiveToolInteraction(toolMode);
 }
 
-// Function to add download/copy links to layers in the LayerSwitcher
 function addDownloadLinksToLayerSwitcher() {
   if (!layerSwitcher || !layerSwitcher.panel) {
     return;
@@ -390,7 +441,6 @@ function addDownloadLinksToLayerSwitcher() {
   for (let i = 0; i < listItems.length; i++) {
     const li = listItems[i];
 
-    // Prevent adding multiple sets of links
     if (li.querySelector('a.download-geojson-link') || li.querySelector('button.copy-url-button')) {
       continue;
     }
@@ -427,7 +477,6 @@ function addDownloadLinksToLayerSwitcher() {
       let urlToCopy = null;
       let isGeoJSON = false;
 
-      // Determine URL and type
       if (source instanceof ol.source.Vector && typeof source.getUrl === 'function' && source.getUrl()) {
         const rawUrl = source.getUrl();
         const format = source.getFormat();
@@ -444,26 +493,21 @@ function addDownloadLinksToLayerSwitcher() {
           urlToCopy = urlObj.toString();
         }
       }
-      // OSM layers are intentionally skipped for copy URL as they don't have a simple one.
 
-      // Create a container for the icons if we have any actions
       let iconContainer = null;
       if (urlToCopy || (isGeoJSON && urlToCopy)) {
         iconContainer = document.createElement('span');
         iconContainer.className = 'layer-action-icons';
-        // Basic styling for the container - can be refined in CSS
-        iconContainer.style.marginLeft = '8px'; // Space it from the label
+        iconContainer.style.marginLeft = '8px';
         iconContainer.style.display = 'inline-flex';
         iconContainer.style.alignItems = 'center';
       }
 
-      // Add Copy URL button
       if (urlToCopy) {
         const copyButton = document.createElement('button');
         copyButton.innerHTML = '🔗';
         copyButton.title = `Copy URL for ${layerTitle}`;
         copyButton.className = 'copy-url-button';
-        // copyButton.style.marginLeft = '5px'; // Spacing now handled by container or individual button margins
         copyButton.onclick = function() {
           navigator.clipboard.writeText(urlToCopy).then(function() {
             const originalText = copyButton.innerHTML;
@@ -476,14 +520,12 @@ function addDownloadLinksToLayerSwitcher() {
         iconContainer.appendChild(copyButton);
       }
 
-      // Add Download link for GeoJSON
       if (isGeoJSON && urlToCopy) {
         const downloadLink = document.createElement('a');
         downloadLink.href = urlToCopy;
         downloadLink.innerHTML = '⭳';
         downloadLink.title = `Download ${layerTitle}`;
         downloadLink.className = 'download-geojson-link';
-        // downloadLink.style.marginLeft = '5px'; // Spacing now handled by container or individual button margins
 
         let filename = layerTitle.replace(/[^\w\s.-]/gi, '_').replace(/\s+/g, '_').toLowerCase();
         if (!filename) filename = "layer";
@@ -493,18 +535,13 @@ function addDownloadLinksToLayerSwitcher() {
         iconContainer.appendChild(downloadLink);
       }
 
-      // Append the icon container to the list item after the label
-      if (iconContainer && label && label.parentNode === li) { // Ensure label exists and is a direct child of li
-        // Use label.after() to insert the icon container immediately after the label element.
-        // This is a more direct and modern way to ensure correct placement.
+      if (iconContainer && label && label.parentNode === li) {
         label.after(iconContainer);
       }
     }
   }
 }
 
-
-// --- InfoControl ---
 class InfoControl extends ol.control.Control {
   constructor(opt_options) {
     const options = opt_options || {};
@@ -517,7 +554,7 @@ class InfoControl extends ol.control.Control {
     element.appendChild(button);
 
     super({ element: element, target: options.target });
-    window.infoControlInstance = this; // Store instance for global access
+    window.infoControlInstance = this;
 
     button.addEventListener('click', () => {
       setSelectedTool('info', this);
@@ -525,7 +562,6 @@ class InfoControl extends ol.control.Control {
   }
 }
 
-// --- LengthControl ---
 class LengthControl extends ol.control.Control {
   constructor(opt_options) {
     const options = opt_options || {};
@@ -538,7 +574,7 @@ class LengthControl extends ol.control.Control {
     element.appendChild(button);
 
     super({ element: element, target: options.target });
-    window.lengthControlInstance = this; // Store instance for global access
+    window.lengthControlInstance = this;
 
     button.addEventListener('click', () => {
       setSelectedTool('length', this);
@@ -546,7 +582,6 @@ class LengthControl extends ol.control.Control {
   }
 }
 
-// --- AreaControl ---
 class AreaControl extends ol.control.Control {
   constructor(opt_options) {
     const options = opt_options || {};
@@ -559,7 +594,7 @@ class AreaControl extends ol.control.Control {
     element.appendChild(button);
 
     super({ element: element, target: options.target });
-    window.areaControlInstance = this; // Store instance for global access
+    window.areaControlInstance = this;
 
     button.addEventListener('click', () => {
       setSelectedTool('area', this);
@@ -567,7 +602,6 @@ class AreaControl extends ol.control.Control {
   }
 }
 
-// --- UnitToggleControl ---
 class UnitToggleControl extends ol.control.Control {
   constructor(opt_options) {
     const options = opt_options || {};
@@ -580,23 +614,22 @@ class UnitToggleControl extends ol.control.Control {
     this.imperialButton.innerHTML = '👑';
     this.imperialButton.title = 'Use Imperial Units';
     this.imperialButton.addEventListener('click', () => this.setUnit('imperial'));
-    element.appendChild(this.imperialButton); // Imperial button first
+    element.appendChild(this.imperialButton);
 
     this.metricButton = document.createElement('button');
     this.metricButton.innerHTML = '⚙️';
     this.metricButton.title = 'Use Metric Units';
     this.metricButton.addEventListener('click', () => this.setUnit('metric'));
-    element.appendChild(this.metricButton); // Metric button second
+    element.appendChild(this.metricButton);
 
-    // Set initial active state based on global displayUnits
     this.updateButtonActiveState();
   }
 
   setUnit(unit) {
-    if (displayUnits === unit) return; // No change
+    if (displayUnits === unit) return;
     displayUnits = unit;
     this.updateButtonActiveState();
-    refreshMapMeasurements(); // Call global function to update UI
+    refreshMapMeasurements();
   }
 
   updateButtonActiveState() {
@@ -610,28 +643,19 @@ class UnitToggleControl extends ol.control.Control {
   }
 }
 
-// Placeholder for the function that will refresh UI elements when units change
 function refreshMapMeasurements() {
   console.log(`Unit system changed to: ${displayUnits}. UI refresh needed.`);
-  // Implementation will be in Phase 2
-  // This function will need to update:
-  // - Active drawing tooltips (length/area)
-  // - Feature info pop-up (if open)
-  // - Lot table
 }
 
 
 var olMap = new ol.Map({
   target: 'ol-map',
   controls: [
-    // Standard controls that might be positioned elsewhere by default by OL
     new ol.control.Attribution({collapsible: true}),
     new ol.control.Rotate(),
     new ol.control.FullScreen(),
     controlMousePosition,
     layerSwitcher,
-
-    // Controls intended for the single top-left column
     new ol.control.Zoom(),
     new InfoControl(),
     new LengthControl(),
@@ -639,26 +663,17 @@ var olMap = new ol.Map({
     new UnitToggleControl(),
   ],
   overlays: [overlay],
-  layers: [olLayerGroupBasemaps, olLayerGroupDrone, olLayerGroupOverlays, layerVectorDrawings], // Restored layerVectorDrawings
+  layers: [olLayerGroupBasemaps, olLayerGroupDrone, olLayerGroupOverlays, layerVectorDrawings],
   view: chooseView()
 });
 
-// After map is initialized and layer switcher is added, listen for its panel updates
 if (layerSwitcher && layerSwitcher.panel) {
   layerSwitcher.panel.addEventListener('rendercomplete', addDownloadLinksToLayerSwitcher);
-  // Also call it once initially in case the panel is already rendered (e.g. if startActive is true)
-  // or if the event isn't caught reliably on first load.
-  // A small timeout ensures the DOM elements are likely available.
   setTimeout(addDownloadLinksToLayerSwitcher, 500);
 } else {
   console.warn('LayerSwitcher or its panel is not available to attach rendercomplete listener.');
 }
 
-
-// =============================
-//  3.  Dynamic XYZ drone layers
-// =============================
-// ============================= Dynamic XYZ loader =============================
 (function loadDroneLayers () {
   const GH_API = 'https://api.github.com/repos/lagobello/lagobello-tiles/contents/zxy?ref=master';
   const TILE_ROOT = 'https://lagobello.github.io/lagobello-tiles/zxy/';
@@ -678,12 +693,37 @@ if (layerSwitcher && layerSwitcher.panel) {
         lyr.set('title', folder);
         lyr.set('type', 'overlay');
         olLayerGroupDrone.getLayers().push(lyr);
-        // latest flight visible by default
         if (idx === folders.length - 1) lyr.setVisible(true);
       });
       layerSwitcher.renderPanel();
     })
     .catch(console.error);
+})();
+
+(function loadLotsData() {
+  fetch('/data/lots.json')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok for lots.json');
+      }
+      return response.json();
+    })
+    .then(data => {
+      lotsData = data;
+      console.log('lots.json loaded successfully.');
+      // Refresh lot layers to apply new styles
+      if (layerVectorLotsPlatS1) layerVectorLotsPlatS1.changed();
+      if (layerVectorLotsPlatS2) layerVectorLotsPlatS2.changed();
+      if (layerVectorLotsPlatS3) layerVectorLotsPlatS3.changed();
+      // Also, if layerVectorLots is ever made visible and uses dynamic styling:
+      // if (layerVectorLots) layerVectorLots.changed();
+      console.log('Lot layers refreshed for styling after lots.json load.');
+    })
+    .catch(error => {
+      console.error('CRITICAL: Error loading lots.json:', error.message);
+      console.warn('lots.json fetch failed. Pop-up information linked to this file will be unavailable. Check file path and server logs.');
+      lotsData = [];
+    });
 })();
 
 var featureCalculateAreaMeters = function (feature) {
@@ -722,25 +762,145 @@ var retrieveFeature = function (pixel) {
   return feature;
 };
 
+function getFriendlyLayerName(clickedFeature) {
+  if (!clickedFeature || !olMap) return 'Unknown Layer';
+
+  let featureLayer = null;
+  const mapLayers = olMap.getLayers().getArray();
+  for (const layer of mapLayers) {
+    if (layer instanceof ol.layer.Vector) {
+      const source = layer.getSource();
+      if (source && typeof source.getFeatures === 'function') {
+        if (source.getFeatures().includes(clickedFeature)) {
+          featureLayer = layer;
+          break;
+        }
+      }
+      if (source instanceof ol.source.Cluster) {
+        const clusterSource = source.getSource();
+         if (clusterSource && typeof clusterSource.getFeatures === 'function') {
+            if (clusterSource.getFeatures().includes(clickedFeature)) {
+                featureLayer = layer;
+                break;
+            }
+        }
+      }
+    } else if (layer instanceof ol.layer.Group) {
+      const groupLayers = layer.getLayers().getArray();
+      for (const subLayer of groupLayers) {
+        if (subLayer instanceof ol.layer.Vector) {
+          const source = subLayer.getSource();
+          if (source && typeof source.getFeatures === 'function') {
+            if (source.getFeatures().includes(clickedFeature)) {
+              featureLayer = subLayer;
+              break;
+            }
+          }
+           if (source instanceof ol.source.Cluster) {
+            const clusterSource = source.getSource();
+            if (clusterSource && typeof clusterSource.getFeatures === 'function') {
+                if (clusterSource.getFeatures().includes(clickedFeature)) {
+                    featureLayer = subLayer;
+                    break;
+                }
+            }
+          }
+        }
+      }
+    }
+    if (featureLayer) break;
+  }
+
+  if (featureLayer) {
+    const title = featureLayer.get('title');
+    return title || 'Unnamed Layer';
+  }
+
+  return clickedFeature.get('Layer') || 'Unknown Layer';
+}
+
+
 var retrieveFeatureInfoTable = function (evt) {
   var feature = retrieveFeature(evt.pixel);
+  var geoJsonFeatureIdentifier = feature.get('EntityHandle') || feature.get('name');
+
   var area = featureCalculateAreaMeters(feature);
-  var name = feature.get('name') || 'N/A';
-  var status = feature.get('status') || 'N/A';
   var entityHandle = feature.get('EntityHandle') || 'N/A';
-  var layerName = feature.get('Layer') || 'Unknown';
+  var rawLayerName = feature.get('Layer') || 'Unknown';
+  var friendlyLayerName = getFriendlyLayerName(feature);
+
+  var matchedLot = null;
+  const featureGeometry = feature.getGeometry();
+  const isLotLayer = friendlyLayerName && (friendlyLayerName.toLowerCase().includes('lot') || friendlyLayerName.toLowerCase().includes('plat'));
+
+  if (isLotLayer && lotsData && featureGeometry && typeof featureGeometry.intersectsCoordinate === 'function') {
+    for (const lotRecord of lotsData) {
+      if (lotRecord.Location && typeof lotRecord.Location === 'string') {
+        const parts = lotRecord.Location.split(',');
+        if (parts.length === 2) {
+          const lat = parseFloat(parts[0].trim());
+          const lon = parseFloat(parts[1].trim());
+
+          if (!isNaN(lat) && !isNaN(lon)) {
+            const lotPointWGS84 = [lon, lat];
+            try {
+              const lotPointInViewProj = ol.proj.transform(lotPointWGS84, 'EPSG:4326', 'EPSG:3857');
+              if (featureGeometry.intersectsCoordinate(lotPointInViewProj)) {
+                matchedLot = lotRecord;
+                console.log("Spatial match found for feature with lot record:", matchedLot.Name);
+                break;
+              }
+            } catch (e) {
+              console.error("Error transforming lot location for spatial match:", lotRecord.Location, e);
+            }
+          }
+        }
+      }
+    }
+    if (!matchedLot) {
+        console.log("No spatial match found for feature on a lot layer. Feature ID (if any):", geoJsonFeatureIdentifier);
+    }
+  }
+
+  var parcelLegalDesc = (matchedLot && matchedLot.Name) ? matchedLot.Name : (geoJsonFeatureIdentifier || 'N/A');
+  var status = matchedLot && matchedLot["Lot Status"] ? matchedLot["Lot Status"] : (feature.get('status') || 'N/A');
+  var listPrice = matchedLot && matchedLot["List Price"] ? `$${parseFloat(matchedLot["List Price"]).toLocaleString()}` : 'N/A';
+  var sqFootage = matchedLot && matchedLot["Size [sqft]"] ? `${parseFloat(matchedLot["Size [sqft]"]).toLocaleString()} sqft` : 'N/A';
+  var listingAgent = matchedLot && matchedLot["Listing Agent"] ? matchedLot["Listing Agent"] : 'N/A';
+  var listingAgentPhone = matchedLot && matchedLot["Listing Agent Phone Number"] ? String(matchedLot["Listing Agent Phone Number"]) : 'N/A';
+  var listingURL = matchedLot && matchedLot["Listing Link"] ? matchedLot["Listing Link"] : 'N/A';
+
+  var callNowButton = '';
+  if (listingAgentPhone !== 'N/A' && listingAgentPhone) {
+    var telLink = listingAgentPhone.replace(/\D/g, '');
+    callNowButton = `<a href="tel:${telLink}" class="call-now-button">Call Now</a>`;
+  }
+
+  var listingLinkHtml = 'N/A';
+  if (listingURL !== 'N/A' && listingURL) {
+    if (listingURL.toLowerCase().includes('http')) {
+      const urlMatch = listingURL.match(/https?:\/\/[^\s]+/i);
+      if (urlMatch && urlMatch[0]) {
+        listingLinkHtml = `<a href="${urlMatch[0]}" target="_blank" rel="noopener noreferrer">View Listing</a>`;
+      } else {
+        listingLinkHtml = listingURL;
+      }
+    } else {
+      listingLinkHtml = listingURL;
+    }
+  }
 
   var areaString = 'N/A';
   if (area) {
     if (displayUnits === 'imperial') {
-      var areaSqFt = area * 10.7639;
-      if (areaSqFt > 43560) { // If larger than an acre
-        areaString = `${(areaSqFt / 43560).toFixed(2)} acres`;
+      var areaSqFt_calc = area * 10.7639;
+      if (areaSqFt_calc > 43560) {
+        areaString = `${(areaSqFt_calc / 43560).toFixed(2)} acres`;
       } else {
-        areaString = `${areaSqFt.toFixed(2)} ft<sup>2</sup>`;
+        areaString = `${areaSqFt_calc.toFixed(2)} ft<sup>2</sup>`;
       }
-    } else { // Metric
-      if (area > 10000) { // if larger than 1 hectare (10,000 m^2) show as km^2
+    } else {
+      if (area > 10000) {
         areaString = `${(area / 1000000).toFixed(2)} km<sup>2</sup>`;
       } else {
         areaString = `${area.toFixed(2)} m<sup>2</sup>`;
@@ -748,92 +908,205 @@ var retrieveFeatureInfoTable = function (evt) {
     }
   }
 
-  var linkedDataHtml = `
-    <div class="popup-section">
-      <div class="popup-section-title">Linked Data</div>
-      <table style="width:100%">
-        <tr><td>Name</td><td><code>${name}</code></td></tr>
-        <tr><td>Status</td><td><code>${status}</code></td></tr>
-      </table>
+  var topLevelHtml = '';
+  if (matchedLot) {
+    topLevelHtml = `
+      <div class="popup-section">
+        <div class="popup-section-title main-title">${parcelLegalDesc}</div>
+        <table style="width:100%">
+          <tr><td>Status</td><td><code>${status}</code></td></tr>
+          <tr><td>List Price</td><td><code>${listPrice}</code></td></tr>
+          <tr><td>Size</td><td><code>${sqFootage}</code></td></tr>
+          <tr><td>Listing Agent</td><td><code>${listingAgent}</code></td></tr>
+          <tr><td>Agent Phone</td><td><code>${listingAgentPhone}</code> ${callNowButton}</td></tr>
+          <tr><td>Listing URL</td><td>${listingLinkHtml}</td></tr>
+        </table>
+      </div>
+    `;
+  }
+
+  var toggleButtonsHtml = '';
+
+  var linkedDataContent = '<table style="width:100%">';
+  let hasLinkedProps = false;
+  if (matchedLot) {
+    const topLevelKeys = ["Name", "Lot Status", "List Price", "Size [sqft]", "Listing Agent", "Listing Agent Phone Number", "Listing Link", "Location"]; // Added Location to exclude
+    for (const key in matchedLot) {
+      if (matchedLot.hasOwnProperty(key) && !topLevelKeys.includes(key)) {
+        linkedDataContent += `<tr><td>${key}</td><td><code>${matchedLot[key] !== null && matchedLot[key] !== undefined ? matchedLot[key] : 'N/A'}</code></td></tr>`;
+        hasLinkedProps = true;
+      }
+    }
+  }
+  if (!hasLinkedProps && matchedLot) {
+    linkedDataContent += '<tr><td colspan="2">No additional linked data found.</td></tr>';
+  } else if (!matchedLot) {
+     linkedDataContent = '';
+  }
+  linkedDataContent += '</table>';
+
+  var linkedDataDumpHtml = '';
+  if (matchedLot) {
+    linkedDataDumpHtml = `
+      <div class="popup-section collapsible-section" style="display:none;" id="linked-data-section">
+        <div class="popup-section-title">Linked Data (lots.json)</div>
+        ${linkedDataContent}
+      </div>
+    `;
+  }
+
+  var areaSqFtImperial_display = '';
+  var areaAcresImperial_display = '';
+  if (displayUnits === 'imperial' && area) {
+    let areaInSqFt = area * 10.7639;
+    areaSqFtImperial_display = areaInSqFt.toFixed(2) + ' ft<sup>2</sup>';
+    areaAcresImperial_display = (areaInSqFt / 43560).toFixed(3) + ' acres';
+  }
+
+  var centroidString = 'N/A';
+  try {
+    var turfFormatForCentroid = new ol.format.GeoJSON();
+    const featureForTurf = feature.clone();
+    const geometryInEPSG3857 = featureForTurf.getGeometry();
+    const turfInputGeometry = JSON.parse(turfFormatForCentroid.writeGeometry(geometryInEPSG3857));
+
+    var centroidProjected = turf.centroid(turfInputGeometry);
+
+    if (centroidProjected && centroidProjected.geometry && centroidProjected.geometry.coordinates) {
+      var lonLatCentroid = ol.proj.transform(centroidProjected.geometry.coordinates, 'EPSG:3857', 'EPSG:4326');
+
+      const threshold = 0.01;
+      if (Math.abs(lonLatCentroid[1]) < threshold && Math.abs(lonLatCentroid[0]) < threshold) {
+        const featureExtent = feature.getGeometry().getExtent();
+        const featureCenter = ol.extent.getCenter(featureExtent);
+        const featureCenterWGS84 = ol.proj.transform(featureCenter, 'EPSG:3857', 'EPSG:4326');
+        if (Math.abs(featureCenterWGS84[1]) > 1 && Math.abs(featureCenterWGS84[0]) > 1) {
+            console.warn("Calculated WGS84 centroid is suspiciously close to (0,0) for feature:", geoJsonFeatureIdentifier);
+            centroidString = 'N/A (Invalid Calc)';
+        } else {
+             centroidString = `${lonLatCentroid[1].toFixed(5)}, ${lonLatCentroid[0].toFixed(5)}`;
+        }
+      } else {
+        centroidString = `${lonLatCentroid[1].toFixed(5)}, ${lonLatCentroid[0].toFixed(5)}`;
+      }
+    } else {
+      console.warn("turf.centroid did not return valid coordinates for feature:", geoJsonFeatureIdentifier);
+    }
+  } catch (e) {
+    console.error("Error calculating centroid for feature:", geoJsonFeatureIdentifier, e);
+    centroidString = 'Error';
+  }
+
+  var calculatedDataContent = `<table style="width:100%">`;
+  if (displayUnits === 'imperial') {
+    if (area) {
+        calculatedDataContent += `<tr><td>Area (sqft)</td><td><code>${areaSqFtImperial_display}</code></td></tr>`;
+        calculatedDataContent += `<tr><td>Area (acres)</td><td><code>${areaAcresImperial_display}</code></td></tr>`;
+    }
+  } else {
+    calculatedDataContent += `<tr><td>Area (calculated)</td><td><code>${areaString}</code></td></tr>`;
+  }
+  calculatedDataContent += `<tr><td>Centroid (Lat, Lon WGS84)</td><td><code>${centroidString}</code></td></tr>`;
+
+  var clickedCoordWGS84 = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+  var clickedCoordString = `${clickedCoordWGS84[1].toFixed(5)}, ${clickedCoordWGS84[0].toFixed(5)}`;
+  calculatedDataContent += `<tr><td>Clicked (Lat, Lon WGS84)</td><td><code>${clickedCoordString}</code></td></tr>`;
+
+  calculatedDataContent += `</table>`;
+
+  var calculatedDataHtml = `
+    <div class="popup-section collapsible-section" style="display:none;" id="calculated-data-section">
+      <div class="popup-section-title">Calculated Data</div>
+      ${calculatedDataContent}
     </div>
   `;
 
-  var inferredDataHtml = `
-    <div class="popup-section inferred-data" style="display:none;">
-      <div class="popup-section-title">Inferred/Calculated Data</div>
-      <table style="width:100%">
-        <tr><td>Area</td><td><code>${areaString}</code></td></tr>
-      </table>
+  var geoJsonMetadataContent = '<table style="width:100%">';
+  const geoJsonProps = feature.getProperties();
+  let hasGeoJsonProps = false;
+  for (const key in geoJsonProps) {
+    if (key !== 'geometry' && geoJsonProps.hasOwnProperty(key)) {
+        geoJsonMetadataContent += `<tr><td>${key}</td><td><code>${geoJsonProps[key]}</code></td></tr>`;
+        hasGeoJsonProps = true;
+    }
+  }
+  if (!hasGeoJsonProps) {
+    geoJsonMetadataContent += '<tr><td colspan="2">No GeoJSON properties found.</td></tr>';
+  }
+  geoJsonMetadataContent += '</table>';
+
+  var geoJsonMetadataHtml = `
+    <div class="popup-section collapsible-section" style="display:none;" id="geojson-metadata-section">
+      <div class="popup-section-title">GeoJSON Metadata</div>
+      ${geoJsonMetadataContent}
     </div>
   `;
 
-  // Handling for features with EntityHandle (new style geojson)
-  if (feature.get('EntityHandle') !== undefined) {
-    var registeredAreaFt2 = feature.get('AREA_REGISTERED_FT2') || '---';
-    var registeredAreaString = `<td>Area registered</td><td><code>${registeredAreaFt2} ${displayUnits === 'imperial' ? "ft<sup>2</sup>" : ""}</code></td>`;
-    if (displayUnits === 'metric' && registeredAreaFt2 !== '---') {
-         registeredAreaString = `<td>Area registered (ft<sup>2</sup>)</td><td><code>${registeredAreaFt2}</code></td>`;
+  var buttonsArray = [];
+  if (hasGeoJsonProps) {
+    buttonsArray.push(`<button onclick="toggleSection('geojson-metadata-section', this)" class="popup-toggle-button popup-toggle-button-subtle">[+] Raw Data</button>`);
+  }
+  buttonsArray.push(`<button onclick="toggleSection('calculated-data-section', this)" class="popup-toggle-button">Calculated</button>`);
+
+  if (matchedLot && hasLinkedProps) {
+    buttonsArray.push(`<button onclick="toggleSection('linked-data-section', this)" class="popup-toggle-button">Linked Data</button>`);
+  }
+
+  toggleButtonsHtml = "";
+  if (buttonsArray.length > 0) {
+    toggleButtonsHtml = `<div class="popup-toggle-buttons">${buttonsArray.join('')}</div>`;
+  }
+
+  if (matchedLot) {
+    return topLevelHtml + toggleButtonsHtml + geoJsonMetadataHtml + calculatedDataHtml + linkedDataDumpHtml;
+  } else {
+    // For UNMATCHED features
+    let titleForUnmatched = "Feature Information"; // Default title
+
+    if (friendlyLayerName) {
+      const lowerFriendlyLayerName = friendlyLayerName.toLowerCase();
+      if (lowerFriendlyLayerName.includes("section 1")) {
+        titleForUnmatched = "Section 1 Lot";
+      } else if (lowerFriendlyLayerName.includes("section 2")) {
+        titleForUnmatched = "Section 2 Lot";
+      } else if (lowerFriendlyLayerName.includes("section 3")) {
+        titleForUnmatched = "Section 3 Lot";
+      } else if (friendlyLayerName !== 'Unknown Layer' && friendlyLayerName !== 'Unnamed Layer') {
+        titleForUnmatched = geoJsonFeatureIdentifier || friendlyLayerName;
+      } else if (geoJsonFeatureIdentifier) {
+        titleForUnmatched = geoJsonFeatureIdentifier;
+      }
+    } else if (geoJsonFeatureIdentifier) {
+        titleForUnmatched = geoJsonFeatureIdentifier;
     }
 
-    // Overwrite linkedDataHtml and inferredDataHtml for EntityHandle features
-    linkedDataHtml = `
+    if (titleForUnmatched === 'Unknown Layer' || titleForUnmatched === 'Unnamed Layer') {
+        titleForUnmatched = geoJsonFeatureIdentifier || "Feature Information";
+    }
+
+    let genericHeaderHtml = `
       <div class="popup-section">
-        <div class="popup-section-title">Linked Data</div>
-        <table style="width:100%">
-          <tr><td>Entity ID</td><td><code>${entityHandle}</code></td></tr>
-          <tr><td>Parcel ID</td><td><code>---</code></td></tr> <!-- Placeholder -->
-        </table>
-      </div>
-    `;
-    inferredDataHtml = `
-      <div class="popup-section inferred-data" style="display:none;">
-        <div class="popup-section-title">Inferred/Calculated Data</div>
-        <table style="width:100%">
-          <tr>${registeredAreaString}</tr>
-          <tr><td>Area calculated</td><td><code>${areaString}</code></td></tr>
-        </table>
-      </div>
-    `;
+        <div class="popup-section-title main-title">${titleForUnmatched}</div>`;
+
+        if (friendlyLayerName && friendlyLayerName !== 'Unknown Layer' && friendlyLayerName !== 'Unnamed Layer' && titleForUnmatched !== friendlyLayerName) {
+          genericHeaderHtml += `<table style="width:100%"><tr><td>Layer</td><td><code>${friendlyLayerName}</code></td></tr></table>`;
+        }
+    genericHeaderHtml += `</div>`;
+
+    return genericHeaderHtml + toggleButtonsHtml + geoJsonMetadataHtml + calculatedDataHtml;
   }
-  // Fallback for other feature types (e.g. park, lake, street)
-  else if (feature.get('name') === undefined && feature.get('status') === undefined && feature.get('EntityHandle') === undefined) {
-      linkedDataHtml = `
-      <div class="popup-section">
-        <div class="popup-section-title">Feature Info</div>
-        <table style="width:100%">
-          <tr><td>Layer</td><td><code>${layerName}</code></td></tr>
-        </table>
-      </div>
-    `;
-    // For these types, area might still be relevant for the inferred section
-    inferredDataHtml = `
-      <div class="popup-section inferred-data" style="display:none;">
-        <div class="popup-section-title">Inferred/Calculated Data</div>
-        <table style="width:100%">
-          <tr><td>Area</td><td><code>${areaString}</code></td></tr>
-        </table>
-      </div>
-    `;
-  }
-
-
-  var toggleButtonHtml = `
-    <button onclick="toggleInferredData(this)" class="popup-toggle-button">Show more</button>
-  `;
-
-  return linkedDataHtml + toggleButtonHtml + inferredDataHtml;
 };
 
-// Make sure this function is accessible globally for the inline onclick
-window.toggleInferredData = function(button) {
-  var popupContent = button.closest('#popup-content');
-  var inferredDataSection = popupContent.querySelector('.inferred-data');
-  if (inferredDataSection.style.display === 'none') {
-    inferredDataSection.style.display = 'block';
-    button.textContent = 'Show less';
+window.toggleSection = function(sectionId, button) {
+  var section = document.getElementById(sectionId);
+  if (section) {
+    if (section.style.display === 'none' || section.style.display === '') {
+      section.style.display = 'block';
+    } else {
+      section.style.display = 'none';
+    }
   } else {
-    inferredDataSection.style.display = 'none';
-    button.textContent = 'Show more';
+    console.error('Section with ID ' + sectionId + ' not found.');
   }
 };
 
@@ -852,19 +1125,19 @@ var retrieveLotTable = function (url) {
       `<tr><th><b>Lot ID</b></th><th><b>Lot Status</b></th><th><b>${areaHeader}</b></th></tr>`
     );
     $.each(data.features, function (key, val) {
-      var areaM2 = turf.area(val); // Area in square meters
+      var areaM2 = turf.area(val);
       var displayArea;
       if (displayUnits === 'imperial') {
         var areaSqFt = areaM2 * 10.7639;
-        if (areaSqFt > 43560) { // acre
+        if (areaSqFt > 43560) {
             displayArea = (areaSqFt / 43560).toFixed(2);
         } else {
             displayArea = areaSqFt.toFixed(2);
         }
-      } else { // Metric
-        if (areaM2 > 10000) { // km2
+      } else {
+        if (areaM2 > 10000) {
             displayArea = (areaM2 / 1000000).toFixed(2);
-        } else { // m2
+        } else {
             displayArea = areaM2.toFixed(2);
         }
       }
@@ -882,8 +1155,6 @@ var retrieveLotTable = function (url) {
 };
 retrieveLotTable('/files/lots.geojson');
 
-/* Event call-backs */
-
 olMap.on('pointermove', function (evt) {
   if (evt.dragging) {
     console.debug('dragging detected');
@@ -892,7 +1163,6 @@ olMap.on('pointermove', function (evt) {
   var pixel = olMap.getEventPixel(evt.originalEvent);
   var feature = retrieveFeature(pixel);
 
-  /* feature can be null */
   if (typeof feature === 'undefined') {
     console.debug('no feature found on mouse-over');
     return;
@@ -913,14 +1183,12 @@ function movePoint10mDown(Point){
   }
 
 olMap.on('click', function (evt) {
-  // Corrected: typeSelect.value to currentToolMode
   if (currentToolMode !== 'info') {
     return;
   }
 
   var feature = retrieveFeature(evt.pixel);
 
-  /* feature can be null */
   if (typeof feature === 'undefined') {
     console.log('no feature found under click or tap');
     return;
@@ -938,8 +1206,6 @@ olMap.on('click', function (evt) {
 });
 
 window.addEventListener('orientationchange', function () {
-  // console.log("the orientation of the device is now " + screen.orientation.angle);
-
   if (screen.orientation.angle === 0) {
     console.log('rotating map to portrait mode');
     olMap.setView(olView);
@@ -949,64 +1215,24 @@ window.addEventListener('orientationchange', function () {
   }
 });
 
-/**
- * Currently drawn feature.
- * @type {import("../src/ol/Feature.js").default}
- */
 var sketch;
-
-/**
- * The help tooltip element.
- * @type {HTMLElement}
- */
 var helpTooltipElement;
-
-/**
- * Overlay to show the help messages.
- * @type {Overlay}
- */
 var helpTooltip;
-
-/**
- * The measure tooltip element.
- * @type {HTMLElement}
- */
 var measureTooltipElement;
-
-/**
- * Overlay to show the measurement.
- * @type {Overlay}
- */
 var measureTooltip;
-
-/**
- * Message to show when the user is drawing a polygon.
- * @type {string}
- */
 var continuePolygonMsg = 'Click to continue drawing the polygon';
-
-/**
- * Message to show when the user is drawing a line.
- * @type {string}
- */
 var continueLineMsg = 'Click to continue drawing the line';
 
-/**
- * Handle pointer move.
- * @param {import("../src/ol/MapBrowserEvent").default} evt The event.
- */
 var pointerMoveHandler = function (evt) {
-  // Corrected: typeSelect.value to currentToolMode
-  if (currentToolMode === 'info' || !sketch) { // Also ensure sketch exists before trying to use it for messages
+  if (currentToolMode === 'info' || !sketch) {
     if (helpTooltipElement && !helpTooltipElement.classList.contains('hidden')) {
-      helpTooltipElement.classList.add('hidden'); // Hide tooltip if not in draw mode or no sketch
+      helpTooltipElement.classList.add('hidden');
     }
     return;
   }
   if (evt.dragging) {
     return;
   }
-  /** @type {string} */
   var helpMsg = 'Click to start drawing';
 
   if (sketch) {
@@ -1027,14 +1253,10 @@ var pointerMoveHandler = function (evt) {
 olMap.on('pointermove', pointerMoveHandler);
 
 olMap.getViewport().addEventListener('mouseout', function () {
-  if (currentToolMode === 'info') return; // Updated
+  if (currentToolMode === 'info') return;
   helpTooltipElement.classList.add('hidden');
 });
 
-// Global variables currentToolMode, displayUnits, and draw are defined at the top of the script.
-
-// Function to set the active tool and update interactions.
-// Called by the individual tool controls.
 function setActiveToolInteraction(toolMode) {
   currentToolMode = toolMode;
   if (olMap) {
@@ -1045,22 +1267,17 @@ function setActiveToolInteraction(toolMode) {
   }
 }
 
-/**
- * Format length output.
- * @param {LineString} line The line.
- * @return {string} The formatted length.
- */
 var formatLength = function (line) {
-  var length = ol.sphere.getLength(line); // Length in meters
+  var length = ol.sphere.getLength(line);
   var output;
   if (displayUnits === 'imperial') {
     var lengthFeet = length * 3.28084;
-    if (lengthFeet > 5280) { // If longer than a mile
+    if (lengthFeet > 5280) {
       output = (lengthFeet / 5280).toFixed(2) + ' ' + 'mi';
     } else {
       output = lengthFeet.toFixed(2) + ' ' + 'ft';
     }
-  } else { // Metric
+  } else {
     if (length > 100) {
       output = (length / 1000).toFixed(2) + ' ' + 'km';
     } else {
@@ -1070,22 +1287,17 @@ var formatLength = function (line) {
   return output;
 };
 
-/**
- * Format area output.
- * @param {Polygon} polygon The polygon.
- * @return {string} Formatted area.
- */
 var formatArea = function (polygon) {
-  var area = ol.sphere.getArea(polygon); // Area in square meters
+  var area = ol.sphere.getArea(polygon);
   var output;
   if (displayUnits === 'imperial') {
     var areaSqFt = area * 10.7639;
-    if (areaSqFt > 43560) { // If larger than an acre
+    if (areaSqFt > 43560) {
       output = (areaSqFt / 43560).toFixed(2) + ' ' + 'acres';
     } else {
       output = areaSqFt.toFixed(2) + ' ' + 'ft<sup>2</sup>';
     }
-  } else { // Metric
+  } else {
     if (area > 10000) {
       output = (area / 1000000).toFixed(2) + ' ' + 'km<sup>2</sup>';
     } else {
@@ -1096,32 +1308,31 @@ var formatArea = function (polygon) {
 };
 
 function addInteraction () {
-  if (currentToolMode === 'info') { // Updated
-    olMap.removeInteraction(draw); // Ensure draw interaction is removed when in info mode
+  if (currentToolMode === 'info') {
+    olMap.removeInteraction(draw);
     return;
   }
-  var type = currentToolMode === 'area' ? 'Polygon' : 'LineString'; // Updated
-  // No need for: if (type === 'info') return; as it's handled above
+  var type = currentToolMode === 'area' ? 'Polygon' : 'LineString';
 
   draw = new ol.interaction.Draw({
-    source: drawingLayerSource, // Use dedicated drawing source
+    source: drawingLayerSource,
     type: type,
     style: new ol.style.Style({
       fill: new ol.style.Fill({
-        color: 'rgba(255, 255, 255, 0.2)' // Original fill
+        color: 'rgba(255, 255, 255, 0.2)'
       }),
       stroke: new ol.style.Stroke({
-        color: 'rgba(0, 0, 0, 0.5)', // Original stroke color
+        color: 'rgba(0, 0, 0, 0.5)',
         lineDash: [10, 10],
-        width: 2 // Original width
+        width: 2
       }),
       image: new ol.style.Circle({
         radius: 5,
         stroke: new ol.style.Stroke({
-          color: 'rgba(0, 0, 0, 0.7)' // Original image stroke
+          color: 'rgba(0, 0, 0, 0.7)'
         }),
         fill: new ol.style.Fill({
-          color: 'rgba(255, 255, 255, 0.2)' // Original image fill
+          color: 'rgba(255, 255, 255, 0.2)'
         })
       })
     })
@@ -1133,12 +1344,8 @@ function addInteraction () {
 
   var listener;
   draw.on('drawstart', function (evt) {
-    // set sketch
     sketch = evt.feature;
-
-    /** @type {import("../src/ol/coordinate.js").Coordinate|undefined} */
     var tooltipCoord = evt.coordinate;
-
     listener = sketch.getGeometry().on('change', function (evt) {
       var geom = evt.target;
       var output;
@@ -1154,42 +1361,32 @@ function addInteraction () {
     });
   });
 
-  draw.on('drawend', function (evt) { // Added evt parameter here
+  draw.on('drawend', function (evt) {
     measureTooltipElement.className = 'ol-tooltip ol-tooltip-static';
     measureTooltip.setOffset([0, -7]);
-    // Ensure the feature uses the layer's style, not the interaction's temporary style
     if (evt.feature) {
-      // evt.feature.setStyle(undefined); // Previous attempt
       const debugRedStyle = new ol.style.Style({
-          stroke: new ol.style.Stroke({ color: 'rgba(255, 0, 0, 1)', width: 4 }), // Bright solid red, width 4
+          stroke: new ol.style.Stroke({ color: 'rgba(255, 0, 0, 1)', width: 4 }),
           fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 0.1)' }),
           image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 1)' }) })
       });
       evt.feature.setStyle(debugRedStyle);
       console.log('Applied direct RED debug style to feature in drawend.');
     }
-    // unset sketch
     sketch = null;
-    // unset tooltip so that a new one can be created
     measureTooltipElement = null;
     createMeasureTooltip();
     ol.Observable.unByKey(listener);
 
-    // Console logs for debugging drawing persistence
     console.log('drawend event triggered.');
     if (evt.feature) {
       console.log('Drawn feature geometry type:', evt.feature.getGeometry().getType());
     }
     console.log('Total features on drawingLayerSource:', drawingLayerSource.getFeatures().length);
-
-    // Ensure the drawingLayerSource (and thus layerVectorDrawings) refreshes
     drawingLayerSource.changed();
   });
 }
 
-/**
- * Creates a new help tooltip
- */
 function createHelpTooltip () {
   if (helpTooltipElement) {
     helpTooltipElement.parentNode.removeChild(helpTooltipElement);
@@ -1204,9 +1401,6 @@ function createHelpTooltip () {
   olMap.addOverlay(helpTooltip);
 }
 
-/**
- * Creates a new measure tooltip
- */
 function createMeasureTooltip () {
   if (measureTooltipElement) {
     measureTooltipElement.parentNode.removeChild(measureTooltipElement);
@@ -1221,10 +1415,9 @@ function createMeasureTooltip () {
   olMap.addOverlay(measureTooltip);
 }
 
-addInteraction(); // Initial call to set up interaction based on default currentToolMode
+addInteraction();
 
 var geolocation = new ol.Geolocation({
-  // enableHighAccuracy must be set to true to have the heading value.
   trackingOptions: {
     enableHighAccuracy: true
   },
@@ -1235,15 +1428,6 @@ function el (id) {
   return document.getElementById(id);
 }
 
-// The old el('track') listener will be removed as the new control handles this.
-// el('track').addEventListener('change', function () {
-//   geolocation.setTracking(this.checked);
-// });
-
-// update the HTML page when the position changes.
-// This assumes 'trackingControlInstance' will be the instance of our new control.
-// This instance needs to be created before this part of the script runs,
-// or this callback needs to be set after the control is instantiated.
 geolocation.on('change', function () {
   if (window.trackingControlInstance && window.trackingControlInstance.trackingOn_) {
     const accuracy = geolocation.getAccuracy() !== undefined ? geolocation.getAccuracy().toFixed(2) : '-';
@@ -1253,39 +1437,30 @@ geolocation.on('change', function () {
     const speed = geolocation.getSpeed() !== undefined ? geolocation.getSpeed().toFixed(2) : '-';
 
     let currentCoords = {lat: '-', lon: '-'};
-    const position = geolocation.getPosition(); // This is in view projection
+    const position = geolocation.getPosition();
     if (position) {
-      const lonLat = ol.proj.toLonLat(position); // Transform to EPSG:4326 for display
+      const lonLat = ol.proj.toLonLat(position);
       currentCoords.lon = lonLat[0];
       currentCoords.lat = lonLat[1];
 
-      // Center map if needsCentering_ flag is true
       if (window.trackingControlInstance.needsCentering_) {
         olMap.getView().animate({ center: position, zoom: Math.max(olMap.getView().getZoom(), 17), rotation: 0, duration: 500 });
-        window.trackingControlInstance.needsCentering_ = false; // Reset flag after centering
+        window.trackingControlInstance.needsCentering_ = false;
       }
     }
 
     window.trackingControlInstance.updateStats(accuracy, altitude, altitudeAccuracy, heading, speed, currentCoords);
   }
-  // The custom control now handles these updates.
-  // el('accuracy').innerText = geolocation.getAccuracy() + ' [m]';
-  // el('altitude').innerText = geolocation.getAltitude() + ' [m]';
-  // el('altitudeAccuracy').innerText = geolocation.getAltitudeAccuracy() + ' [m]';
-  // el('heading').innerText = geolocation.getHeading() + ' [rad]';
-  // el('speed').innerText = geolocation.getSpeed() + ' [m/s]';
 });
 
-// handle geolocation error.
 geolocation.on('error', function (error) {
   var info = document.getElementById('info');
   info.innerHTML = error.message;
   info.style.display = '';
   if (window.trackingControlInstance) {
     window.trackingControlInstance.updateStats('Error', 'Error', 'Error', 'Error', 'Error', {lat: 'Error', lon: 'Error'});
-    // Optionally disable tracking or show error state on button
     if (window.trackingControlInstance.trackingOn_) {
-        window.trackingControlInstance.handleTrackToggle_(); // Toggle to off state
+        window.trackingControlInstance.handleTrackToggle_();
     }
   }
 });
@@ -1321,40 +1496,28 @@ var layerPositionMarker = new ol.layer.Vector({
   })
 });
 
-
-// =============================
-//  Custom Tracking Control
-// =============================
-// Make sure this class definition is before its instantiation
 class TrackingControl extends ol.control.Control {
-  /**
-   * @param {Object} [opt_options] Control options.
-   */
   constructor(opt_options) {
     const options = opt_options || {};
 
     const button = document.createElement('button');
-    button.innerHTML = '🛰️'; // Satellite emoji for "off" state / enable tracking
+    button.innerHTML = '🛰️';
     button.title = 'Toggle GPS Tracking';
 
     const element = document.createElement('div');
-    element.className = 'ol-unselectable ol-control tracking-control'; // Added a custom class
+    element.className = 'ol-unselectable ol-control tracking-control';
     element.appendChild(button);
 
-    // Call super constructor first
     super({
       element: element,
       target: options.target,
     });
 
-    // Create container for stats
     this.statsElement_ = document.createElement('div');
     this.statsElement_.className = 'tracking-stats';
-    // Initially hide stats or show placeholder text
     this.statsElement_.style.display = 'none';
     element.appendChild(this.statsElement_);
 
-    // Create individual stat elements
     this.accuracyElement_ = document.createElement('div');
     this.accuracyElement_.innerHTML = 'Accuracy: -';
     this.statsElement_.appendChild(this.accuracyElement_);
@@ -1380,8 +1543,8 @@ class TrackingControl extends ol.control.Control {
     this.statsElement_.appendChild(this.coordinatesElement_);
 
     this.button_ = button;
-    this.trackingOn_ = false; // To keep track of tracking state
-    this.needsCentering_ = false; // Flag to control centering on first fix
+    this.trackingOn_ = false;
+    this.needsCentering_ = false;
 
     this.button_.addEventListener('click', this.handleTrackToggle_.bind(this), false);
   }
@@ -1392,18 +1555,17 @@ class TrackingControl extends ol.control.Control {
     if (this.trackingOn_) {
       this.button_.innerHTML = '📡';
       this.statsElement_.style.display = 'flex';
-      this.needsCentering_ = true; // Set flag to center on next position update
-      // Attempt to center immediately if position is already available
+      this.needsCentering_ = true;
       const currentPosition = geolocation.getPosition();
       if (currentPosition && this.needsCentering_) {
         olMap.getView().animate({ center: currentPosition, zoom: Math.max(olMap.getView().getZoom(), 17), rotation: 0, duration: 500 });
-        this.needsCentering_ = false; // Centered, so reset flag
+        this.needsCentering_ = false;
       }
     } else {
       this.button_.innerHTML = '🛰️';
       this.statsElement_.style.display = 'none';
       this.updateStats('-', '-', '-', '-', '-', {lat: '-', lon: '-'});
-      this.needsCentering_ = false; // Tracking off, no need to center
+      this.needsCentering_ = false;
     }
     console.log('Tracking toggled:', this.trackingOn_);
   }
@@ -1422,12 +1584,5 @@ class TrackingControl extends ol.control.Control {
   }
 }
 
-// Instantiate the custom control
 window.trackingControlInstance = new TrackingControl();
-
-// Add the custom control to the map
-// Need to ensure olMap is defined before this line.
-// Typically, map initialization code is wrapped in a DOMContentLoaded or similar event,
-// or this part of the script is placed after the map div and OL map instantiation.
-// For this file structure, olMap is defined much earlier.
 olMap.addControl(window.trackingControlInstance);
