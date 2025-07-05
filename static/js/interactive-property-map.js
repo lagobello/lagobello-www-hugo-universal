@@ -65,6 +65,18 @@ var styleHighlight = new ol.style.Style({
   stroke: new ol.style.Stroke({ color: 'blue', width: 3 })
 });
 
+// Status to Color Mapping for dynamic lot styling
+const lotStatusColors = {
+  'SOLD': 'gray',
+  'LISTED': 'green',
+  'AVAILABLE': 'green', // Assuming Available is similar to Listed
+  'UNDER CONTRACT': 'yellow',
+  'PENDING': 'yellow',    // Assuming Pending is similar to Under Contract
+  'RESERVED': 'purple',
+  'FUTURE': 'lightgray',
+  'DEFAULT': 'rgba(0, 60, 136, 0.4)' // A light blue, similar to default OpenLayers fill but with alpha
+};
+
 // =============================
 //  1.  Map controls & overlays
 // =============================
@@ -122,12 +134,63 @@ var layerVectorLake = new ol.layer.Vector({
 });
 
 var styleFunction = function (feature) {
-  return lotStyles[feature.get('status')];
+  return lotStyles[feature.get('status')]; // This might be for a different layer or an old setup.
 };
 
-var styleFunctionPlatLots = function (feature) {
-  return lotStyles['FOR SALE'];
+// New dynamic style function for lot layers based on lots.json status via spatial matching
+var dynamicLotStyleFunction = function(feature) {
+  let chosenColor = lotStatusColors.DEFAULT; // Default color
+
+  if (lotsData && lotsData.length > 0) {
+    const featureGeometry = feature.getGeometry();
+    if (featureGeometry && typeof featureGeometry.intersectsCoordinate === 'function') {
+      let spatiallyMatchedLot = null;
+      for (const lotRecord of lotsData) {
+        if (lotRecord.Location && typeof lotRecord.Location === 'string') {
+          const parts = lotRecord.Location.split(',');
+          if (parts.length === 2) {
+            const lat = parseFloat(parts[0].trim());
+            const lon = parseFloat(parts[1].trim());
+
+            if (!isNaN(lat) && !isNaN(lon)) {
+              const lotPointWGS84 = [lon, lat];
+              try {
+                const lotPointInViewProj = ol.proj.transform(lotPointWGS84, 'EPSG:4326', 'EPSG:3857');
+                if (featureGeometry.intersectsCoordinate(lotPointInViewProj)) {
+                  spatiallyMatchedLot = lotRecord;
+                  break;
+                }
+              } catch (e) { /* ignore transform errors for styling */ }
+            }
+          }
+        }
+      }
+
+      if (spatiallyMatchedLot) {
+        const status = spatiallyMatchedLot["Lot Status"] ? spatiallyMatchedLot["Lot Status"].toUpperCase() : null;
+        if (status && lotStatusColors[status]) {
+          chosenColor = lotStatusColors[status];
+        } else if (status) {
+          console.warn(`No color mapping for status: ${status}. Using default.`);
+        }
+      }
+    }
+  }
+  // Create a new style instance for each feature.
+  // This is important if styles can vary significantly per feature beyond color.
+  // For simple color changes, caching styles is more performant (see optimization note in plan).
+  return new ol.style.Style({
+    fill: new ol.style.Fill({
+      color: chosenColor
+    }),
+    stroke: new ol.style.Stroke({ color: '#D3D3D3', width: 2 }) // Consistent stroke
+  });
 };
+
+// The old styleFunctionPlatLots is now replaced by dynamicLotStyleFunction for plat layers.
+// var styleFunctionPlatLots = function (feature) {
+//   return lotStyles['FOR SALE'];
+// };
 
 var layerVectorLots = new ol.layer.Vector({
   title: 'Lot layer',
@@ -146,7 +209,7 @@ var layerVectorLotsPlatS1 = new ol.layer.Vector({
     format: new ol.format.GeoJSON(),
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S1.geojson'
   }),
-  style: styleFunctionPlatLots,
+  style: dynamicLotStyleFunction,
   opacity: 0.4
 });
 
@@ -156,7 +219,7 @@ var layerVectorLotsPlatS2 = new ol.layer.Vector({
     format: new ol.format.GeoJSON(),
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S2.geojson'
   }),
-  style: styleFunctionPlatLots,
+  style: dynamicLotStyleFunction,
   opacity: 0.4
 });
 
@@ -166,7 +229,7 @@ var layerVectorLotsPlatS3 = new ol.layer.Vector({
     format: new ol.format.GeoJSON(),
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S3.geojson'
   }),
-  style: styleFunctionPlatLots,
+  style: dynamicLotStyleFunction,
   opacity: 0.4
 });
 
@@ -648,6 +711,13 @@ if (layerSwitcher && layerSwitcher.panel) {
     .then(data => {
       lotsData = data;
       console.log('lots.json loaded successfully.');
+      // Refresh lot layers to apply new styles
+      if (layerVectorLotsPlatS1) layerVectorLotsPlatS1.changed();
+      if (layerVectorLotsPlatS2) layerVectorLotsPlatS2.changed();
+      if (layerVectorLotsPlatS3) layerVectorLotsPlatS3.changed();
+      // Also, if layerVectorLots is ever made visible and uses dynamic styling:
+      // if (layerVectorLots) layerVectorLots.changed();
+      console.log('Lot layers refreshed for styling after lots.json load.');
     })
     .catch(error => {
       console.error('CRITICAL: Error loading lots.json:', error.message);
