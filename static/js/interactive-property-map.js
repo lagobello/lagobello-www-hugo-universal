@@ -702,7 +702,7 @@ if (layerSwitcher && layerSwitcher.panel) {
     })
     .then(data => {
       lotsData = data;
-      console.log('lots.json loaded successfully.');
+      console.log('lots.json loaded successfully:', lotsData); // Log the data itself
     })
     .catch(error => {
       console.error('Error loading lots.json:', error);
@@ -826,8 +826,22 @@ var retrieveFeatureInfoTable = function (evt) {
   // Find matching lot in lotsData
   var matchedLot = null;
   if (lotsData && geoJsonName) {
-    matchedLot = lotsData.find(lot => lot.Name === geoJsonName);
+    console.log("Attempting to match GeoJSON feature name:", `'${geoJsonName}'`);
+    // Trim whitespace from both names for more robust matching
+    const trimmedGeoJsonName = geoJsonName.trim();
+    matchedLot = lotsData.find(lot => lot.Name && lot.Name.trim() === trimmedGeoJsonName);
+    if (!matchedLot) {
+      // Optional: Add a case-insensitive fallback if strict matching fails
+      // matchedLot = lotsData.find(lot => lot.Name && lot.Name.trim().toLowerCase() === trimmedGeoJsonName.toLowerCase());
+      // if (matchedLot) console.log("Matched case-insensitively:", matchedLot);
+    }
+    console.log("Matched lot from lots.json:", matchedLot);
+  } else if (lotsData === null) {
+    console.warn("lotsData is null. Cannot perform match. Check if lots.json loaded correctly.");
+  } else if (!geoJsonName) {
+    console.log("No geoJsonName found on feature, cannot match with lots.json.");
   }
+
 
   // --- Top Level Information (only for matched lots) ---
   var parcelLegalDesc = matchedLot && matchedLot.Name ? matchedLot.Name : (geoJsonName || 'N/A');
@@ -957,7 +971,13 @@ var retrieveFeatureInfoTable = function (evt) {
   } else { // Metric
     calculatedDataContent += `<tr><td>Area (calculated)</td><td><code>${areaString}</code></td></tr>`;
   }
-  calculatedDataContent += `<tr><td>Centroid (Lat, Lon)</td><td><code>${centroidString}</code></td></tr>`;
+  calculatedDataContent += `<tr><td>Centroid (Lat, Lon WGS84)</td><td><code>${centroidString}</code></td></tr>`;
+
+  // Add Clicked Coordinates
+  var clickedCoordWGS84 = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+  var clickedCoordString = `${clickedCoordWGS84[1].toFixed(5)}, ${clickedCoordWGS84[0].toFixed(5)}`; // Lat, Lon
+  calculatedDataContent += `<tr><td>Clicked (Lat, Lon WGS84)</td><td><code>${clickedCoordString}</code></td></tr>`;
+
   calculatedDataContent += `</table>`;
 
   var calculatedDataHtml = `
