@@ -1133,50 +1133,65 @@ window.toggleSection = function(sectionId, button) {
   }
 };
 
-var retrieveLotTable = function (url) {
+var makeListingsTable = function (url) {
   $.getJSON(url, function (data) {
     var items = [];
-    var areaHeader = displayUnits === 'imperial' ? 'Lot Area [ft<sup>2</sup>]' : 'Lot Area [m<sup>2</sup>]';
-    if (displayUnits === 'imperial') {
-        areaHeader = turf.area(data.features[0]) * 10.7639 > 43560 ? 'Lot Area [acres]' : 'Lot Area [ft<sup>2</sup>]';
-    } else {
-        areaHeader = turf.area(data.features[0]) > 10000 ? 'Lot Area [km<sup>2</sup>]' : 'Lot Area [m<sup>2</sup>]';
-    }
-
-
+    // Define table headers
     items.push(
-      `<tr><th><b>Lot ID</b></th><th><b>Lot Status</b></th><th><b>${areaHeader}</b></th></tr>`
+      `<thead>
+        <tr>
+          <th>Lot ID</th>
+          <th>Status</th>
+          <th>Price</th>
+          <th>Size (sqft)</th>
+          <th>Address</th>
+          <th>Agent</th>
+          <th>Agent Phone</th>
+          <th>Listing</th>
+          <th>Location</th>
+          <th>Close To</th>
+        </tr>
+      </thead>`
     );
-    $.each(data.features, function (key, val) {
-      var areaM2 = turf.area(val);
-      var displayArea;
-      if (displayUnits === 'imperial') {
-        var areaSqFt = areaM2 * 10.7639;
-        if (areaSqFt > 43560) {
-            displayArea = (areaSqFt / 43560).toFixed(2);
-        } else {
-            displayArea = areaSqFt.toFixed(2);
-        }
-      } else {
-        if (areaM2 > 10000) {
-            displayArea = (areaM2 / 1000000).toFixed(2);
-        } else {
-            displayArea = areaM2.toFixed(2);
-        }
-      }
-      items.push(
-        `<tr><td>${val.properties.name}</td><td>${val.properties.status}</td><td>${displayArea}</td></tr>`
-      );
-    });
+    items.push('<tbody>');
 
-    $('<table/>', {
-      class: 'lot-table',
-      html: items.join('')
-    }).appendTo('#lot-table');
+    // Filter for Section 2 lots and create table rows
+    $.each(data, function (key, val) {
+      if (val.Subdivision === "Section 2") {
+        var listPrice = val["List Price"] ? `$${parseFloat(val["List Price"]).toLocaleString()}` : 'N/A';
+        var sizeSqft = val["Size [sqft]"] ? `${parseFloat(val["Size [sqft]"]).toLocaleString()} sqft` : 'N/A';
+        var listingLink = val["Listing Link"] ? `<a href="${val["Listing Link"]}" target="_blank" rel="noopener noreferrer">View</a>` : 'N/A';
+        var agentPhone = val["Listing Agent Phone Number"] ? String(val["Listing Agent Phone Number"]) : 'N/A';
+
+        items.push(
+          `<tr>
+            <td>${val.Name || 'N/A'}</td>
+            <td>${val["Lot Status"] || 'N/A'}</td>
+            <td>${listPrice}</td>
+            <td>${sizeSqft}</td>
+            <td>${val["Street Address"] || 'N/A'}</td>
+            <td>${val["Listing Agent"] || 'N/A'}</td>
+            <td>${agentPhone}</td>
+            <td>${listingLink}</td>
+            <td>${val.Location || 'N/A'}</td>
+            <td>${val["Close-to"] || 'N/A'}</td>
+          </tr>`
+        );
+      }
+    });
+    items.push('</tbody>');
+
+    // Clear existing table content and append new table
+    $('#lot-table').empty().append(
+        $('<table/>', {
+          class: 'lot-table table table-striped table-hover', // Added Bootstrap classes for styling
+          html: items.join('')
+        })
+    );
   });
   return true;
 };
-retrieveLotTable('/files/lots.geojson');
+makeListingsTable('/data/lots.json');
 
 olMap.on('pointermove', function (evt) {
   if (evt.dragging) {
