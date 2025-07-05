@@ -746,12 +746,82 @@ var retrieveFeature = function (pixel) {
   return feature;
 };
 
+// Helper function to find the friendly layer name (title)
+function getFriendlyLayerName(clickedFeature) {
+  if (!clickedFeature || !olMap) return 'Unknown Layer';
+
+  let featureLayer = null;
+  // Find the layer the feature belongs to. This is a bit complex as features don't directly store their layer.
+  // We iterate over layers and see if the feature is in its source.
+  // This assumes vector layers. For other layer types, this approach might need adjustment.
+
+  // Check top-level layers first
+  const mapLayers = olMap.getLayers().getArray();
+  for (const layer of mapLayers) {
+    if (layer instanceof ol.layer.Vector) {
+      const source = layer.getSource();
+      if (source && typeof source.getFeatures === 'function') {
+        if (source.getFeatures().includes(clickedFeature)) {
+          featureLayer = layer;
+          break;
+        }
+      }
+      // If source is a Cluster source, check its source's features
+      if (source instanceof ol.source.Cluster) {
+        const clusterSource = source.getSource();
+         if (clusterSource && typeof clusterSource.getFeatures === 'function') {
+            if (clusterSource.getFeatures().includes(clickedFeature)) {
+                // We found the feature in the source of a cluster. Use the cluster layer's title.
+                featureLayer = layer;
+                break;
+            }
+        }
+      }
+    } else if (layer instanceof ol.layer.Group) {
+      // Check layers within groups
+      const groupLayers = layer.getLayers().getArray();
+      for (const subLayer of groupLayers) {
+        if (subLayer instanceof ol.layer.Vector) {
+          const source = subLayer.getSource();
+          if (source && typeof source.getFeatures === 'function') {
+            if (source.getFeatures().includes(clickedFeature)) {
+              featureLayer = subLayer;
+              break;
+            }
+          }
+           if (source instanceof ol.source.Cluster) {
+            const clusterSource = source.getSource();
+            if (clusterSource && typeof clusterSource.getFeatures === 'function') {
+                if (clusterSource.getFeatures().includes(clickedFeature)) {
+                    featureLayer = subLayer; // Use the subLayer (vector layer) title
+                    break;
+                }
+            }
+          }
+        }
+      }
+    }
+    if (featureLayer) break;
+  }
+
+  if (featureLayer) {
+    const title = featureLayer.get('title');
+    return title || 'Unnamed Layer'; // Return title or a placeholder if title is missing
+  }
+
+  // Fallback if layer not easily found by feature instance (e.g. complex scenarios or non-vector layers)
+  // This part may need more sophisticated handling if features come from diverse layer types not covered above.
+  return clickedFeature.get('Layer') || 'Unknown Layer'; // Original fallback
+}
+
+
 var retrieveFeatureInfoTable = function (evt) {
   var feature = retrieveFeature(evt.pixel);
   var geoJsonName = feature.get('name'); // Name from GeoJSON feature properties
   var area = featureCalculateAreaMeters(feature);
-  var entityHandle = feature.get('EntityHandle') || 'N/A';
-  var layerName = feature.get('Layer') || 'Unknown';
+  var entityHandle = feature.get('EntityHandle') || 'N/A'; // Still useful for GeoJSON section
+  var rawLayerName = feature.get('Layer') || 'Unknown'; // Keep raw layer name for specific cases if needed
+  var friendlyLayerName = getFriendlyLayerName(feature);
 
   // Find matching lot in lotsData
   var matchedLot = null;
@@ -934,37 +1004,48 @@ var retrieveFeatureInfoTable = function (evt) {
   }
 
   // If it's a matched lot, we'll proceed to build the full structure.
-  // The full return will be: topLevelHtml + toggleButtonsHtml + geoJsonMetadataHtml + calculatedDataHtml + linkedDataDumpHtml;
 
   // --- Toggle Buttons ---
-  // Only add buttons if there's a matchedLot, implying it's a detailed property view
-  if (matchedLot) {
-    toggleButtonsHtml = `
-      <div class="popup-toggle-buttons">
-        <button onclick="toggleSection('geojson-metadata-section', this)" class="popup-toggle-button">GeoJSON Details</button>
-        <button onclick="toggleSection('calculated-data-section', this)" class="popup-toggle-button">Calculated</button>
-        <button onclick="toggleSection('linked-data-section', this)" class="popup-toggle-button">Linked Data</button>
-      </div>
-    `;
+  var buttonsArray = [];
+  if (hasGeoJsonProps) {
+    buttonsArray.push(`<button onclick="toggleSection('geojson-metadata-section', this)" class="popup-toggle-button">GeoJSON Details</button>`);
+  }
+  // Always add Calculated button, its section is always generated.
+  buttonsArray.push(`<button onclick="toggleSection('calculated-data-section', this)" class="popup-toggle-button">Calculated</button>`);
+
+  if (matchedLot && hasLinkedProps) {
+    buttonsArray.push(`<button onclick="toggleSection('linked-data-section', this)" class="popup-toggle-button">Linked Data</button>`);
+  }
+
+  toggleButtonsHtml = ""; // Initialize
+  if (buttonsArray.length > 0) {
+    toggleButtonsHtml = `<div class="popup-toggle-buttons">${buttonsArray.join('')}</div>`;
   }
 
   // Assemble the final HTML
-  // The order is Top Level, then Buttons, then the collapsible sections
   if (matchedLot) {
+    // For matched lots (features found in lots.json)
     return topLevelHtml + toggleButtonsHtml + geoJsonMetadataHtml + calculatedDataHtml + linkedDataDumpHtml;
   } else {
-    // Fallback for non-matched features (already handled above, but as a safeguard)
-    // This part of the code should ideally not be reached if the earlier `if (!matchedLot && !geoJsonName)` block is effective.
-    let genericInfo = `<div class="popup-section"><div class="popup-section-title">${parcelLegalDesc || layerName}</div><table style="width:100%">`;
-    if (layerName !== 'Unknown') genericInfo += `<tr><td>Layer</td><td><code>${layerName}</code></td></tr>`;
-    if (entityHandle !== 'N/A') genericInfo += `<tr><td>Entity ID</td><td><code>${entityHandle}</code></td></tr>`;
-    genericInfo += `<tr><td>Area</td><td><code>${areaString}</code></td></tr></table></div>`;
-    if (hasGeoJsonProps) {
-        genericInfo += `<button onclick="toggleSection('geojson-metadata-section', this)" class="popup-toggle-button">Show GeoJSON Details</button>`;
-        // Note: geoJsonMetadataHtml is defined regardless of matchedLot
-        genericInfo += geoJsonMetadataHtml;
-    }
-    return genericInfo;
+    // For UNMATCHED features (e.g. a lot polygon NOT in lots.json, or a generic map feature like a park/lake)
+    // Use friendlyLayerName. parcelLegalDesc will be the feature's 'name' (e.g. "BLK 1 LOT 1") or 'N/A'.
+
+    let titleForUnmatched = parcelLegalDesc !== 'N/A' ? parcelLegalDesc : friendlyLayerName;
+    if (titleForUnmatched === 'Unknown Layer' && parcelLegalDesc === 'N/A') titleForUnmatched = "Feature Information";
+
+    let genericHeaderHtml = `
+      <div class="popup-section">
+        <div class="popup-section-title main-title">${titleForUnmatched}</div>`;
+        // If the main title isn't already the friendly layer name (e.g. feature has a 'name' property),
+        // and friendlyLayerName is known, display it as a sub-item.
+        if (friendlyLayerName !== 'Unknown Layer' && titleForUnmatched !== friendlyLayerName) {
+          genericHeaderHtml += `<table style="width:100%"><tr><td>Layer</td><td><code>${friendlyLayerName}</code></td></tr></table>`;
+        }
+    genericHeaderHtml += `</div>`;
+
+    // For generic/unmatched features, we show their basic header, then buttons, then GeoJSON and Calculated sections.
+    // Linked data is not applicable here.
+    return genericHeaderHtml + toggleButtonsHtml + geoJsonMetadataHtml + calculatedDataHtml;
   }
 };
 
