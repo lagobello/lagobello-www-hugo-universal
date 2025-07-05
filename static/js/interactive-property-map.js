@@ -12,6 +12,10 @@ var draw;
 // Global variable to store lots.json data
 var lotsData = null;
 
+// Zoom level thresholds for pop-up visibility
+const MIN_POPUP_ZOOM = 17; // Pop-up visible at or above this zoom level
+const MAX_POPUP_ZOOM = 20; // Pop-up visible below this zoom level (i.e., up to 19.x)
+
 // Global references to individual tool control instances
 window.infoControlInstance = window.infoControlInstance || null;
 window.lengthControlInstance = window.lengthControlInstance || null;
@@ -689,6 +693,26 @@ var olMap = new ol.Map({
   layers: [olLayerGroupBasemaps, olLayerGroupDrone, olLayerGroupOverlays, layerVectorDrawings],
   view: chooseView()
 });
+
+// Function to handle zoom changes and pop-up visibility
+function handleZoomChange() {
+  var currentZoom = olMap.getView().getZoom();
+  // Check if the overlay has a position (meaning it's likely visible or intended to be)
+  if (overlay.getPosition()) {
+    if (currentZoom < MIN_POPUP_ZOOM || currentZoom >= MAX_POPUP_ZOOM) {
+      // console.log(`Zoom out of range (${currentZoom}), hiding pop-up.`); // Removed for production
+      overlay.setPosition(undefined);
+      // Optionally, unhighlight the feature if the pop-up is closed due to zoom
+      if (highlight) {
+        featureOverlayHighlight.getSource().removeFeature(highlight);
+        highlight = null;
+      }
+    }
+  }
+}
+
+// Listen to map view changes (zoom, pan)
+olMap.on('moveend', handleZoomChange);
 
 if (layerSwitcher && layerSwitcher.panel) {
   layerSwitcher.panel.addEventListener('rendercomplete', addDownloadLinksToLayerSwitcher);
@@ -1545,7 +1569,13 @@ olMap.on('click', function (evt) {
   var extent = feature.getGeometry().getExtent();
   var center = getCenterOfExtent(extent);
   var centerShifted = movePoint10mDown(center); // Assuming this function is still desired for map centering
-  olMap.getView().animate({ zoom: 18, center: centerShifted });
+  olMap.getView().animate({ zoom: 18, center: centerShifted }, function(completed) {
+    if (completed) {
+      // Ensure pop-up visibility is checked after click-animation completes.
+      // Since zoom 18 is within valid range [17, 20), this will ensure it remains visible.
+      handleZoomChange();
+    }
+  });
 
   // Highlight corresponding row in the table
   // This requires knowing which property of the feature links to the table rows (e.g., lot name)
