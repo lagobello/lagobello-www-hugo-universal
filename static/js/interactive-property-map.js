@@ -9,6 +9,9 @@ let displayUnits = 'imperial'; // Default unit system: 'imperial' or 'metric' (c
 // Global draw variable for interactions
 var draw;
 
+// Global variable to store lots.json data
+var lotsData = null;
+
 // Global references to individual tool control instances
 window.infoControlInstance = window.infoControlInstance || null;
 window.lengthControlInstance = window.lengthControlInstance || null;
@@ -686,6 +689,27 @@ if (layerSwitcher && layerSwitcher.panel) {
     .catch(console.error);
 })();
 
+// =============================
+//  Load lots.json data
+// =============================
+(function loadLotsData() {
+  fetch('/static/data/lots.json')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok for lots.json');
+      }
+      return response.json();
+    })
+    .then(data => {
+      lotsData = data;
+      console.log('lots.json loaded successfully.');
+    })
+    .catch(error => {
+      console.error('Error loading lots.json:', error);
+      lotsData = []; // Initialize as empty array on error to prevent other parts from breaking
+    });
+})();
+
 var featureCalculateAreaMeters = function (feature) {
   var format = new ol.format.GeoJSON();
   var turfFeature = format.writeFeatureObject(feature, {
@@ -724,11 +748,51 @@ var retrieveFeature = function (pixel) {
 
 var retrieveFeatureInfoTable = function (evt) {
   var feature = retrieveFeature(evt.pixel);
+  var geoJsonName = feature.get('name'); // Name from GeoJSON feature properties
   var area = featureCalculateAreaMeters(feature);
-  var name = feature.get('name') || 'N/A';
-  var status = feature.get('status') || 'N/A';
   var entityHandle = feature.get('EntityHandle') || 'N/A';
   var layerName = feature.get('Layer') || 'Unknown';
+
+  // Find matching lot in lotsData
+  var matchedLot = null;
+  if (lotsData && geoJsonName) {
+    matchedLot = lotsData.find(lot => lot.Name === geoJsonName);
+  }
+
+  // --- Top Level Information ---
+  var parcelLegalDesc = matchedLot && matchedLot.Name ? matchedLot.Name : (geoJsonName || 'N/A');
+  var status = matchedLot && matchedLot["Lot Status"] ? matchedLot["Lot Status"] : (feature.get('status') || 'N/A');
+  var listPrice = matchedLot && matchedLot["List Price"] ? `$${parseFloat(matchedLot["List Price"]).toLocaleString()}` : 'N/A';
+  var sqFootage = matchedLot && matchedLot["Size [sqft]"] ? `${parseFloat(matchedLot["Size [sqft]"]).toLocaleString()} sqft` : 'N/A';
+  var listingAgent = matchedLot && matchedLot["Listing Agent"] ? matchedLot["Listing Agent"] : 'N/A';
+  var listingAgentPhone = matchedLot && matchedLot["Listing Agent Phone Number"] ? String(matchedLot["Listing Agent Phone Number"]) : 'N/A';
+  var listingURL = matchedLot && matchedLot["Listing Link"] ? matchedLot["Listing Link"] : 'N/A';
+
+  var callNowButton = '';
+  if (listingAgentPhone !== 'N/A' && listingAgentPhone) {
+    // Remove non-numeric characters for tel: link
+    var telLink = listingAgentPhone.replace(/\D/g, '');
+    callNowButton = `<a href="tel:${telLink}" class="call-now-button">Call Now</a>`;
+  }
+
+  var listingLinkHtml = 'N/A';
+  if (listingURL !== 'N/A' && listingURL) {
+    // Check if it's a Zillow link or just a URL string
+    if (listingURL.toLowerCase().startsWith('http')) {
+      listingLinkHtml = `<a href="${listingURL}" target="_blank" rel="noopener noreferrer">View Listing</a>`;
+    } else if (listingURL.toLowerCase().includes('zillow')) {
+      // Attempt to extract URL if embedded in text like "Zillow Link - http..."
+      const urlMatch = listingURL.match(/https?:\/\/[^\s]+/);
+      if (urlMatch && urlMatch[0]) {
+        listingLinkHtml = `<a href="${urlMatch[0]}" target="_blank" rel="noopener noreferrer">View Listing (Zillow)</a>`;
+      } else {
+        listingLinkHtml = listingURL; // Fallback to text if no clear URL
+      }
+    } else {
+        listingLinkHtml = listingURL; // Fallback for non-standard links
+    }
+  }
+
 
   var areaString = 'N/A';
   if (area) {
@@ -748,92 +812,189 @@ var retrieveFeatureInfoTable = function (evt) {
     }
   }
 
-  var linkedDataHtml = `
+  // Top-level information HTML
+  var topLevelHtml = `
     <div class="popup-section">
-      <div class="popup-section-title">Linked Data</div>
+      <div class="popup-section-title main-title">${parcelLegalDesc}</div>
       <table style="width:100%">
-        <tr><td>Name</td><td><code>${name}</code></td></tr>
         <tr><td>Status</td><td><code>${status}</code></td></tr>
+        <tr><td>List Price</td><td><code>${listPrice}</code></td></tr>
+        <tr><td>Size</td><td><code>${sqFootage}</code></td></tr>
+        <tr><td>Listing Agent</td><td><code>${listingAgent}</code></td></tr>
+        <tr><td>Agent Phone</td><td><code>${listingAgentPhone}</code> ${callNowButton}</td></tr>
+        <tr><td>Listing URL</td><td>${listingLinkHtml}</td></tr>
       </table>
     </div>
   `;
 
-  var inferredDataHtml = `
-    <div class="popup-section inferred-data" style="display:none;">
-      <div class="popup-section-title">Inferred/Calculated Data</div>
-      <table style="width:100%">
-        <tr><td>Area</td><td><code>${areaString}</code></td></tr>
-      </table>
-    </div>
-  `;
+  var toggleButtonsHtml = '';
 
-  // Handling for features with EntityHandle (new style geojson)
-  if (feature.get('EntityHandle') !== undefined) {
-    var registeredAreaFt2 = feature.get('AREA_REGISTERED_FT2') || '---';
-    var registeredAreaString = `<td>Area registered</td><td><code>${registeredAreaFt2} ${displayUnits === 'imperial' ? "ft<sup>2</sup>" : ""}</code></td>`;
-    if (displayUnits === 'metric' && registeredAreaFt2 !== '---') {
-         registeredAreaString = `<td>Area registered (ft<sup>2</sup>)</td><td><code>${registeredAreaFt2}</code></td>`;
+  // --- Linked Data (from lots.json) Section ---
+  var linkedDataContent = '<table style="width:100%">';
+  let hasLinkedProps = false;
+  if (matchedLot) {
+    const topLevelKeys = ["Name", "Lot Status", "List Price", "Size [sqft]", "Listing Agent", "Listing Agent Phone Number", "Listing Link"];
+    for (const key in matchedLot) {
+      if (matchedLot.hasOwnProperty(key) && !topLevelKeys.includes(key)) {
+        linkedDataContent += `<tr><td>${key}</td><td><code>${matchedLot[key] !== null && matchedLot[key] !== undefined ? matchedLot[key] : 'N/A'}</code></td></tr>`;
+        hasLinkedProps = true;
+      }
     }
-
-    // Overwrite linkedDataHtml and inferredDataHtml for EntityHandle features
-    linkedDataHtml = `
-      <div class="popup-section">
-        <div class="popup-section-title">Linked Data</div>
-        <table style="width:100%">
-          <tr><td>Entity ID</td><td><code>${entityHandle}</code></td></tr>
-          <tr><td>Parcel ID</td><td><code>---</code></td></tr> <!-- Placeholder -->
-        </table>
-      </div>
-    `;
-    inferredDataHtml = `
-      <div class="popup-section inferred-data" style="display:none;">
-        <div class="popup-section-title">Inferred/Calculated Data</div>
-        <table style="width:100%">
-          <tr>${registeredAreaString}</tr>
-          <tr><td>Area calculated</td><td><code>${areaString}</code></td></tr>
-        </table>
-      </div>
-    `;
   }
-  // Fallback for other feature types (e.g. park, lake, street)
-  else if (feature.get('name') === undefined && feature.get('status') === undefined && feature.get('EntityHandle') === undefined) {
-      linkedDataHtml = `
-      <div class="popup-section">
-        <div class="popup-section-title">Feature Info</div>
-        <table style="width:100%">
-          <tr><td>Layer</td><td><code>${layerName}</code></td></tr>
-        </table>
-      </div>
-    `;
-    // For these types, area might still be relevant for the inferred section
-    inferredDataHtml = `
-      <div class="popup-section inferred-data" style="display:none;">
-        <div class="popup-section-title">Inferred/Calculated Data</div>
-        <table style="width:100%">
-          <tr><td>Area</td><td><code>${areaString}</code></td></tr>
-        </table>
-      </div>
-    `;
+  if (!hasLinkedProps) {
+    linkedDataContent += '<tr><td colspan="2">No additional linked data found.</td></tr>';
   }
+  linkedDataContent += '</table>';
 
-
-  var toggleButtonHtml = `
-    <button onclick="toggleInferredData(this)" class="popup-toggle-button">Show more</button>
+  var linkedDataDumpHtml = `
+    <div class="popup-section collapsible-section" style="display:none;" id="linked-data-section">
+      <div class="popup-section-title">Linked Data (lots.json)</div>
+      ${linkedDataContent}
+    </div>
   `;
 
-  return linkedDataHtml + toggleButtonHtml + inferredDataHtml;
+  // --- Calculated Data Section ---
+  var areaSqFtImperial = '';
+  var areaAcresImperial = '';
+  if (displayUnits === 'imperial' && area) {
+    areaSqFtImperial = (area * 10.7639).toFixed(2) + ' ft<sup>2</sup>';
+    areaAcresImperial = (area * 10.7639 / 43560).toFixed(3) + ' acres';
+  }
+
+  var centroidString = 'N/A';
+  try {
+    var format = new ol.format.GeoJSON();
+    var turfFeature = format.writeFeatureObject(feature, { featureProjection: 'EPSG:3857' });
+    var centroid = turf.centroid(turfFeature);
+    if (centroid && centroid.geometry && centroid.geometry.coordinates) {
+      // Transform centroid to EPSG:4326 for display
+      var lonLatCentroid = ol.proj.transform(centroid.geometry.coordinates, 'EPSG:3857', 'EPSG:4326');
+      centroidString = `${lonLatCentroid[1].toFixed(5)}, ${lonLatCentroid[0].toFixed(5)}`;
+    }
+  } catch (e) {
+    console.error("Error calculating centroid:", e);
+    centroidString = 'Error';
+  }
+
+  var calculatedDataContent = `
+    <table style="width:100%">
+      <tr><td>Area (calculated)</td><td><code>${areaString}</code></td></tr>
+      ${displayUnits === 'imperial' && area ? `<tr><td>Area (sqft)</td><td><code>${areaSqFtImperial}</code></td></tr>` : ''}
+      ${displayUnits === 'imperial' && area ? `<tr><td>Area (acres)</td><td><code>${areaAcresImperial}</code></td></tr>` : ''}
+      <tr><td>Centroid (Lat, Lon)</td><td><code>${centroidString}</code></td></tr>
+    </table>
+  `;
+
+  var calculatedDataHtml = `
+    <div class="popup-section collapsible-section" style="display:none;" id="calculated-data-section">
+      <div class="popup-section-title">Calculated Data</div>
+      ${calculatedDataContent}
+    </div>
+  `;
+
+  // --- GeoJSON Metadata Section ---
+  var geoJsonMetadataContent = '<table style="width:100%">';
+  const geoJsonProps = feature.getProperties();
+  let hasGeoJsonProps = false;
+  for (const key in geoJsonProps) {
+    if (key !== 'geometry' && geoJsonProps.hasOwnProperty(key)) { // Exclude geometry, check own properties
+        geoJsonMetadataContent += `<tr><td>${key}</td><td><code>${geoJsonProps[key]}</code></td></tr>`;
+        hasGeoJsonProps = true;
+    }
+  }
+  if (!hasGeoJsonProps) {
+    geoJsonMetadataContent += '<tr><td colspan="2">No additional GeoJSON properties found.</td></tr>';
+  }
+  geoJsonMetadataContent += '</table>';
+
+  var geoJsonMetadataHtml = `
+    <div class="popup-section collapsible-section" style="display:none;" id="geojson-metadata-section">
+      <div class="popup-section-title">GeoJSON Metadata</div>
+      ${geoJsonMetadataContent}
+    </div>
+  `;
+
+
+  // Fallback for features not matched in lots.json or generic features (park, lake, street)
+  // This fallback is now less likely to be hit if a feature has a name, as lots.json is the primary source
+  // but kept for safety for features that might not be in lots.json (e.g. truly generic map elements)
+  if (!matchedLot && !geoJsonName) { // Adjusted condition: if no matchedLot AND no geoJsonName to identify it
+    let genericInfo = `<div class="popup-section"><div class="popup-section-title">${layerName}</div><table style="width:100%">`;
+    if (layerName !== 'Unknown') {
+      genericInfo += `<tr><td>Layer</td><td><code>${layerName}</code></td></tr>`;
+    }
+    if (entityHandle !== 'N/A') { // entityHandle is from feature.get('EntityHandle')
+      genericInfo += `<tr><td>Entity ID</td><td><code>${entityHandle}</code></td></tr>`;
+    }
+    genericInfo += `<tr><td>Area</td><td><code>${areaString}</code></td></tr>`;
+    genericInfo += `</table></div>`;
+    // If it's a generic feature, we might still want to show its GeoJSON properties if available
+    if (hasGeoJsonProps) {
+        genericInfo += `<button onclick="toggleSection('geojson-metadata-section', this)" class="popup-toggle-button">Show GeoJSON Details</button>`;
+        genericInfo += geoJsonMetadataHtml;
+    }
+    return genericInfo;
+  }
+
+  // If it's a matched lot, we'll proceed to build the full structure.
+  // The full return will be: topLevelHtml + toggleButtonsHtml + geoJsonMetadataHtml + calculatedDataHtml + linkedDataDumpHtml;
+
+  // --- Toggle Buttons ---
+  // Only add buttons if there's a matchedLot, implying it's a detailed property view
+  if (matchedLot) {
+    toggleButtonsHtml = `
+      <div class="popup-toggle-buttons">
+        <button onclick="toggleSection('geojson-metadata-section', this)" class="popup-toggle-button">GeoJSON Details</button>
+        <button onclick="toggleSection('calculated-data-section', this)" class="popup-toggle-button">Calculated</button>
+        <button onclick="toggleSection('linked-data-section', this)" class="popup-toggle-button">Linked Data</button>
+      </div>
+    `;
+  }
+
+  // Assemble the final HTML
+  // The order is Top Level, then Buttons, then the collapsible sections
+  if (matchedLot) {
+    return topLevelHtml + toggleButtonsHtml + geoJsonMetadataHtml + calculatedDataHtml + linkedDataDumpHtml;
+  } else {
+    // Fallback for non-matched features (already handled above, but as a safeguard)
+    // This part of the code should ideally not be reached if the earlier `if (!matchedLot && !geoJsonName)` block is effective.
+    let genericInfo = `<div class="popup-section"><div class="popup-section-title">${parcelLegalDesc || layerName}</div><table style="width:100%">`;
+    if (layerName !== 'Unknown') genericInfo += `<tr><td>Layer</td><td><code>${layerName}</code></td></tr>`;
+    if (entityHandle !== 'N/A') genericInfo += `<tr><td>Entity ID</td><td><code>${entityHandle}</code></td></tr>`;
+    genericInfo += `<tr><td>Area</td><td><code>${areaString}</code></td></tr></table></div>`;
+    if (hasGeoJsonProps) {
+        genericInfo += `<button onclick="toggleSection('geojson-metadata-section', this)" class="popup-toggle-button">Show GeoJSON Details</button>`;
+        // Note: geoJsonMetadataHtml is defined regardless of matchedLot
+        genericInfo += geoJsonMetadataHtml;
+    }
+    return genericInfo;
+  }
 };
 
 // Make sure this function is accessible globally for the inline onclick
-window.toggleInferredData = function(button) {
-  var popupContent = button.closest('#popup-content');
-  var inferredDataSection = popupContent.querySelector('.inferred-data');
-  if (inferredDataSection.style.display === 'none') {
-    inferredDataSection.style.display = 'block';
-    button.textContent = 'Show less';
+window.toggleSection = function(sectionId, button) {
+  var section = document.getElementById(sectionId);
+  if (section) {
+    if (section.style.display === 'none' || section.style.display === '') {
+      section.style.display = 'block';
+      // Keep button text generic or update based on specific section if needed later
+      // For now, a simple Show/Hide based on current text might be too complex if buttons start different
+      // A common approach: If button text includes "Show", change to "Hide", and vice-versa.
+      // However, the buttons are specific (e.g. "GeoJSON Details").
+      // So, we'll just toggle. User can add more sophisticated text changes if desired.
+      // For now, let's assume button text doesn't need to change, or it's handled by CSS/user understanding.
+      // Or, a simple generic change:
+      if (button.textContent.includes('Show') || button.textContent.includes('Details') || button.textContent.includes('Calculated') || button.textContent.includes('Linked')) {
+        // This is a bit of a heuristic. A data attribute on the button might be better.
+        // For simplicity, we'll not change button text for now as it might get complex
+        // button.textContent = 'Hide ' + sectionId.replace('-section','').replace('-',' '); // Example
+      }
+    } else {
+      section.style.display = 'none';
+      // button.textContent = 'Show ' + sectionId.replace('-section','').replace('-',' '); // Example
+    }
   } else {
-    inferredDataSection.style.display = 'none';
-    button.textContent = 'Show more';
+    console.error('Section with ID ' + sectionId + ' not found.');
   }
 };
 
