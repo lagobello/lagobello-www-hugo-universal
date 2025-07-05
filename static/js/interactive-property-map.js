@@ -1140,12 +1140,12 @@ var makeListingsTable = function (url) {
     // Remove old global filter container if it exists from previous versions of the script
     $('#table-filters-container').remove();
 
-    // Generate options for "Close To" filter from data
-    var closeToOptionsHtml = '<option value="">All Locations</option>';
-    var uniqueCloseToValues = [...new Set(lotsData.map(lot => lot["Close-to"]).filter(ct => ct))].sort();
-    uniqueCloseToValues.forEach(function(val) {
-        closeToOptionsHtml += `<option value="${val}">${val}</option>`;
-    });
+    // Generate options for "Close To" filter (fixed for Section 2)
+    var closeToOptionsHtml = `
+        <option value="">All Locations</option>
+        <option value="Lake">Lake</option>
+        <option value="School">School</option>
+    `;
 
     // Generate options for "Status" filter (fixed for now, could also be dynamic)
     var statusOptionsHtml = `
@@ -1162,7 +1162,7 @@ var makeListingsTable = function (url) {
       <thead>
         <tr>
           <th>Lot ID</th>
-          <th>Status <br><select id="header-filter-status" class="header-filter" style="width: 90%; margin-top: 4px; padding: 0.15rem 0.5rem; font-size: 0.85em; height: auto;">${statusOptionsHtml}</select></th>
+          <th>Status <br><select id="header-filter-status" class="header-filter form-control form-control-sm" style="width: 90%; margin-top: 4px; padding: 0.15rem 0.5rem; font-size: 0.85em; height: auto; color: #495057; background-color: #fff;">${statusOptionsHtml}</select></th>
           <th>Price</th>
           <th>Size (sqft)</th>
           <th>Address</th>
@@ -1170,7 +1170,7 @@ var makeListingsTable = function (url) {
           <th>Agent Phone</th>
           <th>Listing</th>
           <th>Location</th>
-          <th>Close To <br><select id="header-filter-location" class="header-filter" style="width: 90%; margin-top: 4px; padding: 0.15rem 0.5rem; font-size: 0.85em; height: auto;">${closeToOptionsHtml}</select></th>
+          <th>Close To <br><select id="header-filter-location" class="header-filter form-control form-control-sm" style="width: 90%; margin-top: 4px; padding: 0.15rem 0.5rem; font-size: 0.85em; height: auto; color: #495057; background-color: #fff;">${closeToOptionsHtml}</select></th>
         </tr>
       </thead>`;
 
