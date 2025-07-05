@@ -702,7 +702,7 @@ if (layerSwitcher && layerSwitcher.panel) {
     })
     .then(data => {
       lotsData = data;
-      console.log('lots.json loaded successfully:', lotsData); // Log the data itself
+      console.log('lots.json loaded successfully.'); // Simplified log
     })
     .catch(error => {
       console.error('CRITICAL: Error loading lots.json:', error.message);
@@ -818,38 +818,62 @@ function getFriendlyLayerName(clickedFeature) {
 
 var retrieveFeatureInfoTable = function (evt) {
   var feature = retrieveFeature(evt.pixel);
-  // Using 'EntityHandle' as the potential key for matching with lots.json based on logs.
-  // This should be confirmed by the user. If another key holds the "BLK 1 LOT X" identifier, this needs to change.
-  var geoJsonName = feature.get('EntityHandle');
-  console.log(`Using feature.get('EntityHandle') for geoJsonName: ${geoJsonName}`);
+  // geoJsonName will be determined by spatial matching later or feature properties.
+  var geoJsonFeatureIdentifier = feature.get('EntityHandle') || feature.get('name'); // Fallback for display if no spatial match
 
   var area = featureCalculateAreaMeters(feature);
-  var entityHandle = feature.get('EntityHandle') || 'N/A'; // Retain for GeoJSON section if different from matching key
-  var rawLayerName = feature.get('Layer') || 'Unknown'; // Keep raw layer name for specific cases if needed
+  var entityHandle = feature.get('EntityHandle') || 'N/A'; // Retain for GeoJSON section
+  var rawLayerName = feature.get('Layer') || 'Unknown';
   var friendlyLayerName = getFriendlyLayerName(feature);
 
-  // Find matching lot in lotsData
+  // Spatial Matching Logic
   var matchedLot = null;
-  if (lotsData && geoJsonName) {
-    console.log("Attempting to match GeoJSON feature name:", `'${geoJsonName}'`);
-    // Trim whitespace from both names for more robust matching
-    const trimmedGeoJsonName = geoJsonName.trim();
-    matchedLot = lotsData.find(lot => lot.Name && lot.Name.trim() === trimmedGeoJsonName);
-    if (!matchedLot) {
-      // Optional: Add a case-insensitive fallback if strict matching fails
-      // matchedLot = lotsData.find(lot => lot.Name && lot.Name.trim().toLowerCase() === trimmedGeoJsonName.toLowerCase());
-      // if (matchedLot) console.log("Matched case-insensitively:", matchedLot);
+  const featureGeometry = feature.getGeometry();
+
+  // Heuristic to identify lot layers for spatial matching
+  const isLotLayer = friendlyLayerName && (friendlyLayerName.toLowerCase().includes('lot') || friendlyLayerName.toLowerCase().includes('plat'));
+
+  if (isLotLayer && lotsData && featureGeometry && typeof featureGeometry.intersectsCoordinate === 'function') {
+    for (const lotRecord of lotsData) {
+      if (lotRecord.Location && typeof lotRecord.Location === 'string') {
+        const parts = lotRecord.Location.split(',');
+        if (parts.length === 2) {
+          const lat = parseFloat(parts[0].trim());
+          const lon = parseFloat(parts[1].trim());
+
+          if (!isNaN(lat) && !isNaN(lon)) {
+            // Location is WGS84, transform to map view projection (EPSG:3857)
+            const lotPointWGS84 = [lon, lat]; // ol.proj.transform expects [lon, lat]
+            try {
+              const lotPointInViewProj = ol.proj.transform(lotPointWGS84, 'EPSG:4326', 'EPSG:3857');
+
+              // Check if the feature's geometry contains the lot's point
+              if (featureGeometry.intersectsCoordinate(lotPointInViewProj)) {
+                matchedLot = lotRecord;
+                console.log("Spatial match found for feature with lot record:", matchedLot.Name);
+                break; // Found a match, no need to check further
+              }
+            } catch (e) {
+              console.error("Error transforming lot location for spatial match:", lotRecord.Location, e);
+            }
+          } else {
+            // console.warn("Could not parse lat/lon from lotRecord.Location:", lotRecord.Location);
+          }
+        } else {
+          // console.warn("LotRecord.Location format incorrect:", lotRecord.Location);
+        }
+      }
     }
-    console.log("Matched lot from lots.json:", matchedLot);
-  } else if (lotsData === null) {
-    console.warn("lotsData is null. Cannot perform match. Check if lots.json loaded correctly.");
-  } else if (!geoJsonName) {
-    console.log("No geoJsonName found on feature, cannot match with lots.json.");
+    if (!matchedLot) {
+        console.log("No spatial match found for feature on a lot layer. Feature ID (if any):", geoJsonFeatureIdentifier);
+    }
   }
 
 
   // --- Top Level Information (only for matched lots) ---
-  var parcelLegalDesc = matchedLot && matchedLot.Name ? matchedLot.Name : (geoJsonName || 'N/A');
+  // parcelLegalDesc will be updated after spatial matching.
+  // For now, it uses the feature's identifier or a generic N/A.
+  var parcelLegalDesc = (matchedLot && matchedLot.Name) ? matchedLot.Name : (geoJsonFeatureIdentifier || 'N/A');
   var status = matchedLot && matchedLot["Lot Status"] ? matchedLot["Lot Status"] : (feature.get('status') || 'N/A');
   var listPrice = matchedLot && matchedLot["List Price"] ? `$${parseFloat(matchedLot["List Price"]).toLocaleString()}` : 'N/A';
   var sqFootage = matchedLot && matchedLot["Size [sqft]"] ? `${parseFloat(matchedLot["Size [sqft]"]).toLocaleString()} sqft` : 'N/A';
@@ -964,36 +988,32 @@ var retrieveFeatureInfoTable = function (evt) {
     // for planar calculations, it uses the coordinate values as-is.
     const turfInputGeometry = JSON.parse(turfFormatForCentroid.writeGeometry(geometryInEPSG3857));
 
-    console.log("Input Geometry for turf.centroid (coords are EPSG:3857):", JSON.stringify(turfInputGeometry));
+    // console.log("Input Geometry for turf.centroid (coords are EPSG:3857):", JSON.stringify(turfInputGeometry)); // Removed diagnostic
     var centroidProjected = turf.centroid(turfInputGeometry); // turf calculates centroid, result coords are EPSG:3857
 
     if (centroidProjected && centroidProjected.geometry && centroidProjected.geometry.coordinates) {
-      console.log("Raw turf.centroid output (coords are EPSG:3857):", centroidProjected.geometry.coordinates);
+      // console.log("Raw turf.centroid output (coords are EPSG:3857):", centroidProjected.geometry.coordinates); // Removed diagnostic
       var lonLatCentroid = ol.proj.transform(centroidProjected.geometry.coordinates, 'EPSG:3857', 'EPSG:4326'); // Transform to WGS84
 
-      // Check for suspicious (0,0)-like WGS84 coordinates
-      // Threshold can be adjusted. 0.001 degrees is roughly 111 meters.
-      const threshold = 0.01; // Approx 1.1 km, if centroid is this close to 0,0 lat/lon, it's suspicious for typical data
+      const threshold = 0.01;
       if (Math.abs(lonLatCentroid[1]) < threshold && Math.abs(lonLatCentroid[0]) < threshold) {
-        // Heuristic: if original feature extent is far from 0,0 then a 0,0 centroid is likely an error
-        const featureExtent = feature.getGeometry().getExtent(); // EPSG:3857
+        const featureExtent = feature.getGeometry().getExtent();
         const featureCenter = ol.extent.getCenter(featureExtent);
         const featureCenterWGS84 = ol.proj.transform(featureCenter, 'EPSG:3857', 'EPSG:4326');
-        // If feature center is far from (0,0) but centroid is very close, then treat centroid as invalid.
-        if (Math.abs(featureCenterWGS84[1]) > 1 && Math.abs(featureCenterWGS84[0]) > 1) { // e.g. if feature is more than ~1 deg from Null Island
-            console.warn("Calculated WGS84 centroid is suspiciously close to (0,0):", lonLatCentroid, "Original feature center (WGS84):", featureCenterWGS84);
+        if (Math.abs(featureCenterWGS84[1]) > 1 && Math.abs(featureCenterWGS84[0]) > 1) {
+            console.warn("Calculated WGS84 centroid is suspiciously close to (0,0) for feature:", geoJsonFeatureIdentifier); // Retained this important warning
             centroidString = 'N/A (Invalid Calc)';
         } else {
-             centroidString = `${lonLatCentroid[1].toFixed(5)}, ${lonLatCentroid[0].toFixed(5)}`; // Lat, Lon
+             centroidString = `${lonLatCentroid[1].toFixed(5)}, ${lonLatCentroid[0].toFixed(5)}`;
         }
       } else {
-        centroidString = `${lonLatCentroid[1].toFixed(5)}, ${lonLatCentroid[0].toFixed(5)}`; // Lat, Lon
+        centroidString = `${lonLatCentroid[1].toFixed(5)}, ${lonLatCentroid[0].toFixed(5)}`;
       }
     } else {
-      console.warn("turf.centroid did not return valid coordinates for feature:", feature.get('name'), turfGeom);
+      console.warn("turf.centroid did not return valid coordinates for feature:", geoJsonFeatureIdentifier); // Used geoJsonFeatureIdentifier
     }
   } catch (e) {
-    console.error("Error calculating centroid:", e);
+    console.error("Error calculating centroid for feature:", geoJsonFeatureIdentifier, e); // Added feature identifier to error
     centroidString = 'Error';
   }
 
