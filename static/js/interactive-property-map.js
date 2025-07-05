@@ -1157,7 +1157,7 @@ var makeListingsTable = function (url) {
 
     // Filter for Section 2 lots and create table rows
     $.each(data, function (key, val) {
-      if (val.Subdivision === "Section 2") {
+      if (val.Subdivision === "Section 2" && (val["Lot Status"] === "Available" || val["Lot Status"] === "Listed")) {
         var listPrice = val["List Price"] ? `$${parseFloat(val["List Price"]).toLocaleString()}` : 'N/A';
         var sizeSqft = val["Size [sqft]"] ? `${parseFloat(val["Size [sqft]"]).toLocaleString()} sqft` : 'N/A';
         var listingLink = val["Listing Link"] ? `<a href="${val["Listing Link"]}" target="_blank" rel="noopener noreferrer">View</a>` : 'N/A';
