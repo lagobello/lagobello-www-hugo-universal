@@ -1511,7 +1511,7 @@ olMap.on('click', function (evt) {
   var extent = feature.getGeometry().getExtent();
   var center = getCenterOfExtent(extent);
   var centerShifted = movePoint10mDown(center); // Assuming this function is still desired for map centering
-  olMap.getView().animate({ zoom: 18, center: centerShifted }, function(completed) {
+  olMap.getView().animate({ zoom: 17, center: centerShifted }, function(completed) {
     if (completed) {
       // Ensure pop-up visibility is checked after click-animation completes.
       // Since zoom 18 is within valid range [17, 20), this will ensure it remains visible.
