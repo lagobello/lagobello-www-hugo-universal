@@ -144,28 +144,37 @@ var layerVectorLots = new ol.layer.Vector({
     url: '/files/lots.geojson'
   }),
   style: styleFunction,
-  opacity: 0.4
-});
-
-var layerVectorLotsPlat = new ol.layer.Vector({
-  title: 'Lot layer - plat',
-  source: new ol.source.Vector({
-    format: new ol.format.GeoJSON(),
-    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS.geojson'
-  }),
-  style: styleFunctionPlatLots,
   visible: false,
   opacity: 0.4
 });
 
-var layerVectorLotsPlat = new ol.layer.Vector({
-  title: 'Lot layer - Section 3 (future)',
+var layerVectorLotsPlatS1 = new ol.layer.Vector({
+  title: 'Lot Layer - Plat Section 1',
+  source: new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S1.geojson'
+  }),
+  style: styleFunctionPlatLots,
+  opacity: 0.4
+});
+
+var layerVectorLotsPlatS2 = new ol.layer.Vector({
+  title: 'Lot Layer - Plat Section 2',
+  source: new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S2.geojson'
+  }),
+  style: styleFunctionPlatLots,
+  opacity: 0.4
+});
+
+var layerVectorLotsPlatS3 = new ol.layer.Vector({
+  title: 'Lot Layer - Plat Section 3 (future)',
   source: new ol.source.Vector({
     format: new ol.format.GeoJSON(),
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S3.geojson'
   }),
   style: styleFunctionPlatLots,
-  visible: false,
   opacity: 0.4
 });
 
@@ -180,14 +189,14 @@ var layerVectorLotsCameronAppraisalDistrict = new ol.layer.Vector({
   opacity: 0.8
 });
 
-var layerVectorPark = new ol.layer.Vector({
-  title: 'Park layer',
+var layerVectorFountain = new ol.layer.Vector({
+  title: 'Fountain',
   source: new ol.source.Vector({
     format: new ol.format.GeoJSON(),
-    url: '/files/park.geojson'
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-FOUNTAIN.geojson'
   }),
   style: stylePark,
-  visible: true,
+  visible: false,
   opacity: 0.4
 });
 
@@ -198,48 +207,91 @@ var layerVectorCommonArea = new ol.layer.Vector({
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-COMMONAREA-S3.geojson'
   }),
   style: stylePark,
-  visible: false,
+  visible: true,
   opacity: 0.4
 });
 
-var layerVectorCaminata = new ol.layer.Vector({
-  title: 'Caminata layer',
+var layerVectorCaminataS1 = new ol.layer.Vector({
+  title: 'Caminata - Section 1',
   source: new ol.source.Vector({
     format: new ol.format.GeoJSON(),
-    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-CAMINATA.geojson'
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-CAMINATA-S1.geojson'
+  }),
+  style: stylePark,
+  opacity: 0.8
+});
+
+var layerVectorCaminataS2 = new ol.layer.Vector({
+  title: 'Caminata - Section 2',
+  source: new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-CAMINATA-S2.geojson'
   }),
   style: stylePark,
   opacity: 0.8
 });
 
 var layerVectorCaminataProposed = new ol.layer.Vector({
-  title: 'Caminata layer proposed',
+  title: 'Caminata (proposed)',
   source: new ol.source.Vector({
     format: new ol.format.GeoJSON(),
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-CAMINATA-PROPOSED.geojson'
   }),
   style: stylePark,
+  visible: false,
   opacity: 0.8
 });
 
 
-var layerVectorStreet = new ol.layer.Vector({
-  title: 'Street layer',
+var layerVectorStreetS1 = new ol.layer.Vector({
+  title: 'Right of Way - Section 1',
   source: new ol.source.Vector({
     format: new ol.format.GeoJSON(),
-    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-STREET.geojson'
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-ROW-S1.geojson'
   }),
   style: styleStreet,
-  opacity: 0.4
+  opacity: 0.8
+});
+
+var layerVectorStreetS2 = new ol.layer.Vector({
+  title: 'Right of Way - Section 2',
+  source: new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-ROW-S2.geojson'
+  }),
+  style: styleStreet,
+  opacity: 0.8
 });
 
 var layerVectorStreetS3 = new ol.layer.Vector({
-  title: 'Street layer - Section 3',
+  title: 'Right of Way - Section 3',
   source: new ol.source.Vector({
     format: new ol.format.GeoJSON(),
-    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-STREET-S3.geojson'
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-ROW-S3.geojson'
   }),
   style: styleStreet,
+  opacity: 0.8
+});
+
+var layerVectorStreetReserved = new ol.layer.Vector({
+  title: 'Right of Way - Reserved',
+  source: new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-ROW-RESERVE.geojson'
+  }),
+  style: styleStreet,
+  visible: true,
+  opacity: 0.8
+});
+
+var layerVectorStreetAccess = new ol.layer.Vector({
+  title: 'Right of Way - Access',
+  source: new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-ROW-ACCESS.geojson'
+  }),
+  style: styleStreet,
+  visible: false,
   opacity: 0.8
 });
 
@@ -267,16 +319,22 @@ var olLayerGroupDrone = new ol.layer.Group({ title: 'Drone imagery', layers: [] 
 var olLayerGroupOverlays = new ol.layer.Group({
   title: 'Overlays',
   layers: [
-  layerVectorCaminata,
+  layerVectorCaminataS1,
+  layerVectorCaminataS2,
   layerVectorCaminataProposed,
   layerVectorLake,
-  layerVectorLots,
-  layerVectorLotsPlat,
+  layerVectorLotsPlatS1,
+  layerVectorLotsPlatS2,
+  layerVectorLotsPlatS3,
   layerVectorLotsCameronAppraisalDistrict,
-  layerVectorPark,
+  layerVectorFountain,
   layerVectorCommonArea,
-  layerVectorStreet,
-  layerVectorStreetS3
+  layerVectorStreetS1,
+  layerVectorStreetS2,
+  layerVectorStreetS3,
+  layerVectorStreetReserved,
+  layerVectorStreetAccess
+
     ],
   zIndex: 10 // Ensure this group is below the drawing layer (zIndex 100)
 });
