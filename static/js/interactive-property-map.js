@@ -17,6 +17,29 @@ window.infoControlInstance = window.infoControlInstance || null;
 window.lengthControlInstance = window.lengthControlInstance || null;
 window.areaControlInstance = window.areaControlInstance || null;
 
+// Throttle function
+function throttle(func, limit) {
+  let lastFunc;
+  let lastRan;
+  return function(...args) {
+    if (!lastRan) {
+      func.apply(this, args);
+      lastRan = Date.now();
+    } else {
+      clearTimeout(lastFunc);
+      lastFunc = setTimeout(function() {
+        if ((Date.now() - lastRan) >= limit) {
+          func.apply(this, args);
+          lastRan = Date.now();
+        }
+      }, limit - (Date.now() - lastRan));
+    }
+  };
+}
+
+// Throttled logger for specific debug messages
+const throttledDebugLog = throttle(console.debug, 2000); // Log at most once every 2 seconds
+
 
 // -----------------------------
 //  Lago Bello Interactive Map
@@ -1157,14 +1180,14 @@ retrieveLotTable('/files/lots.geojson');
 
 olMap.on('pointermove', function (evt) {
   if (evt.dragging) {
-    console.debug('dragging detected');
+    throttledDebugLog('dragging detected');
     return;
   }
   var pixel = olMap.getEventPixel(evt.originalEvent);
   var feature = retrieveFeature(pixel);
 
   if (typeof feature === 'undefined') {
-    console.debug('no feature found on mouse-over');
+    throttledDebugLog('no feature found on mouse-over');
     return;
   }
 
