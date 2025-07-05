@@ -818,9 +818,13 @@ function getFriendlyLayerName(clickedFeature) {
 
 var retrieveFeatureInfoTable = function (evt) {
   var feature = retrieveFeature(evt.pixel);
-  var geoJsonName = feature.get('name'); // Name from GeoJSON feature properties
+  // Using 'EntityHandle' as the potential key for matching with lots.json based on logs.
+  // This should be confirmed by the user. If another key holds the "BLK 1 LOT X" identifier, this needs to change.
+  var geoJsonName = feature.get('EntityHandle');
+  console.log(`Using feature.get('EntityHandle') for geoJsonName: ${geoJsonName}`);
+
   var area = featureCalculateAreaMeters(feature);
-  var entityHandle = feature.get('EntityHandle') || 'N/A'; // Still useful for GeoJSON section
+  var entityHandle = feature.get('EntityHandle') || 'N/A'; // Retain for GeoJSON section if different from matching key
   var rawLayerName = feature.get('Layer') || 'Unknown'; // Keep raw layer name for specific cases if needed
   var friendlyLayerName = getFriendlyLayerName(feature);
 
@@ -951,15 +955,23 @@ var retrieveFeatureInfoTable = function (evt) {
 
   var centroidString = 'N/A';
   try {
-    var turfFormat = new ol.format.GeoJSON(); // Use a different var name to avoid conflict
-    var turfGeom = turfFormat.writeFeatureObject(feature, { featureProjection: 'EPSG:3857' });
-    console.log("Feature for turf.centroid:", JSON.stringify(turfGeom)); // Log the feature
-    var centroid = turf.centroid(turfGeom);
-    if (centroid && centroid.geometry && centroid.geometry.coordinates) {
-      console.log("Raw turf.centroid coordinates (EPSG:3857):", centroid.geometry.coordinates); // Log raw centroid
-      var lonLatCentroid = ol.proj.transform(centroid.geometry.coordinates, 'EPSG:3857', 'EPSG:4326');
+    var turfFormatForCentroid = new ol.format.GeoJSON();
+    const featureForTurf = feature.clone(); // Clone to avoid altering the original feature
+    const geometryInEPSG3857 = featureForTurf.getGeometry(); // This geometry is in EPSG:3857
 
-      // Check for suspicious (0,0)-like WGS84 coordinates if the original geometry wasn't expected to be there
+    // Create a GeoJSON geometry object with EPSG:3857 coordinates for turf.
+    // turf.js typically expects GeoJSON, and while GeoJSON standard is WGS84,
+    // for planar calculations, it uses the coordinate values as-is.
+    const turfInputGeometry = JSON.parse(turfFormatForCentroid.writeGeometry(geometryInEPSG3857));
+
+    console.log("Input Geometry for turf.centroid (coords are EPSG:3857):", JSON.stringify(turfInputGeometry));
+    var centroidProjected = turf.centroid(turfInputGeometry); // turf calculates centroid, result coords are EPSG:3857
+
+    if (centroidProjected && centroidProjected.geometry && centroidProjected.geometry.coordinates) {
+      console.log("Raw turf.centroid output (coords are EPSG:3857):", centroidProjected.geometry.coordinates);
+      var lonLatCentroid = ol.proj.transform(centroidProjected.geometry.coordinates, 'EPSG:3857', 'EPSG:4326'); // Transform to WGS84
+
+      // Check for suspicious (0,0)-like WGS84 coordinates
       // Threshold can be adjusted. 0.001 degrees is roughly 111 meters.
       const threshold = 0.01; // Approx 1.1 km, if centroid is this close to 0,0 lat/lon, it's suspicious for typical data
       if (Math.abs(lonLatCentroid[1]) < threshold && Math.abs(lonLatCentroid[0]) < threshold) {
