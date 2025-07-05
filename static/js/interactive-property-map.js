@@ -1156,6 +1156,8 @@ var makeListingsTable = function (url) {
     // The base filter in applyFiltersAndSortAndRender already limits to Available/Listed.
     // This dropdown will further refine *within* that set if a specific status is chosen.
 
+    var items = []; // Initialize items array
+
     var tableHeadersHtml = `
       <thead>
         <tr>
