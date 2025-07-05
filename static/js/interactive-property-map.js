@@ -693,7 +693,7 @@ if (layerSwitcher && layerSwitcher.panel) {
 //  Load lots.json data
 // =============================
 (function loadLotsData() {
-  fetch('/static/data/lots.json')
+  fetch('/data/lots.json')
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok for lots.json');
@@ -777,19 +777,18 @@ var retrieveFeatureInfoTable = function (evt) {
 
   var listingLinkHtml = 'N/A';
   if (listingURL !== 'N/A' && listingURL) {
-    // Check if it's a Zillow link or just a URL string
-    if (listingURL.toLowerCase().startsWith('http')) {
-      listingLinkHtml = `<a href="${listingURL}" target="_blank" rel="noopener noreferrer">View Listing</a>`;
-    } else if (listingURL.toLowerCase().includes('zillow')) {
-      // Attempt to extract URL if embedded in text like "Zillow Link - http..."
-      const urlMatch = listingURL.match(/https?:\/\/[^\s]+/);
+    if (listingURL.toLowerCase().includes('http')) {
+      // Attempt to extract the first full URL found if 'http' is present
+      const urlMatch = listingURL.match(/https?:\/\/[^\s]+/i); // Case-insensitive match
       if (urlMatch && urlMatch[0]) {
-        listingLinkHtml = `<a href="${urlMatch[0]}" target="_blank" rel="noopener noreferrer">View Listing (Zillow)</a>`;
+        listingLinkHtml = `<a href="${urlMatch[0]}" target="_blank" rel="noopener noreferrer">View Listing</a>`;
       } else {
-        listingLinkHtml = listingURL; // Fallback to text if no clear URL
+        // If 'http' is present but regex fails (unlikely for valid URLs), display raw text
+        listingLinkHtml = listingURL;
       }
     } else {
-        listingLinkHtml = listingURL; // Fallback for non-standard links
+      // If 'http' is not present, display as plain text
+      listingLinkHtml = listingURL;
     }
   }
 
@@ -923,9 +922,7 @@ var retrieveFeatureInfoTable = function (evt) {
     if (layerName !== 'Unknown') {
       genericInfo += `<tr><td>Layer</td><td><code>${layerName}</code></td></tr>`;
     }
-    if (entityHandle !== 'N/A') { // entityHandle is from feature.get('EntityHandle')
-      genericInfo += `<tr><td>Entity ID</td><td><code>${entityHandle}</code></td></tr>`;
-    }
+    // Entity ID will be shown in the GeoJSON Metadata section if available
     genericInfo += `<tr><td>Area</td><td><code>${areaString}</code></td></tr>`;
     genericInfo += `</table></div>`;
     // If it's a generic feature, we might still want to show its GeoJSON properties if available
