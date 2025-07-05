@@ -644,7 +644,7 @@ class UnitToggleControl extends ol.control.Control {
 }
 
 function refreshMapMeasurements() {
-  console.log(`Unit system changed to: ${displayUnits}. UI refresh needed.`);
+// console.log(`Unit system changed to: ${displayUnits}. UI refresh needed.`);
 }
 
 
@@ -710,14 +710,14 @@ if (layerSwitcher && layerSwitcher.panel) {
     })
     .then(data => {
       lotsData = data;
-      console.log('lots.json loaded successfully.');
+      // console.log('lots.json loaded successfully.');
       // Refresh lot layers to apply new styles
       if (layerVectorLotsPlatS1) layerVectorLotsPlatS1.changed();
       if (layerVectorLotsPlatS2) layerVectorLotsPlatS2.changed();
       if (layerVectorLotsPlatS3) layerVectorLotsPlatS3.changed();
       // Also, if layerVectorLots is ever made visible and uses dynamic styling:
       // if (layerVectorLots) layerVectorLots.changed();
-      console.log('Lot layers refreshed for styling after lots.json load.');
+      // console.log('Lot layers refreshed for styling after lots.json load.');
     })
     .catch(error => {
       console.error('CRITICAL: Error loading lots.json:', error.message);
@@ -847,7 +847,7 @@ var retrieveFeatureInfoTable = function (evt) {
               const lotPointInViewProj = ol.proj.transform(lotPointWGS84, 'EPSG:4326', 'EPSG:3857');
               if (featureGeometry.intersectsCoordinate(lotPointInViewProj)) {
                 matchedLot = lotRecord;
-                console.log("Spatial match found for feature with lot record:", matchedLot.Name);
+                // console.log("Spatial match found for feature with lot record:", matchedLot.Name);
                 break;
               }
             } catch (e) {
@@ -858,7 +858,7 @@ var retrieveFeatureInfoTable = function (evt) {
       }
     }
     if (!matchedLot) {
-        console.log("No spatial match found for feature on a lot layer. Feature ID (if any):", geoJsonFeatureIdentifier);
+        // console.log("No spatial match found for feature on a lot layer. Feature ID (if any):", geoJsonFeatureIdentifier);
     }
   }
 
@@ -1157,14 +1157,14 @@ retrieveLotTable('/files/lots.geojson');
 
 olMap.on('pointermove', function (evt) {
   if (evt.dragging) {
-    console.debug('dragging detected');
+    // console.trace('dragging detected'); // Changed from console.debug
     return;
   }
   var pixel = olMap.getEventPixel(evt.originalEvent);
   var feature = retrieveFeature(pixel);
 
   if (typeof feature === 'undefined') {
-    console.debug('no feature found on mouse-over');
+    // console.trace('no feature found on mouse-over'); // Changed from console.debug
     return;
   }
 
@@ -1190,7 +1190,7 @@ olMap.on('click', function (evt) {
   var feature = retrieveFeature(evt.pixel);
 
   if (typeof feature === 'undefined') {
-    console.log('no feature found under click or tap');
+    // console.log('no feature found under click or tap');
     return;
   }
 
@@ -1200,17 +1200,17 @@ olMap.on('click', function (evt) {
 
   var extent = feature.getGeometry().getExtent();
   var center= getCenterOfExtent(extent);
-  console.debug('center of feature is: ' + center);
+  // console.trace('center of feature is: ' + center); // Changed from console.debug
   var centerShifted= movePoint10mDown(center);
   olMap.getView().animate({zoom: 18, center: centerShifted });
 });
 
 window.addEventListener('orientationchange', function () {
   if (screen.orientation.angle === 0) {
-    console.log('rotating map to portrait mode');
+    // console.log('rotating map to portrait mode');
     olMap.setView(olView);
   } else {
-    console.log('rotating map to landscape mode');
+    // console.log('rotating map to landscape mode');
     olMap.setView(olViewRotated);
   }
 });
@@ -1242,7 +1242,7 @@ var pointerMoveHandler = function (evt) {
     } else if (geom instanceof ol.geom.LineString) {
       helpMsg = continueLineMsg;
     } else {
-      console.log('Could not determine geom type.');
+      // console.log('Could not determine geom type.');
     }
   }
   helpTooltipElement.innerHTML = helpMsg;
@@ -1371,18 +1371,18 @@ function addInteraction () {
           image: new ol.style.Circle({ radius: 7, fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 1)' }) })
       });
       evt.feature.setStyle(debugRedStyle);
-      console.log('Applied direct RED debug style to feature in drawend.');
+      // console.log('Applied direct RED debug style to feature in drawend.');
     }
     sketch = null;
     measureTooltipElement = null;
     createMeasureTooltip();
     ol.Observable.unByKey(listener);
 
-    console.log('drawend event triggered.');
+    // console.log('drawend event triggered.');
     if (evt.feature) {
-      console.log('Drawn feature geometry type:', evt.feature.getGeometry().getType());
+      // console.log('Drawn feature geometry type:', evt.feature.getGeometry().getType());
     }
-    console.log('Total features on drawingLayerSource:', drawingLayerSource.getFeatures().length);
+    // console.log('Total features on drawingLayerSource:', drawingLayerSource.getFeatures().length);
     drawingLayerSource.changed();
   });
 }
@@ -1567,7 +1567,7 @@ class TrackingControl extends ol.control.Control {
       this.updateStats('-', '-', '-', '-', '-', {lat: '-', lon: '-'});
       this.needsCentering_ = false;
     }
-    console.log('Tracking toggled:', this.trackingOn_);
+    // console.log('Tracking toggled:', this.trackingOn_);
   }
 
   updateStats(accuracy, altitude, altitudeAccuracy, heading, speed, coordinates) {
