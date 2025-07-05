@@ -733,14 +733,14 @@ if (layerSwitcher && layerSwitcher.panel) {
     })
     .then(data => {
       lotsData = data;
-      console.log('lots.json loaded successfully.');
+      // console.log('lots.json loaded successfully.'); // Removed
       // Refresh lot layers to apply new styles
       if (layerVectorLotsPlatS1) layerVectorLotsPlatS1.changed();
       if (layerVectorLotsPlatS2) layerVectorLotsPlatS2.changed();
       if (layerVectorLotsPlatS3) layerVectorLotsPlatS3.changed();
       // Also, if layerVectorLots is ever made visible and uses dynamic styling:
       // if (layerVectorLots) layerVectorLots.changed();
-      console.log('Lot layers refreshed for styling after lots.json load.');
+      // console.log('Lot layers refreshed for styling after lots.json load.'); // Removed
     })
     .catch(error => {
       console.error('CRITICAL: Error loading lots.json:', error.message);
@@ -1137,28 +1137,30 @@ var makeListingsTable = function (url) {
   $.getJSON(url, function (data) {
     lotsData = data; // Store fetched data globally for reuse
 
-    // Dynamically add filter controls HTML if not present
-    if ($('#table-filters-container').length === 0) {
-        var filterControlsHtml = `
-            <div id="table-filters-container" style="padding: 10px; margin-bottom: 10px; background-color: #f8f9fa; border-radius: 5px; display: flex; flex-wrap: wrap; gap: 10px;">
-                <input type="text" id="filter-location" placeholder="Filter Location (e.g., Lake)" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex-basis: 200px; flex-grow: 1;">
-                <input type="text" id="filter-status" placeholder="Filter Status (e.g., Listed)" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; flex-basis: 200px; flex-grow: 1;">
-            </div>`;
-        // Attempt to prepend to a more specific container if available, otherwise fallback.
-        var $lotTableContainer = $('#lot-table').parent(); // Assuming #lot-table is wrapped
-        if ($lotTableContainer.length) {
-            $lotTableContainer.before(filterControlsHtml); // Place filters before the table's direct container
-        } else {
-             $('#lot-table').before(filterControlsHtml); // Fallback: place before the table itself
-        }
-    }
+    // Remove old global filter container if it exists from previous versions of the script
+    $('#table-filters-container').remove();
 
-    var items = [];
-    items.push(
-      `<thead>
+    // Generate options for "Close To" filter from data
+    var closeToOptionsHtml = '<option value="">All Locations</option>';
+    var uniqueCloseToValues = [...new Set(lotsData.map(lot => lot["Close-to"]).filter(ct => ct))].sort();
+    uniqueCloseToValues.forEach(function(val) {
+        closeToOptionsHtml += `<option value="${val}">${val}</option>`;
+    });
+
+    // Generate options for "Status" filter (fixed for now, could also be dynamic)
+    var statusOptionsHtml = `
+        <option value="">All Statuses</option>
+        <option value="Available">Available</option>
+        <option value="Listed">Listed</option>
+    `;
+    // The base filter in applyFiltersAndSortAndRender already limits to Available/Listed.
+    // This dropdown will further refine *within* that set if a specific status is chosen.
+
+    var tableHeadersHtml = `
+      <thead>
         <tr>
           <th>Lot ID</th>
-          <th>Status</th>
+          <th>Status <br><select id="header-filter-status" class="header-filter" style="width: 90%; margin-top: 4px; padding: 0.15rem 0.5rem; font-size: 0.85em; height: auto;">${statusOptionsHtml}</select></th>
           <th>Price</th>
           <th>Size (sqft)</th>
           <th>Address</th>
@@ -1401,7 +1403,28 @@ function renderTableBody(lotsToRender) {
   $.each(lotsToRender, function (key, val) {
     var listPrice = val["List Price"] ? `$${parseFloat(val["List Price"]).toLocaleString()}` : 'N/A';
     var sizeSqft = val["Size [sqft]"] ? `${parseFloat(val["Size [sqft]"]).toLocaleString()} sqft` : 'N/A';
-    var listingLink = val["Listing Link"] && val["Listing Link"].toLowerCase().startsWith('http') ? `<a href="${val["Listing Link"]}" target="_blank" rel="noopener noreferrer">View</a>` : (val["Listing Link"] || 'N/A');
+
+    var listingLinkHtml = 'N/A';
+    if (val["Listing Link"]) {
+        var rawLink = val["Listing Link"];
+        // Attempt to extract URL if it's embedded, e.g. "Zillow Link - https://..."
+        var urlMatch = rawLink.match(/https?:\/\/[^\s]+/i);
+        var actualUrl = urlMatch && urlMatch[0] ? urlMatch[0] : (rawLink.toLowerCase().startsWith('http') ? rawLink : null);
+
+        if (actualUrl) {
+            var linkText = "View Listing"; // Default text
+            try {
+                var domain = new URL(actualUrl).hostname;
+                linkText = domain.replace(/^www\./, ''); // Show domain as link text
+            } catch (e) { /* use default linkText */ }
+            // Apply truncation via CSS class if needed, e.g., class="truncated-link"
+            listingLinkHtml = `<a href="${actualUrl}" target="_blank" rel="noopener noreferrer" class="listing-link-cell" title="${actualUrl}">${linkText}</a>`;
+        } else {
+            // If no valid URL, display the text but not as a link
+            listingLinkHtml = `<span title="${rawLink}">${rawLink.substring(0,30)}${rawLink.length > 30 ? '...' : ''}</span>`;
+        }
+    }
+
     var agentPhoneStr = val["Listing Agent Phone Number"] ? String(val["Listing Agent Phone Number"]).replace(/\D/g, '') : '';
     var callNowButton = agentPhoneStr ? `<button class="btn btn-sm btn-success call-now-btn" data-phone="${agentPhoneStr}">Call</button>` : '';
     var agentPhoneDisplay = val["Listing Agent Phone Number"] ? String(val["Listing Agent Phone Number"]) : 'N/A';
@@ -1415,7 +1438,7 @@ function renderTableBody(lotsToRender) {
         <td>${val["Street Address"] || 'N/A'}</td>
         <td>${val["Listing Agent"] || 'N/A'}</td>
         <td>${agentPhoneDisplay} ${callNowButton}</td>
-        <td>${listingLink}</td>
+        <td>${listingLinkHtml}</td>
         <td>${val.Location || 'N/A'}</td>
         <td>${val["Close-to"] || 'N/A'}</td>
       </tr>`
@@ -1424,7 +1447,16 @@ function renderTableBody(lotsToRender) {
   $('#lot-table tbody').html(tableBodyItems.join(''));
 
   // Re-attach row click listeners
-  $('#lot-table tbody tr').on('click', function() {
+  $('#lot-table tbody tr').on('click', function(e) { // Added event 'e'
+    var $target = $(e.target); // Get the actual clicked element
+
+    // Prevent row click if the click was on a button or a link inside the row
+    if ($target.is('a, button') || $target.closest('a, button').length) {
+        // If it's a link or button, or inside one, let its default action proceed.
+        // No need to e.stopPropagation() unless other row-level behaviors are unintentionally triggered by link/button.
+        return;
+    }
+
     var lotName = $(this).data('lot-name');
     if (!lotName) return;
     $('#lot-table tbody tr').removeClass('table-info');
@@ -1463,21 +1495,19 @@ function applyFiltersAndSortAndRender() {
                (lot["Lot Status"] === "Available" || lot["Lot Status"] === "Listed");
     });
 
-    // 2. Apply "Close-to" (Location) filter from tableDisplayState
-    var locationFilterValue = $('#filter-location').val();
+    // 2. Apply "Close-to" (Location) filter from header dropdown
+    var locationFilterValue = $('#header-filter-location').val();
     if (locationFilterValue) {
         currentLots = currentLots.filter(function(lot) {
-            return lot["Close-to"] && lot["Close-to"].toLowerCase().includes(locationFilterValue.toLowerCase());
+            return lot["Close-to"] && lot["Close-to"].toLowerCase() === locationFilterValue.toLowerCase();
         });
     }
 
-    // 3. Apply "Lot Status" filter from tableDisplayState
-    var statusFilterValue = $('#filter-status').val();
+    // 3. Apply "Lot Status" filter from header dropdown
+    var statusFilterValue = $('#header-filter-status').val();
     if (statusFilterValue) {
         currentLots = currentLots.filter(function(lot) {
-            // This ensures that the additional status filter is applied on top of "Available" or "Listed"
-            // e.g. if base is (Available OR Listed) AND statusFilter is (Listed), result is (Listed)
-            return lot["Lot Status"] && lot["Lot Status"].toLowerCase().includes(statusFilterValue.toLowerCase());
+            return lot["Lot Status"] && lot["Lot Status"].toLowerCase() === statusFilterValue.toLowerCase();
         });
     }
 
@@ -1493,20 +1523,33 @@ function applyFiltersAndSortAndRender() {
     // Update sort indicators in table headers
     $('#lot-table thead th').each(function() {
         var $this = $(this);
-        var columnText = $this.text().replace(/[\s↑↓▲▼]/g, '');
-        var indicator = '';
-        var columnKeyMappings = {'Lot ID': 'Name', 'Size (sqft)': 'Size [sqft]', 'Price': 'List Price'};
-        var currentHeaderKey = columnKeyMappings[columnText];
-
-        if (currentHeaderKey === tableDisplayState.sort.column) {
-            indicator = tableDisplayState.sort.order === 'asc' ? ' <span class="sort-arrow">▲</span>' : ' <span class="sort-arrow">▼</span>';
+        // Normalize header text by removing existing indicators and extra spaces for reliable matching
+        var headerText = $this.clone().children('.sort-arrow').remove().end().text().trim();
+        var indicatorSpan = $this.find('span.sort-arrow');
+        if (indicatorSpan.length === 0 && ['Lot ID', 'Size (sqft)', 'Price'].includes(headerText)) {
+            // Ensure span exists for sortable columns if not already there
+            $this.append(' <span class="sort-arrow"></span>');
+            indicatorSpan = $this.find('span.sort-arrow'); // Re-find it
         }
-        $this.find('span.sort-arrow').remove(); // Remove old arrow
-        if (['Lot ID', 'Size (sqft)', 'Price'].includes(columnText)){ // Only add arrows to sortable columns
-             $this.append(indicator);
-             $this.css('cursor', 'pointer');
+
+        var indicatorChar = ''; // Default to no indicator
+        var columnKeyMappings = {'Lot ID': 'Name', 'Size (sqft)': 'Size [sqft]', 'Price': 'List Price'};
+        var currentHeaderKey = columnKeyMappings[headerText];
+
+        if (currentHeaderKey) { // If it's a sortable column
+            $this.css('cursor', 'pointer');
+            if (currentHeaderKey === tableDisplayState.sort.column) {
+                indicatorChar = tableDisplayState.sort.order === 'asc' ? '▲' : '▼';
+            }
+            if (indicatorSpan.length) {
+                 indicatorSpan.text(indicatorChar); // Set text of existing span
+            } else if (indicatorChar) {
+                // This case should be less common if span is added above, but as a fallback
+                $this.append(' <span class="sort-arrow">' + indicatorChar + '</span>');
+            }
         } else {
             $this.css('cursor', 'default');
+            if (indicatorSpan.length) indicatorSpan.text(''); // Clear indicator for non-sortable if any somehow existed
         }
     });
 }
