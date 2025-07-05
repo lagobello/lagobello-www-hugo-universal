@@ -90,14 +90,14 @@ var styleHighlight = new ol.style.Style({
 
 // Status to Color Mapping for dynamic lot styling
 const lotStatusColors = {
-  'SOLD': 'gray',
-  'LISTED': 'green',
-  'AVAILABLE': 'green', // Assuming Available is similar to Listed
-  'UNDER CONTRACT': 'yellow',
-  'PENDING': 'yellow',    // Assuming Pending is similar to Under Contract
-  'RESERVED': 'purple',
-  'FUTURE': 'lightgray',
-  'DEFAULT': 'rgba(0, 60, 136, 0.4)' // A light blue, similar to default OpenLayers fill but with alpha
+  'SOLD': 'rgba(229, 115, 115, 0.6)', // Reddish hue, slightly more opaque (0.6)
+  'LISTED': 'rgba(76, 175, 80, 0.4)', // Green with original opacity
+  'AVAILABLE': 'rgba(76, 175, 80, 0.4)', // Green with original opacity
+  'UNDER CONTRACT': 'rgba(255, 235, 59, 0.4)', // Yellow with original opacity
+  'PENDING': 'rgba(255, 235, 59, 0.4)', // Yellow with original opacity
+  'RESERVED': 'rgba(100, 181, 246, 0.2)', // Blueish hue, less opaque (0.2)
+  'FUTURE': 'rgba(186, 104, 200, 0.7)', // Pink-purpleish hue, more opaque (0.7)
+  'DEFAULT': 'rgba(0, 60, 136, 0.4)'
 };
 
 // =============================
@@ -233,7 +233,7 @@ var layerVectorLotsPlatS1 = new ol.layer.Vector({
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S1.geojson'
   }),
   style: dynamicLotStyleFunction,
-  opacity: 0.4
+  opacity: 1 // Changed from 0.4
 });
 
 var layerVectorLotsPlatS2 = new ol.layer.Vector({
@@ -243,7 +243,7 @@ var layerVectorLotsPlatS2 = new ol.layer.Vector({
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S2.geojson'
   }),
   style: dynamicLotStyleFunction,
-  opacity: 0.4
+  opacity: 1 // Changed from 0.4
 });
 
 var layerVectorLotsPlatS3 = new ol.layer.Vector({
@@ -253,7 +253,7 @@ var layerVectorLotsPlatS3 = new ol.layer.Vector({
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S3.geojson'
   }),
   style: dynamicLotStyleFunction,
-  opacity: 0.4
+  opacity: 1 // Changed from 0.4
 });
 
 var layerVectorLotsCameronAppraisalDistrict = new ol.layer.Vector({
@@ -1086,32 +1086,24 @@ var retrieveFeatureInfoTable = function (evt) {
     // For UNMATCHED features
     let titleForUnmatched = "Feature Information"; // Default title
 
-    if (friendlyLayerName) {
-      const lowerFriendlyLayerName = friendlyLayerName.toLowerCase();
-      if (lowerFriendlyLayerName.includes("section 1")) {
-        titleForUnmatched = "Section 1 Lot";
-      } else if (lowerFriendlyLayerName.includes("section 2")) {
-        titleForUnmatched = "Section 2 Lot";
-      } else if (lowerFriendlyLayerName.includes("section 3")) {
-        titleForUnmatched = "Section 3 Lot";
-      } else if (friendlyLayerName !== 'Unknown Layer' && friendlyLayerName !== 'Unnamed Layer') {
-        titleForUnmatched = geoJsonFeatureIdentifier || friendlyLayerName;
-      } else if (geoJsonFeatureIdentifier) {
-        titleForUnmatched = geoJsonFeatureIdentifier;
-      }
-    } else if (geoJsonFeatureIdentifier) {
+    // Prioritize friendlyLayerName if it's specific
+    if (friendlyLayerName && friendlyLayerName !== 'Unknown Layer' && friendlyLayerName !== 'Unnamed Layer') {
+        titleForUnmatched = friendlyLayerName;
+    }
+    // If friendlyLayerName is generic, try geoJsonFeatureIdentifier
+    else if (geoJsonFeatureIdentifier && geoJsonFeatureIdentifier !== 'N/A') {
         titleForUnmatched = geoJsonFeatureIdentifier;
     }
-
-    if (titleForUnmatched === 'Unknown Layer' || titleForUnmatched === 'Unnamed Layer') {
-        titleForUnmatched = geoJsonFeatureIdentifier || "Feature Information";
-    }
+    // If both are generic or unavailable, title remains "Feature Information"
 
     let genericHeaderHtml = `
       <div class="popup-section">
         <div class="popup-section-title main-title">${titleForUnmatched}</div>`;
 
-        if (friendlyLayerName && friendlyLayerName !== 'Unknown Layer' && friendlyLayerName !== 'Unnamed Layer' && titleForUnmatched !== friendlyLayerName) {
+        // If the title ended up being the geoJsonFeatureIdentifier, and a more friendly (but generic) layer name exists, show it as sub-info.
+        // Or, if the title is "Feature Information" but we have a friendlyLayerName, show that.
+        if ( (titleForUnmatched === geoJsonFeatureIdentifier && friendlyLayerName && friendlyLayerName !== 'Unknown Layer' && friendlyLayerName !== 'Unnamed Layer' && friendlyLayerName !== titleForUnmatched) ||
+             (titleForUnmatched === "Feature Information" && friendlyLayerName && friendlyLayerName !== 'Unknown Layer' && friendlyLayerName !== 'Unnamed Layer') ) {
           genericHeaderHtml += `<table style="width:100%"><tr><td>Layer</td><td><code>${friendlyLayerName}</code></td></tr></table>`;
         }
     genericHeaderHtml += `</div>`;
