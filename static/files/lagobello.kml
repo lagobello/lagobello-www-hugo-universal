@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+  <Document id="masterDoc">
+    <name>Lago Bello - All Layers</name>
+
+    
+
+    <!-- ===================================================== -->
+    <!--  BASE RASTER                                          -->
+    <!-- ===================================================== -->
+    <NetworkLink>
+      <name>Drone Image Tiles</name>
+      <Link>
+        <href>https://pub-0e80d9c06d104badbab83740623ace84.r2.dev/kml/20250217%20-%20Section%202%20Lot%20Grading/doc.kml</href>
+        <viewRefreshMode>onRegion</viewRefreshMode>
+      </Link>
+    </NetworkLink>
+
+    <!-- ===================================================== -->
+    <!--  SHARED STYLES                                        -->
+    <!-- ===================================================== -->
+    <NetworkLink>
+      <name>Lago Styles</name>
+      <Link>
+        <href>https://lagobello.github.io/lagobello-drawings/web/styles.kml</href>
+      </Link>
+    </NetworkLink>
+
+    <!-- ===================================================== -->
+    <!--  VECTOR LAYERS              -->
+    <!-- ===================================================== -->
+    <Folder>
+      <name>Project KML layers</name>
+
+      <NetworkLink id="lotsS1"><name>Lots - S1</name><Link><href>https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S1.kml</href></Link></NetworkLink>
+      <NetworkLink id="lotsS2"><name>Lots - S2</name><Link><href>https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S2.kml</href></Link></NetworkLink>
+      <NetworkLink id="lotsS3"><name>Lots - S3</name><Link><href>https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S3.kml</href></Link></NetworkLink>
+
+      <NetworkLink id="fountain"><name>Fountain</name><Link><href>https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-FOUNTAIN.kml</href></Link></NetworkLink>
+      <NetworkLink id="commonS3"><name>Common area - S3</name><Link><href>https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-COMMONAREA-S3.kml</href></Link></NetworkLink>
+
+      <NetworkLink id="caminataS1"><name>Caminata - S1</name><Link><href>https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-CAMINATA-S1.kml</href></Link></NetworkLink>
+      <NetworkLink id="caminataS2"><name>Caminata - S2</name><Link><href>https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-CAMINATA-S2.kml</href></Link></NetworkLink>
+
+    </Folder>
+
+    
+  </Document>
+</kml>
