@@ -10,6 +10,9 @@ defaultContentLanguage = "en"
 googleAnalytics = "G-4QJX5C6RZR"
 ignoreErrors = ["error-missing-instagram-accesstoken"]
 
+# Disable taxonomy pages since we don't use tags/categories
+disableKinds = ["taxonomy", "term"]
+
 
 
 [pagination]
