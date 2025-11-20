@@ -1,9 +1,10 @@
 +++
 description = "Lago Bello Properties for Sale - Interactive Map and Listings"
-keywords = ["Lago Bello properties", "lots for sale", "lakefront property Texas", "investment property Lago Bello", "Lago Bello real estate", "interactive property map"]
+keywords = ["Lago Bello properties", "Lago Bello properties", "lots for sale", "lakefront property Texas", "investment property Lago Bello", "Lago Bello real estate", "interactive property map"]
 title = "Discover Your Dream Property at Lago Bello: Interactive Map"
 type = "page"
-
+date = "2025-11-20"
+sitemap = { changefreq = "weekly", priority = 0.8 }
 +++
 
 ## Explore Available Properties in Beautiful Lago Bello
