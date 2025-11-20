@@ -72,8 +72,19 @@
 .popup-toggle-button:hover { background-color: #e0e0e0; }
 
 /* Table styles - Unchanged */
-#lot-table { height: 300px; overflow:auto; }
-.lot-table { font-family: "Trebuchet MS", Arial, Helvetica, sans-serif; border-collapse: collapse; height: 200px; overflow:auto; }
+#lot-table { height: auto; overflow: visible; }
+.lot-table { font-family: "Trebuchet MS", Arial, Helvetica, sans-serif; border-collapse: collapse; height: auto; overflow: visible; }
+.lot-table td, .lot-table th { border: 1px solid #ddd; padding: 8px; }
+.lot-table tr:nth-child(even){background-color: #f2f2f2;}
+.lot-table tr:hover {background-color: #ddd;}
+.lot-table th { padding-top: 12px; padding-bottom: 12px; text-align: left; background-color: rgba(0,60,136,.7); color: white; }
+
+@media print {
+  .lot-table { width: 100%; font-size: 8px; }
+  .lot-table td, .lot-table th { padding: 2px; font-size: 8px; }
+}
+
+
 .lot-table td, .lot-table th { border: 1px solid #ddd; padding: 8px; }
 .lot-table tr:nth-child(even){background-color: #f2f2f2;}
 .lot-table tr:hover {background-color: #ddd;}

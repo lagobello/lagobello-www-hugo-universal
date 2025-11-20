@@ -134,17 +134,10 @@ var layerOsmStreet = new ol.layer.Tile({
 });
 
 var layerMapboxSatellite = new ol.layer.Tile({
-  title: 'Mapbox Satellite Streets',
+  title: 'Mapbox Satellite',
   type: 'base',
   source: new ol.source.XYZ({
-    attributions:
-      '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
-      '© <a href="https://www.openstreetmap.org/copyright">' +
-      'OpenStreetMap contributors</a>',
-    url:
-      'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v10/tiles/256/' +
-      '{z}/{x}/{y}?access_token=' +
-      mapboxKey
+    url: 'https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.png?access_token=' + mapboxKey
   }),
   opacity: 1.0
 });
@@ -214,7 +207,7 @@ var dynamicLotStyleFunction = function(feature) {
 
 
 var layerVectorLotsPlatS1 = new ol.layer.Vector({
-  title: 'Lots - Plat Section 1',
+  title: 'Lot Layer - Plat Section 1',
   source: new ol.source.Vector({
     format: new ol.format.GeoJSON(),
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S1.geojson'
@@ -224,7 +217,7 @@ var layerVectorLotsPlatS1 = new ol.layer.Vector({
 });
 
 var layerVectorLotsPlatS2 = new ol.layer.Vector({
-  title: 'Lots - Plat Section 2',
+  title: 'Lot Layer - Plat Section 2',
   source: new ol.source.Vector({
     format: new ol.format.GeoJSON(),
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S2.geojson'
@@ -234,7 +227,7 @@ var layerVectorLotsPlatS2 = new ol.layer.Vector({
 });
 
 var layerVectorLotsPlatS3 = new ol.layer.Vector({
-  title: 'Lots - Plat Section 3 (future)',
+  title: 'Lot Layer - Plat Section 3 (future)',
   source: new ol.source.Vector({
     format: new ol.format.GeoJSON(),
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-LOTS-S3.geojson'
@@ -244,7 +237,7 @@ var layerVectorLotsPlatS3 = new ol.layer.Vector({
 });
 
 var layerVectorLotsCameronAppraisalDistrict = new ol.layer.Vector({
-  title: 'Lots - Cameron Appraisal District',
+  title: 'Lot layer - Cameron Appraisal District',
   source: new ol.source.Vector({
     format: new ol.format.GeoJSON(),
     url: '/files/lots_cameron_appraisal_district.geojson'
@@ -371,7 +364,7 @@ var layerVectorDrawings = new ol.layer.Vector({
 
 var olLayerGroupBasemaps = new ol.layer.Group({
   title: 'Base maps',
-  layers: [layerOsmStreet,  layerMapboxSatellite]
+  layers: [layerMapboxSatellite, layerOsmStreet]
 
 });
 
@@ -380,18 +373,13 @@ var olLayerGroupDrone = new ol.layer.Group({ title: 'Drone imagery', layers: [] 
 var olLayerGroupOverlays = new ol.layer.Group({
   title: 'Overlays',
   layers: [
-  layerVectorCaminataS2,
   layerVectorCaminataS1,
   layerVectorCaminataProposed,
   layerVectorLake,
-  layerVectorLotsPlatS3,
-  layerVectorLotsPlatS2,
   layerVectorLotsPlatS1,
   layerVectorLotsCameronAppraisalDistrict,
   layerVectorFountain,
   layerVectorCommonArea,
-  layerVectorStreetS3,
-  layerVectorStreetS2,
   layerVectorStreetS1,
   layerVectorStreetReserved,
   layerVectorStreetAccess
@@ -1153,11 +1141,12 @@ var makeListingsTable = function (url) {
     var tableHeadersHtml = `
       <thead>
         <tr>
-          <th>Lot ID</th>
-          <th>Status <br><select id="header-filter-status" class="header-filter form-control form-control-sm" style="width: 90%; margin-top: 4px; padding: 0.15rem 0.5rem; font-size: 0.85em; height: auto; color: #495057; background-color: #fff;">${statusOptionsHtml}</select></th>
+          <th>Address</th>
+          <th>Status</th>
+          <th>Block</th>
+          <th>Lot</th>
           <th>Price</th>
           <th>Size (sqft)</th>
-          <th>Address</th>
           <th>Agent</th>
           <th>Agent Phone</th>
           <th>Listing</th>
@@ -1178,9 +1167,6 @@ var makeListingsTable = function (url) {
     $('#lot-table').empty().append(tableElement);
 
     // Set initial values for dropdowns if they exist in tableDisplayState (e.g. from previous interaction before a full reload)
-    if (tableDisplayState.filters.status) {
-        $('#header-filter-status').val(tableDisplayState.filters.status);
-    }
     if (tableDisplayState.filters.location) {
         $('#header-filter-location').val(tableDisplayState.filters.location);
     }
@@ -1205,7 +1191,7 @@ var makeListingsTable = function (url) {
       var columnText = $(this).clone().children().remove().end().text().trim();
       var columnKey;
       switch (columnText) {
-        case 'Lot ID': columnKey = 'Name'; break;
+        case 'Address': columnKey = 'Name'; break;
         case 'Size (sqft)': columnKey = 'Size [sqft]'; break;
         case 'Price': columnKey = 'List Price'; break;
         // Status and Close To are handled by their select, not direct th click for sorting
@@ -1299,7 +1285,8 @@ function renderTableBody(lotsToRender) {
     $(this).addClass('table-info');
     var lotDataEntry = lotsData.find(ld => ld.Name === lotName);
     if (lotDataEntry && lotDataEntry.Location) {
-      const targetFeature = findFeatureByLotName(lotName);
+      var constructedLotName = 'BLK ' + Math.floor(lotDataEntry['Block Number']) + ' LOT ' + Math.floor(lotDataEntry['Lot Number']);
+      const targetFeature = findFeatureByLotName(constructedLotName);
       if (targetFeature) {
         var featureCenter = ol.extent.getCenter(targetFeature.getGeometry().getExtent());
         olMap.getView().animate({ center: featureCenter, zoom: 19, duration: 500 });
@@ -1360,14 +1347,14 @@ function applyFiltersAndSortAndRender() {
         // Normalize header text by removing existing indicators and extra spaces for reliable matching
         var headerText = $this.clone().children('.sort-arrow').remove().end().text().trim();
         var indicatorSpan = $this.find('span.sort-arrow');
-        if (indicatorSpan.length === 0 && ['Lot ID', 'Size (sqft)', 'Price'].includes(headerText)) {
+        if (indicatorSpan.length === 0 && ['Address', 'Size (sqft)', 'Price'].includes(headerText)) {
             // Ensure span exists for sortable columns if not already there
             $this.append(' <span class="sort-arrow"></span>');
             indicatorSpan = $this.find('span.sort-arrow'); // Re-find it
         }
 
         var indicatorChar = ''; // Default to no indicator
-        var columnKeyMappings = {'Lot ID': 'Name', 'Size (sqft)': 'Size [sqft]', 'Price': 'List Price'};
+        var columnKeyMappings = {'Address': 'Name', 'Size (sqft)': 'Size [sqft]', 'Price': 'List Price'};
         var currentHeaderKey = columnKeyMappings[headerText];
 
         if (currentHeaderKey) { // If it's a sortable column
@@ -1442,7 +1429,7 @@ function findFeatureByLotName(lotName) {
                 // }
 
                 // Fallback: if lotsData is available, try to match by location, then check if this feature contains that location
-                const lotJsonEntry = lotsData.find(l => l.Name === lotName);
+                const lotJsonEntry = lotsData.find(l => 'BLK ' + Math.floor(l['Block Number']) + ' LOT ' + Math.floor(l['Lot Number']) === lotName);
                 if (lotJsonEntry && lotJsonEntry.Location) {
                     const parts = lotJsonEntry.Location.split(',');
                     if (parts.length === 2) {
@@ -1562,13 +1549,13 @@ olMap.on('click', function (evt) {
       // This requires the #lot-table container to have a fixed height and overflow-y: auto;
       var tableContainer = $('#lot-table').parent(); // Or specific scrollable container
       if (tableContainer.length && targetRow.position()) {
-         var rowTop = targetRow.position().top;
-         var containerScrollTop = tableContainer.scrollTop();
-         var containerHeight = tableContainer.height();
-         // Check if row is not visible
-         if (rowTop < 0 || rowTop > containerHeight - targetRow.outerHeight()) {
-            tableContainer.scrollTop(containerScrollTop + rowTop - (containerHeight / 2) + (targetRow.outerHeight() / 2) );
-         }
+        var rowTop = targetRow.position().top;
+        var containerScrollTop = tableContainer.scrollTop();
+        var containerHeight = tableContainer.height();
+        // Check if row is not visible
+        if (rowTop < 0 || rowTop > containerHeight - targetRow.outerHeight()) {
+          tableContainer.scrollTop(containerScrollTop + rowTop - (containerHeight / 2) + (targetRow.outerHeight() / 2) );
+        }
       }
     }
   }

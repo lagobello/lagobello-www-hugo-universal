@@ -1,3 +1,5 @@
 .hugo_build.lock
 public/
 scripts/Lot_Inventory.xlsx
+.DS_Store
+

@@ -1,0 +1,4 @@
+{{ $data := index .Site.Data "lots-structured" }}
+{{ range $listing := $data }}
+{{ (printf "<script type=\"application/ld+json\">%s</script>" ($listing | jsonify)) | safeHTML }}
+{{ end }}
