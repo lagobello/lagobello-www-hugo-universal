@@ -2,16 +2,16 @@
 
 // Global store for current filters and sort state
 var tableDisplayState = {
-    filters: {
-        location: '', // "Close-to"
-        status: ''     // "Lot Status" - this will be ANDed with the default "Available/Listed"
-    },
-    sort: { column: 'List Price', order: 'asc' }
+  filters: {
+    location: '', // "Close-to"
+    status: ''     // "Lot Status" - this will be ANDed with the default "Available/Listed"
+  },
+  sort: { column: 'List Price', order: 'asc' }
 };
 
 // Helper sort function
 function sortLotsData(lotsArray, columnKey, order) {
-  return lotsArray.sort(function(a, b) {
+  return lotsArray.sort(function (a, b) {
     var valA = a[columnKey];
     var valB = b[columnKey];
 
@@ -38,66 +38,66 @@ function sortLotsData(lotsArray, columnKey, order) {
 
 // Function to apply filters and sort, then render table
 function applyFiltersAndSortAndRender() {
-    if (!lotsData) return;
-    if (!Array.isArray(lotsData)) {
-        console.error('lotsData is not an array:', lotsData);
-        return;
+  if (!lotsData) return;
+  if (!Array.isArray(lotsData)) {
+    console.error('lotsData is not an array:', lotsData);
+    return;
+  }
+
+  // 1. Apply base filter (Available or Listed lots)
+  var currentLots = lotsData.filter(function (lot) {
+    return lot["Lot Status"] === "Available" || lot["Lot Status"] === "Listed";
+  });
+
+  // 2. Apply "Close-to" (Location) filter from header dropdown
+  var locationFilterValue = $('#header-filter-location').val();
+  if (locationFilterValue) {
+    currentLots = currentLots.filter(function (lot) {
+      return lot["Close-to"] && lot["Close-to"].toLowerCase() === locationFilterValue.toLowerCase();
+    });
+  }
+
+
+
+  // 4. Apply sorting from tableDisplayState
+  currentLots = sortLotsData(currentLots, tableDisplayState.sort.column, tableDisplayState.sort.order);
+
+  // 5. Render
+  renderTableBody(currentLots);
+
+
+  // Update sort indicators in table headers
+  $('#lot-table thead th').each(function () {
+    var $this = $(this);
+    // Normalize header text by removing existing indicators and extra spaces for reliable matching
+    var headerText = $this.clone().children('.sort-arrow').remove().end().text().trim();
+    var indicatorSpan = $this.find('span.sort-arrow');
+    if (indicatorSpan.length === 0 && ['Address', 'Size (sqft)', 'Price'].includes(headerText)) {
+      // Ensure span exists for sortable columns if not already there
+      $this.append(' <span class="sort-arrow"></span>');
+      indicatorSpan = $this.find('span.sort-arrow'); // Re-find it
     }
 
-    // 1. Apply base filter (Listed lots)
-    var currentLots = lotsData.filter(function(lot) {
-        return lot["Lot Status"] === "Listed";
-    });
+    var indicatorChar = ''; // Default to no indicator
+    var columnKeyMappings = { 'Address': 'Name', 'Size (sqft)': 'Size [sqft]', 'Price': 'List Price' };
+    var currentHeaderKey = columnKeyMappings[headerText];
 
-    // 2. Apply "Close-to" (Location) filter from header dropdown
-    var locationFilterValue = $('#header-filter-location').val();
-    if (locationFilterValue) {
-        currentLots = currentLots.filter(function(lot) {
-            return lot["Close-to"] && lot["Close-to"].toLowerCase() === locationFilterValue.toLowerCase();
-        });
+    if (currentHeaderKey) { // If it's a sortable column
+      $this.css('cursor', 'pointer');
+      if (currentHeaderKey === tableDisplayState.sort.column) {
+        indicatorChar = tableDisplayState.sort.order === 'asc' ? '▲' : '▼';
+      }
+      if (indicatorSpan.length) {
+        indicatorSpan.text(indicatorChar); // Set text of existing span
+      } else if (indicatorChar) {
+        // This case should be less common if span is added above, but as a fallback
+        $this.append(' <span class="sort-arrow">' + indicatorChar + '</span>');
+      }
+    } else {
+      $this.css('cursor', 'default');
+      if (indicatorSpan.length) indicatorSpan.text(''); // Clear indicator for non-sortable if any somehow existed
     }
-
-
-
-    // 4. Apply sorting from tableDisplayState
-    currentLots = sortLotsData(currentLots, tableDisplayState.sort.column, tableDisplayState.sort.order);
-
-    // 5. Render
-    renderTableBody(currentLots);
-
-
-    // Update sort indicators in table headers
-    $('#lot-table thead th').each(function() {
-        var $this = $(this);
-        // Normalize header text by removing existing indicators and extra spaces for reliable matching
-        var headerText = $this.clone().children('.sort-arrow').remove().end().text().trim();
-        var indicatorSpan = $this.find('span.sort-arrow');
-        if (indicatorSpan.length === 0 && ['Address', 'Size (sqft)', 'Price'].includes(headerText)) {
-            // Ensure span exists for sortable columns if not already there
-            $this.append(' <span class="sort-arrow"></span>');
-            indicatorSpan = $this.find('span.sort-arrow'); // Re-find it
-        }
-
-        var indicatorChar = ''; // Default to no indicator
-        var columnKeyMappings = {'Address': 'Name', 'Size (sqft)': 'Size [sqft]', 'Price': 'List Price'};
-        var currentHeaderKey = columnKeyMappings[headerText];
-
-        if (currentHeaderKey) { // If it's a sortable column
-            $this.css('cursor', 'pointer');
-            if (currentHeaderKey === tableDisplayState.sort.column) {
-                indicatorChar = tableDisplayState.sort.order === 'asc' ? '▲' : '▼';
-            }
-            if (indicatorSpan.length) {
-                 indicatorSpan.text(indicatorChar); // Set text of existing span
-            } else if (indicatorChar) {
-                // This case should be less common if span is added above, but as a fallback
-                $this.append(' <span class="sort-arrow">' + indicatorChar + '</span>');
-            }
-        } else {
-            $this.css('cursor', 'default');
-            if (indicatorSpan.length) indicatorSpan.text(''); // Clear indicator for non-sortable if any somehow existed
-        }
-    });
+  });
 }
 
 // Helper function to render the table body based on provided lots data
@@ -109,24 +109,24 @@ function renderTableBody(lotsToRender) {
 
     var listingLinkHtml = 'N/A';
     if (val["Listing Link"]) {
-        var rawLink = val["Listing Link"];
-        // Attempt to extract URL if it's embedded, e.g. "Zillow Link - https://..."
-        var urlMatch = rawLink.match(/https?:\/\/[^\s]+/i);
-        var actualUrl = urlMatch && urlMatch[0] ? urlMatch[0] : (rawLink.toLowerCase().startsWith('http') ? rawLink : null);
+      var rawLink = val["Listing Link"];
+      // Attempt to extract URL if it's embedded, e.g. "Zillow Link - https://..."
+      var urlMatch = rawLink.match(/https?:\/\/[^\s]+/i);
+      var actualUrl = urlMatch && urlMatch[0] ? urlMatch[0] : (rawLink.toLowerCase().startsWith('http') ? rawLink : null);
 
-        if (actualUrl) {
-            var linkText = "View Listing"; // Default text
-            try {
-                var domain = new URL(actualUrl).hostname;
-                linkText = domain.replace(/^www\./, ''); // Show domain as link text
-            } catch (e) { /* use default linkText */ }
-            // Apply truncation via CSS class if needed, e.g., class="truncated-link"
-            listingLinkHtml = `<a href="${actualUrl}" target="_blank" rel="noopener noreferrer" class="listing-link-cell" title="${actualUrl}">${linkText}</a>`;
-        } else {
-            // If no valid URL, display the text but not as a link
-            // If no valid URL, display the text but not as a link
-            listingLinkHtml = `<span title="${rawLink}">${rawLink.substring(0,30)}${rawLink.length > 30 ? '...' : ''}</span>`;
-        }
+      if (actualUrl) {
+        var linkText = "View Listing"; // Default text
+        try {
+          var domain = new URL(actualUrl).hostname;
+          linkText = domain.replace(/^www\./, ''); // Show domain as link text
+        } catch (e) { /* use default linkText */ }
+        // Apply truncation via CSS class if needed, e.g., class="truncated-link"
+        listingLinkHtml = `<a href="${actualUrl}" target="_blank" rel="noopener noreferrer" class="listing-link-cell" title="${actualUrl}">${linkText}</a>`;
+      } else {
+        // If no valid URL, display the text but not as a link
+        // If no valid URL, display the text but not as a link
+        listingLinkHtml = `<span title="${rawLink}">${rawLink.substring(0, 30)}${rawLink.length > 30 ? '...' : ''}</span>`;
+      }
     }
 
     var agentPhoneStr = val["Listing Agent Phone Number"] ? String(val["Listing Agent Phone Number"]).replace(/\D/g, '') : '';
@@ -152,14 +152,14 @@ function renderTableBody(lotsToRender) {
   $('#lot-table tbody').html(tableBodyItems.join(''));
 
   // Re-attach row click listeners
-  $('#lot-table tbody tr').on('click', function(e) { // Added event 'e'
+  $('#lot-table tbody tr').on('click', function (e) { // Added event 'e'
     var $target = $(e.target); // Get the actual clicked element
 
     // Prevent row click if the click was on a button or a link inside the row
     if ($target.is('a, button') || $target.closest('a, button').length) {
-        // If it's a link or button, or inside one, let its default action proceed.
-        // No need to e.stopPropagation() unless other row-level behaviors are unintentionally triggered by link/button.
-        return;
+      // If it's a link or button, or inside one, let its default action proceed.
+      // No need to e.stopPropagation() unless other row-level behaviors are unintentionally triggered by link/button.
+      return;
     }
 
     var lotName = $(this).data('lot-name');
@@ -173,9 +173,13 @@ function renderTableBody(lotsToRender) {
         var featureCenter = ol.extent.getCenter(targetFeature.getGeometry().getExtent());
         olMap.getView().animate({ center: featureCenter, zoom: 19, duration: 500 });
         var pseudoEvt = { pixel: olMap.getPixelFromCoordinate(featureCenter), coordinate: featureCenter };
-        content.innerHTML = retrieveFeatureInfoTable(pseudoEvt);
-        overlay.setPosition(featureCenter);
-        featureHighlight(targetFeature);
+
+        // Use the new global function to show the card
+        if (window.showMapCard) {
+          window.showMapCard(targetFeature, pseudoEvt);
+        } else {
+          console.error("showMapCard function not found");
+        }
       }
     }
   });
@@ -236,24 +240,24 @@ function makeListingsTable(url) {
 
     // Set initial values for dropdowns if they exist in tableDisplayState (e.g. from previous interaction before a full reload)
     if (tableDisplayState.filters.location) {
-        $('#header-filter-location').val(tableDisplayState.filters.location);
+      $('#header-filter-location').val(tableDisplayState.filters.location);
     }
 
     applyFiltersAndSortAndRender(); // Initial render which also sets up sort indicators
 
     // Event listeners (use .off().on() to prevent multiple bindings if makeListingsTable is ever recalled)
-    $('#lot-table').off('click', '.call-now-btn').on('click', '.call-now-btn', function(e) {
-        e.stopPropagation();
-        var phone = $(this).data('phone');
-        if (phone) {
-            window.location.href = 'tel:' + phone;
-        }
+    $('#lot-table').off('click', '.call-now-btn').on('click', '.call-now-btn', function (e) {
+      e.stopPropagation();
+      var phone = $(this).data('phone');
+      if (phone) {
+        window.location.href = 'tel:' + phone;
+      }
     });
 
-    $('#lot-table thead th').off('click').on('click', function(e) {
+    $('#lot-table thead th').off('click').on('click', function (e) {
       if ($(e.target).is('select.header-filter')) {
-          e.stopPropagation(); // Prevent sorting when clicking on the select dropdown itself
-          return;
+        e.stopPropagation(); // Prevent sorting when clicking on the select dropdown itself
+        return;
       }
       // Use clone to get text without children like select or span.sort-arrow
       var columnText = $(this).clone().children().remove().end().text().trim();
@@ -276,11 +280,11 @@ function makeListingsTable(url) {
     });
 
     // Filter dropdown listeners
-    $('#header-filter-status, #header-filter-location').off('change').on('change', function(e) {
-        e.stopPropagation(); // Prevent th click event if selects are inside th
-        tableDisplayState.filters.status = $('#header-filter-status').val();
-        tableDisplayState.filters.location = $('#header-filter-location').val();
-        applyFiltersAndSortAndRender();
+    $('#header-filter-status, #header-filter-location').off('change').on('change', function (e) {
+      e.stopPropagation(); // Prevent th click event if selects are inside th
+      tableDisplayState.filters.status = $('#header-filter-status').val();
+      tableDisplayState.filters.location = $('#header-filter-location').val();
+      applyFiltersAndSortAndRender();
     });
 
   });
@@ -291,44 +295,44 @@ function makeListingsTable(url) {
 // This might be slow if there are many features.
 // Consider adding 'Name' property directly to GeoJSON features during conversion if possible.
 function findFeatureByLotName(lotName) {
-    let foundFeature = null;
-    const layersToSearch = [layerVectorLotsPlatS1, layerVectorLotsPlatS2, layerVectorLotsPlatS3];
+  let foundFeature = null;
+  const layersToSearch = [layerVectorLotsPlatS1, layerVectorLotsPlatS2, layerVectorLotsPlatS3];
 
-    for (const layer of layersToSearch) {
-        if (foundFeature) break;
-        const source = layer.getSource();
-        if (source && source.getFeatures) {
-            const features = source.getFeatures();
-            for (const feature of features) {
-                // This is the tricky part: GeoJSON features might not have a direct 'Name' property
-                // that matches lots.json. We rely on spatial matching for popups.
-                // For reverse (map to table), we need a reliable link.
-                // This placeholder shows the need for such a link.
-                // If features are guaranteed to have a unique ID that maps to lotName:
-                // if (feature.get('id_property_that_matches_lotName') === lotName) {
-                //    foundFeature = feature;
-                //    break;
-                // }
+  for (const layer of layersToSearch) {
+    if (foundFeature) break;
+    const source = layer.getSource();
+    if (source && source.getFeatures) {
+      const features = source.getFeatures();
+      for (const feature of features) {
+        // This is the tricky part: GeoJSON features might not have a direct 'Name' property
+        // that matches lots.json. We rely on spatial matching for popups.
+        // For reverse (map to table), we need a reliable link.
+        // This placeholder shows the need for such a link.
+        // If features are guaranteed to have a unique ID that maps to lotName:
+        // if (feature.get('id_property_that_matches_lotName') === lotName) {
+        //    foundFeature = feature;
+        //    break;
+        // }
 
-                // Fallback: if lotsData is available, try to match by location, then check if this feature contains that location
-                const lotJsonEntry = lotsData.find(l => l.Name === lotName);
-                if (lotJsonEntry && lotJsonEntry.Location) {
-                    const parts = lotJsonEntry.Location.split(',');
-                    if (parts.length === 2) {
-                        const lat = parseFloat(parts[0].trim());
-                        const lon = parseFloat(parts[1].trim());
-                        if (!isNaN(lat) && !isNaN(lon)) {
-                            const lotPointWGS84 = [lon, lat];
-                            const lotPointInFeatureProj = ol.proj.transform(lotPointWGS84, 'EPSG:4326', 'EPSG:3857');
-                            if (feature.getGeometry().intersectsCoordinate(lotPointInFeatureProj)) {
-                                foundFeature = feature;
-                                break;
-                            }
-                        }
-                    }
-                }
+        // Fallback: if lotsData is available, try to match by location, then check if this feature contains that location
+        const lotJsonEntry = lotsData.find(l => l.Name === lotName);
+        if (lotJsonEntry && lotJsonEntry.Location) {
+          const parts = lotJsonEntry.Location.split(',');
+          if (parts.length === 2) {
+            const lat = parseFloat(parts[0].trim());
+            const lon = parseFloat(parts[1].trim());
+            if (!isNaN(lat) && !isNaN(lon)) {
+              const lotPointWGS84 = [lon, lat];
+              const lotPointInFeatureProj = ol.proj.transform(lotPointWGS84, 'EPSG:4326', 'EPSG:3857');
+              if (feature.getGeometry().intersectsCoordinate(lotPointInFeatureProj)) {
+                foundFeature = feature;
+                break;
+              }
             }
+          }
         }
+      }
     }
-    return foundFeature;
+  }
+  return foundFeature;
 }

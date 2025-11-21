@@ -1,33 +1,41 @@
 @import url("custom-popup-styles.css");
 
 .map {
-    height: 400px;
-    width: 100%;
+  height: 400px;
+  width: 100%;
+  position: relative;
 }
 
-.ol-mouse-position{
-    top: unset;
-    right: unset;
-    left: 8px; /* Custom positioning from original file */
-    bottom: 10px; /* Custom positioning from original file */
-    background-color: rgba(255, 255, 255, 0.8); /* Default OL control background */
-    color: black; /* Default OL control text color */
-    padding: 3px 5px; /* Typical padding for OL text controls */
-    border-radius: 4px; /* Default OL control border radius */
+.ol-mouse-position {
+  top: unset;
+  right: unset;
+  left: 8px;
+  /* Custom positioning from original file */
+  bottom: 10px;
+  /* Custom positioning from original file */
+  background-color: rgba(255, 255, 255, 0.8);
+  /* Default OL control background */
+  color: black;
+  /* Default OL control text color */
+  padding: 3px 5px;
+  /* Typical padding for OL text controls */
+  border-radius: 4px;
+  /* Default OL control border radius */
 }
 
 /* Ensure spans within mouse position also use black text if not inheriting */
 .ol-mouse-position span {
-    color: black;
-    background-color: transparent; /* Remove any prior custom span backgrounds */
+  color: black;
+  background-color: transparent;
+  /* Remove any prior custom span backgrounds */
 }
 
 /* Popup styles - Unchanged */
 .ol-popup {
   position: absolute;
   background-color: white;
-  -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
-  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+  -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
   padding: 15px;
   border-radius: 10px;
   border: 1px solid #cccccc;
@@ -35,7 +43,9 @@
   left: -50px;
   min-width: 280px;
 }
-.ol-popup:after, .ol-popup:before {
+
+.ol-popup:after,
+.ol-popup:before {
   top: 100%;
   border: solid transparent;
   content: " ";
@@ -44,87 +54,202 @@
   position: absolute;
   pointer-events: none;
 }
+
 .ol-popup:after {
   border-top-color: white;
   border-width: 10px;
   left: 48px;
   margin-left: -10px;
 }
+
 .ol-popup:before {
   border-top-color: #cccccc;
   border-width: 11px;
   left: 48px;
   margin-left: -11px;
 }
+
 .ol-popup-closer {
   text-decoration: none;
   position: absolute;
   top: 2px;
   right: 8px;
 }
+
 .ol-popup-closer:after {
   content: "✖";
 }
-.popup-section { margin-bottom: 10px; }
-.popup-section-title { font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #eee; padding-bottom: 3px; }
-.inferred-data { }
-.popup-toggle-button { background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 4px; padding: 5px 10px; cursor: pointer; display: block; margin: 10px auto 5px; text-align: center; }
-.popup-toggle-button:hover { background-color: #e0e0e0; }
+
+.popup-section {
+  margin-bottom: 10px;
+}
+
+.popup-section-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 3px;
+}
+
+.inferred-data {}
+
+.popup-toggle-button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  display: block;
+  margin: 10px auto 5px;
+  text-align: center;
+}
+
+.popup-toggle-button:hover {
+  background-color: #e0e0e0;
+}
 
 /* Table styles - Unchanged */
-#lot-table { height: auto; overflow: visible; }
-.lot-table { font-family: "Trebuchet MS", Arial, Helvetica, sans-serif; border-collapse: collapse; height: auto; overflow: visible; }
-.lot-table td, .lot-table th { border: 1px solid #ddd; padding: 8px; }
-.lot-table tr:nth-child(even){background-color: #f2f2f2;}
-.lot-table tr:hover {background-color: #ddd;}
-.lot-table th { padding-top: 12px; padding-bottom: 12px; text-align: left; background-color: rgba(0,60,136,.7); color: white; }
+#lot-table {
+  height: auto;
+  overflow: visible;
+}
+
+.lot-table {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  height: auto;
+  overflow: visible;
+}
+
+.lot-table td,
+.lot-table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.lot-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.lot-table tr:hover {
+  background-color: #ddd;
+}
+
+.lot-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: rgba(0, 60, 136, .7);
+  color: white;
+}
 
 @media print {
-  .lot-table { width: 100%; font-size: 8px; }
-  .lot-table td, .lot-table th { padding: 2px; font-size: 8px; }
+  .lot-table {
+    width: 100%;
+    font-size: 8px;
+  }
+
+  .lot-table td,
+  .lot-table th {
+    padding: 2px;
+    font-size: 8px;
+  }
 }
 
 
-.lot-table td, .lot-table th { border: 1px solid #ddd; padding: 8px; }
-.lot-table tr:nth-child(even){background-color: #f2f2f2;}
-.lot-table tr:hover {background-color: #ddd;}
-.lot-table th { padding-top: 12px; padding-bottom: 12px; text-align: left; background-color: rgba(0,60,136,.7); color: white; }
+.lot-table td,
+.lot-table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.lot-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.lot-table tr:hover {
+  background-color: #ddd;
+}
+
+.lot-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: rgba(0, 60, 136, .7);
+  color: white;
+}
 
 /* Tooltip styles - Unchanged */
-.ol-tooltip { position: relative; background: rgba(0, 0, 0, 0.5); border-radius: 4px; color: white; padding: 4px 8px; opacity: 0.7; white-space: nowrap; font-size: 12px; }
-.ol-tooltip-measure { opacity: 1; font-weight: bold; }
-.ol-tooltip-static { background-color: #ffcc33; color: black; border: 1px solid white; }
-.ol-tooltip-measure:before, .ol-tooltip-static:before { border-top: 6px solid rgba(0, 0, 0, 0.5); border-right: 6px solid transparent; border-left: 6px solid transparent; content: ""; position: absolute; bottom: -6px; margin-left: -7px; left: 50%; }
-.ol-tooltip-static:before { border-top-color: #ffcc33; }
+.ol-tooltip {
+  position: relative;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  color: white;
+  padding: 4px 8px;
+  opacity: 0.7;
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.ol-tooltip-measure {
+  opacity: 1;
+  font-weight: bold;
+}
+
+.ol-tooltip-static {
+  background-color: #ffcc33;
+  color: black;
+  border: 1px solid white;
+}
+
+.ol-tooltip-measure:before,
+.ol-tooltip-static:before {
+  border-top: 6px solid rgba(0, 0, 0, 0.5);
+  border-right: 6px solid transparent;
+  border-left: 6px solid transparent;
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  margin-left: -7px;
+  left: 50%;
+}
+
+.ol-tooltip-static:before {
+  border-top-color: #ffcc33;
+}
 
 /* OL Zoom control button styling */
 /* Note: .ol-zoom positioning is part of the restored Top-Left Control Column */
 .ol-zoom button {
-    font-weight: bold;
-    /* Standard OL buttons have no border, only outline on hover/focus.
+  font-weight: bold;
+  /* Standard OL buttons have no border, only outline on hover/focus.
        If a border is desired for all buttons, it would be added to .ol-control button */
 }
 
 /* Styling for active state and click feedback on control buttons */
 .ol-control button.active {
-    background-color: rgba(0, 60, 136, 0.15); /* Subtle blue background for active state */
-    border: 2px solid rgba(0, 60, 136, 0.7) !important; /* Thicker, darker blue border for active state */
-    /* Adjust padding if border throws off size, e.g., padding: 0; if buttons had 1px margin and now border is 2px */
-    /* Standard OL buttons have margin: 1px. A 2px border will make them slightly larger. */
-    /* To maintain size, could use outline instead of border, or adjust margins/padding. */
-    /* Using border for now as requested for "thicker border". */
-    outline: none; /* Remove default focus outline if we use a border for active state */
+  background-color: rgba(0, 60, 136, 0.15);
+  /* Subtle blue background for active state */
+  border: 2px solid rgba(0, 60, 136, 0.7) !important;
+  /* Thicker, darker blue border for active state */
+  /* Adjust padding if border throws off size, e.g., padding: 0; if buttons had 1px margin and now border is 2px */
+  /* Standard OL buttons have margin: 1px. A 2px border will make them slightly larger. */
+  /* To maintain size, could use outline instead of border, or adjust margins/padding. */
+  /* Using border for now as requested for "thicker border". */
+  outline: none;
+  /* Remove default focus outline if we use a border for active state */
 }
 
 .ol-control button:active {
-    background-color: rgba(0, 60, 136, 0.3); /* Slightly darker background for immediate click feedback */
+  background-color: rgba(0, 60, 136, 0.3);
+  /* Slightly darker background for immediate click feedback */
 }
 
 /* Specific styling for buttons within the unit toggle control when active */
 .ol-unit-toggle-control button.active {
-    background-color: rgba(0, 60, 136, 0.2);
-    border: 2px solid rgba(0, 60, 136, 0.8);
-    /* Ensure text color contrasts if needed, e.g., color: white; if background is dark */
+  background-color: rgba(0, 60, 136, 0.2);
+  border: 2px solid rgba(0, 60, 136, 0.8);
+  /* Ensure text color contrasts if needed, e.g., color: white; if background is dark */
 }
 
 /* === Top-Left Control Column Styling (Restored) === */
@@ -149,12 +274,26 @@
 .ol-zoom {
   top: 0.5em !important;
 }
+
 /* Adjusted multipliers for tighter spacing between info, length, area tools */
-.ol-info-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 0.5) !important; }
-.ol-length-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 1.4) !important; } /* Reduced from 1.5 */
-.ol-area-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 2.3) !important; } /* Reduced from 2.5 */
+.ol-info-control {
+  top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 0.5) !important;
+}
+
+.ol-length-control {
+  top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 1.4) !important;
+}
+
+/* Reduced from 1.5 */
+.ol-area-control {
+  top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 2.3) !important;
+}
+
+/* Reduced from 2.5 */
 /* Unit toggle control's original multiplier maintained to preserve its relative spacing from the tools above it */
-.ol-unit-toggle-control { top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 3.5) !important; }
+.ol-unit-toggle-control {
+  top: calc(0.5em + var(--ol-zoom-control-total-height) + var(--ol-single-button-control-slot-height) * 3.5) !important;
+}
 
 /* UnitToggleControl specific layout (Restored for positioning) */
 .ol-unit-toggle-control {
@@ -166,12 +305,13 @@
      .ol-unit-toggle-control button { font-size: 0.9em; font-weight: normal; padding: 0 0.5em; etc. }
   */
 }
+
 /* === End Top-Left Column Styling === */
 
 /* OL Rotate Control Positioning (Restored) */
 .ol-rotate {
-    right: 50px;
-    /* top will be default OL (usually top-right corner along with other controls) */
+  right: 50px;
+  /* top will be default OL (usually top-right corner along with other controls) */
 }
 
 /* Custom Tracking Control Positioning (Restored) */
@@ -183,11 +323,13 @@
      If they conflict with a desired minimal .ol-control look, they might need adjustment.
      For now, restoring them as they were with positioning. */
   padding: 2px;
-  display: flex; /* This is important for internal layout if it has multiple elements like stats + button */
+  display: flex;
+  /* This is important for internal layout if it has multiple elements like stats + button */
   align-items: center;
   /* box-shadow: none; was present, usually good for default OL look */
   /* background-color will be inherited or use OL default if not specified here */
 }
+
 /* If .tracking-control button needs specific styling for its default look (e.g. emoji size):
    .tracking-control button { font-size: 1.2em; }
 */
@@ -197,29 +339,36 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: rgba(255,255,255,0.8); /* Semi-transparent white background */
+  background-color: rgba(255, 255, 255, 0.8);
+  /* Semi-transparent white background */
   padding: 3px 8px;
   border-radius: 4px;
   /* margin-right: 0px; /* Assuming tracking-control handles spacing if needed */
   /* order: 1; /* This was for layout within tracking-control, should be fine if structure is simple */
-  box-shadow: 0 0 5px rgba(0,0,0,0.2); /* Subtle shadow */
-  color: #333; /* Default text color for stats */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  /* Subtle shadow */
+  color: #333;
+  /* Default text color for stats */
 }
 
-.tracking-stats div { /* Individual stat item */
+.tracking-stats div {
+  /* Individual stat item */
   padding: 2px 5px;
   font-size: 0.75em;
   white-space: nowrap;
 }
 
 .tracking-stats div:not(:last-child) {
-  border-right: 1px solid #ccc; /* Separator lines between stats */
+  border-right: 1px solid #ccc;
+  /* Separator lines between stats */
 }
 
 
 /* Layer Switcher icon styling */
-.layer-switcher button i, .ol-layerswitcher button i,
-.layer-switcher button svg, .ol-layerswitcher button svg {
+.layer-switcher button i,
+.ol-layerswitcher button i,
+.layer-switcher button svg,
+.ol-layerswitcher button svg {
   max-width: 100%;
   max-height: 100%;
   display: block;
@@ -227,11 +376,12 @@
 }
 
 /* Layer Switcher Panel styling */
-.layer-switcher .panel, .ol-layerswitcher .panel {
-    background-color: rgb(255, 255, 255) !important;
-    border: 4px solid rgb(238, 238, 238) !important;
-    color: black !important;
-    z-index: 1050 !important;
+.layer-switcher .panel,
+.ol-layerswitcher .panel {
+  background-color: rgb(255, 255, 255) !important;
+  border: 4px solid rgb(238, 238, 238) !important;
+  color: black !important;
+  z-index: 1050 !important;
 }
 
 /* GeoJSON download link in LayerSwitcher */
@@ -244,10 +394,12 @@
   line-height: 1;
   vertical-align: middle;
 }
+
 .download-geojson-link:hover {
   color: darkgreen;
   text-decoration: none;
 }
+
 .download-geojson-link:focus {
   color: darkgreen;
   outline: 1px dotted #007bff;
@@ -255,29 +407,133 @@
 }
 
 /* Layer Action Icons container - no specific styles */
-.layer-action-icons { }
+.layer-action-icons {}
 
 /* Copy URL button in LayerSwitcher */
 .copy-url-button {
-    display: inline !important;
-    float: none !important;
-    position: static !important;
-    margin: 0;
-    padding: 0;
-    background: none;
-    border: none;
-    color: #007bff;
-    font-size: 0.9em;
-    cursor: pointer;
-    vertical-align: middle;
+  display: inline !important;
+  float: none !important;
+  position: static !important;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 0.9em;
+  cursor: pointer;
+  vertical-align: middle;
 }
-.copy-url-button + .download-geojson-link,
-.download-geojson-link + .copy-url-button {
+
+.copy-url-button+.download-geojson-link,
+.download-geojson-link+.copy-url-button {
   margin-left: 3px;
 }
+
 .copy-url-button:hover,
 .copy-url-button:focus {
   color: #0056b3;
   outline: 1px dotted #007bff;
   outline-offset: 1px;
+}
+
+/* Map Card Styles */
+.map-card {
+  position: absolute;
+  top: 80px;
+  /* Moved down to avoid overlapping top-right controls */
+  right: 10px;
+  /* Moved closer to edge */
+  width: 300px;
+  max-width: 90%;
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  /* High enough to sit over map */
+  display: none;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.map-card-close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  line-height: 1;
+  padding: 0;
+}
+
+.map-card-close:hover {
+  color: #000;
+}
+
+#map-card-content {
+  margin-top: 10px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .map-card {
+    top: auto;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 10px 10px 0 0;
+    max-height: 50vh;
+  }
+}
+
+/* Styles for collapsible sections */
+.map-card details {
+  margin-bottom: 10px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.map-card summary {
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  list-style: none;
+  /* Hide default triangle in some browsers */
+  position: relative;
+  outline: none;
+}
+
+/* Custom arrow indicator */
+.map-card summary::-webkit-details-marker {
+  display: none;
+}
+
+.map-card summary::after {
+  content: '+';
+  position: absolute;
+  right: 12px;
+  font-weight: bold;
+}
+
+.map-card details[open] summary::after {
+  content: '-';
+}
+
+.map-card details[open] summary {
+  border-bottom: 1px solid #eee;
+  background-color: #e9ecef;
+}
+
+.map-card details>div,
+.map-card details>table {
+  padding: 10px;
+  margin: 0;
 }
