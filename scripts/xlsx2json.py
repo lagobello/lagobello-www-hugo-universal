@@ -73,6 +73,14 @@ def convert(xlsx_path: Path) -> tuple[list[dict], list[dict]]:
             "name": record["Name"],
             "description": f"Lot {record['Name']} in Lago Bello, {size} sqft, status: {status}",
             "url": f"https://www.lagobello.com/properties/#{record['Name']}",
+            "image": [
+                "https://www.lagobello.com/img/logo.png"
+            ],
+            "sku": record["Name"],
+            "brand": {
+                "@type": "Brand",
+                "name": "Lago Bello"
+            },
             "address": {
                 "@type": "PostalAddress",
                 "addressLocality": "Brownsville",
@@ -103,6 +111,7 @@ def convert(xlsx_path: Path) -> tuple[list[dict], list[dict]]:
             availability = "https://schema.org/InStock"
             offers = {
                 "@type": "Offer",
+                "url": f"https://www.lagobello.com/properties/#{record['Name']}",
                 "price": price,
                 "priceCurrency": "USD",
                 "availability": availability
