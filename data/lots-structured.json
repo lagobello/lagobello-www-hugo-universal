@@ -5,6 +5,14 @@
     "name": "1332 Giuseppe Verdi Ave",
     "description": "Lot 1332 Giuseppe Verdi Ave in Lago Bello, 16142.0 sqft, status: Listed",
     "url": "https://www.lagobello.com/properties/#1332 Giuseppe Verdi Ave",
+    "image": [
+      "https://www.lagobello.com/img/logo.png"
+    ],
+    "sku": "1332 Giuseppe Verdi Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Brownsville",
@@ -30,6 +38,7 @@
     ],
     "offers": {
       "@type": "Offer",
+      "url": "https://www.lagobello.com/properties/#1332 Giuseppe Verdi Ave",
       "price": 160000.0,
       "priceCurrency": "USD",
       "availability": "https://schema.org/InStock",
@@ -45,6 +54,14 @@
     "name": "1336 Giuseppe Verdi Ave",
     "description": "Lot 1336 Giuseppe Verdi Ave in Lago Bello, 14103.0 sqft, status: Listed",
     "url": "https://www.lagobello.com/properties/#1336 Giuseppe Verdi Ave",
+    "image": [
+      "https://www.lagobello.com/img/logo.png"
+    ],
+    "sku": "1336 Giuseppe Verdi Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Brownsville",
@@ -70,6 +87,7 @@
     ],
     "offers": {
       "@type": "Offer",
+      "url": "https://www.lagobello.com/properties/#1336 Giuseppe Verdi Ave",
       "price": 140000.0,
       "priceCurrency": "USD",
       "availability": "https://schema.org/InStock",
@@ -85,6 +103,14 @@
     "name": "1340 Giuseppe Verdi Ave",
     "description": "Lot 1340 Giuseppe Verdi Ave in Lago Bello, 13855.0 sqft, status: Listed",
     "url": "https://www.lagobello.com/properties/#1340 Giuseppe Verdi Ave",
+    "image": [
+      "https://www.lagobello.com/img/logo.png"
+    ],
+    "sku": "1340 Giuseppe Verdi Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Brownsville",
@@ -110,6 +136,7 @@
     ],
     "offers": {
       "@type": "Offer",
+      "url": "https://www.lagobello.com/properties/#1340 Giuseppe Verdi Ave",
       "price": 140000.0,
       "priceCurrency": "USD",
       "availability": "https://schema.org/InStock",
@@ -125,6 +152,14 @@
     "name": "1344 Giuseppe Verdi Ave",
     "description": "Lot 1344 Giuseppe Verdi Ave in Lago Bello, 13862.0 sqft, status: Listed",
     "url": "https://www.lagobello.com/properties/#1344 Giuseppe Verdi Ave",
+    "image": [
+      "https://www.lagobello.com/img/logo.png"
+    ],
+    "sku": "1344 Giuseppe Verdi Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Brownsville",
@@ -150,6 +185,7 @@
     ],
     "offers": {
       "@type": "Offer",
+      "url": "https://www.lagobello.com/properties/#1344 Giuseppe Verdi Ave",
       "price": 140000.0,
       "priceCurrency": "USD",
       "availability": "https://schema.org/InStock",
@@ -165,6 +201,14 @@
     "name": "1352 Giuseppe Verdi Ave",
     "description": "Lot 1352 Giuseppe Verdi Ave in Lago Bello, 12747.0 sqft, status: Listed",
     "url": "https://www.lagobello.com/properties/#1352 Giuseppe Verdi Ave",
+    "image": [
+      "https://www.lagobello.com/img/logo.png"
+    ],
+    "sku": "1352 Giuseppe Verdi Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Brownsville",
@@ -190,6 +234,7 @@
     ],
     "offers": {
       "@type": "Offer",
+      "url": "https://www.lagobello.com/properties/#1352 Giuseppe Verdi Ave",
       "price": 140000.0,
       "priceCurrency": "USD",
       "availability": "https://schema.org/InStock",
@@ -205,6 +250,14 @@
     "name": "1347 Giuseppe Verdi Ave",
     "description": "Lot 1347 Giuseppe Verdi Ave in Lago Bello, 8147.0 sqft, status: Listed",
     "url": "https://www.lagobello.com/properties/#1347 Giuseppe Verdi Ave",
+    "image": [
+      "https://www.lagobello.com/img/logo.png"
+    ],
+    "sku": "1347 Giuseppe Verdi Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Brownsville",
@@ -230,6 +283,7 @@
     ],
     "offers": {
       "@type": "Offer",
+      "url": "https://www.lagobello.com/properties/#1347 Giuseppe Verdi Ave",
       "price": 73000.0,
       "priceCurrency": "USD",
       "availability": "https://schema.org/InStock",
@@ -245,6 +299,14 @@
     "name": "1359 Giuseppe Verdi Ave",
     "description": "Lot 1359 Giuseppe Verdi Ave in Lago Bello, 7941.0 sqft, status: Listed",
     "url": "https://www.lagobello.com/properties/#1359 Giuseppe Verdi Ave",
+    "image": [
+      "https://www.lagobello.com/img/logo.png"
+    ],
+    "sku": "1359 Giuseppe Verdi Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Brownsville",
@@ -270,6 +332,7 @@
     ],
     "offers": {
       "@type": "Offer",
+      "url": "https://www.lagobello.com/properties/#1359 Giuseppe Verdi Ave",
       "price": 80000.0,
       "priceCurrency": "USD",
       "availability": "https://schema.org/InStock",
