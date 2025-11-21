@@ -130,15 +130,17 @@ var layerOsmStreet = new ol.layer.Tile({
   title: 'OpenStreetMap',
   type: 'base',
   source: new ol.source.OSM(),
+  visible: false,
   opacity: 1.0
 });
 
 var layerMapboxSatellite = new ol.layer.Tile({
-  title: 'Mapbox Satellite',
+  title: 'Mapbox Satellite Streets',
   type: 'base',
   source: new ol.source.XYZ({
-    url: 'https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.png?access_token=' + mapboxKey
+    url: 'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/256/{z}/{x}/{y}?access_token=' + mapboxKey
   }),
+  visible: true,
   opacity: 1.0
 });
 
