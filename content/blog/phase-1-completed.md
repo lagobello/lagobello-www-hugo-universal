@@ -10,5 +10,4 @@ We are currently developing lots for phase 2 of the project.
 Please contact us at by visiting our [Contact](/contact) page for more info!
 
 
-<img src="/img/works.png" alt="Aerial"
-	title="A drone's view of the works" width="600"/>
+{{< figure src="/img/works.png" alt="Aerial" title="A drone's view of the works" width="600" >}}
