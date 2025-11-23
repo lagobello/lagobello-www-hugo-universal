@@ -9,6 +9,14 @@ var tableDisplayState = {
   sort: { column: 'List Price', order: 'asc' }
 };
 
+// Mapping of Company Name to Logo Filename
+var companyLogos = {
+  'coldwell banker': 'coldwell-banker-logo.svg',
+  'keller williams': 'keller-williams-logo.svg',
+  'liz realty': 'liz-realty-logo.jpg',
+  'spi realty': 'spi-realty-logo.png'
+};
+
 // Helper sort function
 function sortLotsData(lotsArray, columnKey, order) {
   return lotsArray.sort(function (a, b) {
@@ -21,7 +29,7 @@ function sortLotsData(lotsArray, columnKey, order) {
       valB = parseFloat(valB);
       if (isNaN(valA)) valA = (order === 'asc' ? Infinity : -Infinity); // Push NaNs to end/start
       if (isNaN(valB)) valB = (order === 'asc' ? Infinity : -Infinity);
-    } else { // Handle string sort for Name
+    } else { // Handle string sort for Name and Company
       valA = String(valA || '').toLowerCase();
       valB = String(valB || '').toLowerCase();
     }
@@ -72,14 +80,14 @@ function applyFiltersAndSortAndRender() {
     // Normalize header text by removing existing indicators and extra spaces for reliable matching
     var headerText = $this.clone().children('.sort-arrow').remove().end().text().trim();
     var indicatorSpan = $this.find('span.sort-arrow');
-    if (indicatorSpan.length === 0 && ['Address', 'Size (sqft)', 'Price'].includes(headerText)) {
+    if (indicatorSpan.length === 0 && ['Address', 'Size (sqft)', 'Price', 'Listing Firm'].includes(headerText)) {
       // Ensure span exists for sortable columns if not already there
       $this.append(' <span class="sort-arrow"></span>');
       indicatorSpan = $this.find('span.sort-arrow'); // Re-find it
     }
 
     var indicatorChar = ''; // Default to no indicator
-    var columnKeyMappings = { 'Address': 'Name', 'Size (sqft)': 'Size [sqft]', 'Price': 'List Price' };
+    var columnKeyMappings = { 'Address': 'Name', 'Size (sqft)': 'Size [sqft]', 'Price': 'List Price', 'Listing Firm': 'Listing Firm' };
     var currentHeaderKey = columnKeyMappings[headerText];
 
     if (currentHeaderKey) { // If it's a sortable column
@@ -133,6 +141,29 @@ function renderTableBody(lotsToRender) {
     var callNowButton = agentPhoneStr ? `<button class="btn btn-sm btn-success call-now-btn" data-phone="${agentPhoneStr}">Call</button>` : '';
     var agentPhoneDisplay = val["Listing Agent Phone Number"] ? String(val["Listing Agent Phone Number"]) : 'N/A';
 
+    // Handle Listing Company and Logo
+    var companyName = val["Listing Firm"] || 'N/A';
+    var logoHtml = '';
+    if (companyName !== 'N/A') {
+      var lowerName = companyName.toLowerCase().trim();
+      // Try exact match or partial match
+      var logoFile = null;
+      for (var key in companyLogos) {
+        if (lowerName.includes(key)) {
+          logoFile = companyLogos[key];
+          break;
+        }
+      }
+
+      if (logoFile) {
+        // Added title attribute for tooltip
+        logoHtml = `<img src="/img/realtors/${logoFile}" alt="${companyName}" title="${companyName}" style="max-height: 30px; max-width: 80px;">`;
+      } else {
+        // Fallback to text if no logo found but company name exists
+        logoHtml = `<span title="${companyName}">${companyName}</span>`;
+      }
+    }
+
     tableBodyItems.push(
       `<tr data-lot-name="${val.Name}" style="cursor:pointer;">
         <td>${val.Name || 'N/A'}</td>
@@ -143,6 +174,7 @@ function renderTableBody(lotsToRender) {
         <td>${sizeSqft}</td>
         <td>${val["Listing Agent"] || 'N/A'}</td>
         <td>${agentPhoneDisplay} ${callNowButton}</td>
+        <td>${logoHtml}</td>
         <td>${listingLinkHtml}</td>
         <td>${val.Location || 'N/A'}</td>
         <td>${val["Close-to"] || 'N/A'}</td>
@@ -221,6 +253,7 @@ function makeListingsTable(url) {
           <th>Size (sqft)</th>
           <th>Agent</th>
           <th>Agent Phone</th>
+          <th>Listing Firm</th>
           <th>Listing</th>
           <th>Location</th>
           <th>Close To <br><select id="header-filter-location" class="header-filter form-control form-control-sm" style="width: 90%; margin-top: 4px; padding: 0.15rem 0.5rem; font-size: 0.85em; height: auto; color: #495057; background-color: #fff;">${closeToOptionsHtml}</select></th>
@@ -266,6 +299,7 @@ function makeListingsTable(url) {
         case 'Address': columnKey = 'Name'; break;
         case 'Size (sqft)': columnKey = 'Size [sqft]'; break;
         case 'Price': columnKey = 'List Price'; break;
+        case 'Listing Firm': columnKey = 'Listing Firm'; break;
         // Status and Close To are handled by their select, not direct th click for sorting
         default: return;
       }

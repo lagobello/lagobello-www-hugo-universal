@@ -240,7 +240,7 @@
       "availability": "https://schema.org/InStock",
       "seller": {
         "@type": "Organization",
-        "name": "Louie Vera"
+        "name": "Luis Vera"
       }
     }
   },
@@ -289,7 +289,7 @@
       "availability": "https://schema.org/InStock",
       "seller": {
         "@type": "Organization",
-        "name": "Louie Vera"
+        "name": "Luis Vera"
       }
     }
   },
