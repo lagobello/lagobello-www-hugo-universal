@@ -90,7 +90,7 @@ pagerSize = 10
     # Social media
     facebook_site = "https://www.facebook.com/lagobellosouthtexas" # the Facebook handle of your site ('https://www.facebook.com/HANDLE')
     twitter_site = "GoHugoIO" # the Twitter handle of your site (without the '@')
-    default_sharing_image = "img/logo.png"
+    default_sharing_image = "img/lago-logo-500-500.png"
 
     # Google Maps API key (if not set will default to not passing a key.)
     googleMapsApiKey = "AIzaSyCW4qOsR79D9diOaX20DJ60FC_I85PSsxk"
@@ -120,7 +120,7 @@ pagerSize = 10
     # Format dates with Go's time formatting
     date_format = "January 2, 2006"
 
-    logo = "img/logo.png"
+    logo = "img/lago-logo-500-500.png"
     logo_small = "img/logo-small.png"
     address = """<p><strong>Hacienda Lakeview Incorporated</strong>
         <br>1000 Vittorio Alfieri Ave.
