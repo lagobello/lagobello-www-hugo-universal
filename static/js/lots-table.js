@@ -24,7 +24,7 @@ function sortLotsData(lotsArray, columnKey, order) {
     var valB = b[columnKey];
 
     // Handle numeric sort for price and size
-    if (columnKey === 'List Price' || columnKey === 'Size [sqft]') {
+    if (columnKey === 'List Price' || columnKey === 'Size [sqft]' || columnKey === 'Sale Price') {
       valA = parseFloat(valA);
       valB = parseFloat(valB);
       if (isNaN(valA)) valA = (order === 'asc' ? Infinity : -Infinity); // Push NaNs to end/start
@@ -111,8 +111,17 @@ function applyFiltersAndSortAndRender() {
 // Helper function to render the table body based on provided lots data
 function renderTableBody(lotsToRender) {
   var tableBodyItems = [];
+
+  // Apply Black Friday specific filtering if mode is active
+  if (tableDisplayState.mode === 'black-friday') {
+    lotsToRender = lotsToRender.filter(function (lot) {
+      return lot["Close-to"] === "Lake";
+    });
+  }
+
   $.each(lotsToRender, function (key, val) {
-    var listPrice = val["List Price"] ? `$${parseFloat(val["List Price"]).toLocaleString()}` : 'N/A';
+    var listPriceVal = parseFloat(val["List Price"]);
+    var listPrice = val["List Price"] ? `$${listPriceVal.toLocaleString()}` : 'N/A';
     var sizeSqft = val["Size [sqft]"] ? `${parseFloat(val["Size [sqft]"]).toLocaleString()} sqft` : 'N/A';
 
     var listingLinkHtml = 'N/A';
@@ -164,22 +173,43 @@ function renderTableBody(lotsToRender) {
       }
     }
 
-    tableBodyItems.push(
-      `<tr data-lot-name="${val.Name}" style="cursor:pointer;">
-        <td>${val.Name || 'N/A'}</td>
-        <td>${val["Lot Status"] || 'N/A'}</td>
-        <td>${val["Block Number"] || 'N/A'}</td>
-        <td>${val["Lot Number"] || 'N/A'}</td>
-        <td>${listPrice}</td>
-        <td>${sizeSqft}</td>
-        <td>${val["Listing Agent"] || 'N/A'}</td>
-        <td>${agentPhoneDisplay} ${callNowButton}</td>
-        <td>${logoHtml}</td>
-        <td>${listingLinkHtml}</td>
-        <td>${val.Location || 'N/A'}</td>
-        <td>${val["Close-to"] || 'N/A'}</td>
-      </tr>`
-    );
+    if (tableDisplayState.mode === 'black-friday') {
+      var salePriceVal = listPriceVal * 0.9;
+      var salePrice = !isNaN(salePriceVal) ? `$${salePriceVal.toLocaleString()}` : 'N/A';
+
+      // Add Sale Price to val for sorting
+      val['Sale Price'] = salePriceVal;
+
+      tableBodyItems.push(
+        `<tr data-lot-name="${val.Name}" style="cursor:pointer;">
+            <td>${val.Name || 'N/A'}</td>
+            <td style="color: red; font-weight: bold;">${salePrice}</td>
+            <td style="text-decoration: line-through;">${listPrice}</td>
+            <td>${sizeSqft}</td>
+            <td>${val["Listing Agent"] || 'N/A'}</td>
+            <td>${agentPhoneDisplay} ${callNowButton}</td>
+            <td>${logoHtml}</td>
+            <td>${listingLinkHtml}</td>
+          </tr>`
+      );
+    } else {
+      tableBodyItems.push(
+        `<tr data-lot-name="${val.Name}" style="cursor:pointer;">
+            <td>${val.Name || 'N/A'}</td>
+            <td>${val["Lot Status"] || 'N/A'}</td>
+            <td>${val["Block Number"] || 'N/A'}</td>
+            <td>${val["Lot Number"] || 'N/A'}</td>
+            <td>${listPrice}</td>
+            <td>${sizeSqft}</td>
+            <td>${val["Listing Agent"] || 'N/A'}</td>
+            <td>${agentPhoneDisplay} ${callNowButton}</td>
+            <td>${logoHtml}</td>
+            <td>${listingLinkHtml}</td>
+            <td>${val.Location || 'N/A'}</td>
+            <td>${val["Close-to"] || 'N/A'}</td>
+          </tr>`
+      );
+    }
   });
   $('#lot-table tbody').html(tableBodyItems.join(''));
 
@@ -217,7 +247,8 @@ function renderTableBody(lotsToRender) {
   });
 }
 
-function makeListingsTable(url) {
+function makeListingsTable(url, options) {
+  options = options || {};
   $.getJSON(url, function (data) {
     lotsData = data; // Store fetched data globally for reuse
 
@@ -242,23 +273,40 @@ function makeListingsTable(url) {
 
     var items = []; // Initialize items array
 
-    var tableHeadersHtml = `
-      <thead>
-        <tr>
-          <th>Address</th>
-          <th>Status</th>
-          <th>Block</th>
-          <th>Lot</th>
-          <th>Price</th>
-          <th>Size (sqft)</th>
-          <th>Agent</th>
-          <th>Agent Phone</th>
-          <th>Listing Firm</th>
-          <th>Listing</th>
-          <th>Location</th>
-          <th>Close To <br><select id="header-filter-location" class="header-filter form-control form-control-sm" style="width: 90%; margin-top: 4px; padding: 0.15rem 0.5rem; font-size: 0.85em; height: auto; color: #495057; background-color: #fff;">${closeToOptionsHtml}</select></th>
-        </tr>
-      </thead>`;
+    var tableHeadersHtml = '';
+    if (options.mode === 'black-friday') {
+      tableHeadersHtml = `
+          <thead>
+            <tr>
+              <th>Address</th>
+              <th>Sale Price</th>
+              <th>List Price</th>
+              <th>Size (sqft)</th>
+              <th>Agent</th>
+              <th>Agent Phone</th>
+              <th>Listing Firm</th>
+              <th>Listing</th>
+            </tr>
+          </thead>`;
+    } else {
+      tableHeadersHtml = `
+          <thead>
+            <tr>
+              <th>Address</th>
+              <th>Status</th>
+              <th>Block</th>
+              <th>Lot</th>
+              <th>Price</th>
+              <th>Size (sqft)</th>
+              <th>Agent</th>
+              <th>Agent Phone</th>
+              <th>Listing Firm</th>
+              <th>Listing</th>
+              <th>Location</th>
+              <th>Close To <br><select id="header-filter-location" class="header-filter form-control form-control-sm" style="width: 90%; margin-top: 4px; padding: 0.15rem 0.5rem; font-size: 0.85em; height: auto; color: #495057; background-color: #fff;">${closeToOptionsHtml}</select></th>
+            </tr>
+          </thead>`;
+    }
 
     items.push(tableHeadersHtml); // Push headers to items
     items.push('<tbody></tbody>'); // Empty tbody, populated by applyFiltersAndSortAndRender
@@ -275,6 +323,11 @@ function makeListingsTable(url) {
     if (tableDisplayState.filters.location) {
       $('#header-filter-location').val(tableDisplayState.filters.location);
     }
+
+    // Override applyFiltersAndSortAndRender for Black Friday mode if needed, or modify it to handle options
+    // For simplicity, we'll modify the global applyFiltersAndSortAndRender to check a global flag or pass options if we refactored more.
+    // Since applyFiltersAndSortAndRender is global, let's attach the mode to tableDisplayState
+    tableDisplayState.mode = options.mode;
 
     applyFiltersAndSortAndRender(); // Initial render which also sets up sort indicators
 
@@ -299,6 +352,8 @@ function makeListingsTable(url) {
         case 'Address': columnKey = 'Name'; break;
         case 'Size (sqft)': columnKey = 'Size [sqft]'; break;
         case 'Price': columnKey = 'List Price'; break;
+        case 'List Price': columnKey = 'List Price'; break;
+        case 'Sale Price': columnKey = 'Sale Price'; break; // We'll need to handle this in sort
         case 'Listing Firm': columnKey = 'Listing Firm'; break;
         // Status and Close To are handled by their select, not direct th click for sorting
         default: return;

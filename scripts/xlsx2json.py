@@ -76,7 +76,7 @@ def convert(xlsx_path: Path) -> tuple[list[dict], list[dict]]:
             "image": [
                 "https://www.lagobello.com/img/lago-logo-500-500.png"
             ],
-            "sku": record["Name"],
+            "sku": record["Name"].replace(" ", "-"),
             "brand": {
                 "@type": "Brand",
                 "name": "Lago Bello"
