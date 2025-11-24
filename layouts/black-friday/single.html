@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+
+<head>
+    {{ partial "headers.html" . }}
+    {{ partial "custom_headers.html" . }}
+</head>
+
+<body>
+
+    <div id="all">
+
+        {{ partial "top.html" . }}
+
+        {{ partial "nav.html" . }}
+
+        {{ partial "breadcrumbs.html" . }}
+
+        <div id="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="text-center" style="margin-bottom: 30px;">
+                            <img src="/img/sales/LAGO BLACK FRIDAY.png" alt="Black Friday Sale" class="img-responsive"
+                                style="margin: 0 auto; max-width: 800px;">
+                        </div>
+
+                        <div class="sales-pitch text-center"
+                            style="margin-bottom: 30px; background-color: #000; color: #ff6600; padding: 20px; border-radius: 5px;">
+                            <h3 style="color: #ff6600; margin-top: 0;">Black Friday Exclusive Offer</h3>
+                            <ul style="list-style: none; padding: 0; font-size: 1.2em;">
+                                <li style="margin-bottom: 10px;">Lock in the price with non-refundable <strong>$2,500
+                                        escrow deposit</strong></li>
+                                <li style="margin-bottom: 10px;">Only valid for the <strong>first two lots sold</strong>
+                                </li>
+                                <li>Only for <strong>lake-side lots</strong></li>
+                            </ul>
+                        </div>
+
+                        <style>
+                            #lot-table table {
+                                border: 2px solid #000;
+                            }
+
+                            #lot-table thead th {
+                                background-color: #000;
+                                color: #ff6600;
+                                border-bottom: 2px solid #ff6600;
+                            }
+
+                            #lot-table tbody tr:hover {
+                                background-color: #fff3e0;
+                            }
+
+                            #lot-table td {
+                                border-color: #000;
+                            }
+                        </style>
+
+                        <div id="lot-table"></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{ partial "footer.html" . }}
+
+    </div>
+    <!-- /#all -->
+
+    {{ partial "scripts.html" . }}
+    <script src="/js/lots-table.js"></script>
+    <script>
+        $(document).ready(function () {
+            if (typeof makeListingsTable === 'function') {
+                makeListingsTable('/data/lots.json', { mode: 'black-friday' });
+            }
+        });
+    </script>
+
+</body>
+
+</html>
