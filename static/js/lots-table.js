@@ -147,8 +147,33 @@ function renderTableBody(lotsToRender) {
     }
 
     var agentPhoneStr = val["Listing Agent Phone Number"] ? String(val["Listing Agent Phone Number"]).replace(/\D/g, '') : '';
-    var callNowButton = agentPhoneStr ? `<button class="btn btn-sm btn-success call-now-btn" data-phone="${agentPhoneStr}">Call</button>` : '';
-    var agentPhoneDisplay = val["Listing Agent Phone Number"] ? String(val["Listing Agent Phone Number"]) : 'N/A';
+
+    // Helper to format phone number
+    var formatPhone = function (str) {
+      if (!str) return '';
+      // Assuming US numbers starting with 1
+      if (str.length === 11 && str.startsWith('1')) {
+        str = str.substring(1);
+      }
+      if (str.length === 10) {
+        return '(' + str.substring(0, 3) + ') ' + str.substring(3, 6) + '-' + str.substring(6);
+      }
+      return str;
+    };
+
+    var formattedPhone = formatPhone(agentPhoneStr);
+    var agentName = val["Listing Agent"] || '';
+    var agentFirstName = agentName.split(' ')[0] || 'Agent';
+
+    // Button with integrated phone number
+    var callNowButton = agentPhoneStr ?
+      `<a href="tel:${agentPhoneStr}" class="btn btn-success call-now-btn" style="white-space: normal; line-height: 1.2; padding: 5px 10px;">
+        <div style="font-weight: bold;">Call ${agentFirstName}</div>
+        <div style="font-size: 0.85em;">${formattedPhone}</div>
+      </a>` : 'N/A';
+
+    // We no longer need a separate display string since it's in the button
+    // var agentPhoneDisplay = ... (removed)
 
     // Handle Listing Company and Logo
     var companyName = val["Listing Firm"] || 'N/A';
@@ -187,7 +212,7 @@ function renderTableBody(lotsToRender) {
             <td style="text-decoration: line-through;">${listPrice}</td>
             <td>${sizeSqft}</td>
             <td>${val["Listing Agent"] || 'N/A'}</td>
-            <td>${agentPhoneDisplay} ${callNowButton}</td>
+            <td>${callNowButton}</td>
             <td>${logoHtml}</td>
             <td>${listingLinkHtml}</td>
           </tr>`
@@ -202,7 +227,7 @@ function renderTableBody(lotsToRender) {
             <td>${listPrice}</td>
             <td>${sizeSqft}</td>
             <td>${val["Listing Agent"] || 'N/A'}</td>
-            <td>${agentPhoneDisplay} ${callNowButton}</td>
+            <td>${callNowButton}</td>
             <td>${logoHtml}</td>
             <td>${listingLinkHtml}</td>
             <td>${val.Location || 'N/A'}</td>
@@ -330,15 +355,6 @@ function makeListingsTable(url, options) {
     tableDisplayState.mode = options.mode;
 
     applyFiltersAndSortAndRender(); // Initial render which also sets up sort indicators
-
-    // Event listeners (use .off().on() to prevent multiple bindings if makeListingsTable is ever recalled)
-    $('#lot-table').off('click', '.call-now-btn').on('click', '.call-now-btn', function (e) {
-      e.stopPropagation();
-      var phone = $(this).data('phone');
-      if (phone) {
-        window.location.href = 'tel:' + phone;
-      }
-    });
 
     $('#lot-table thead th').off('click').on('click', function (e) {
       if ($(e.target).is('select.header-filter')) {
