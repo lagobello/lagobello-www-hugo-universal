@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+
+<head>
+    {{ partial "headers.html" . }}
+    {{ partial "custom_headers.html" . }}
+</head>
+
+<body>
+
+    <div id="all">
+
+        {{ partial "top.html" . }}
+
+        {{ partial "nav.html" . }}
+
+        {{ partial "breadcrumbs.html" . }}
+
+        <div id="content">
+            <div class="container">
+
+                <div class="row">
+
+                    <!-- *** LEFT COLUMN *** -->
+
+                    <div class="col-md-9" id="blog-post">
+
+                        <h1>{{ .Title }}</h1>
+                        <p class="lead">{{ .Params.description }}</p>
+
+                        {{ if .Params.image }}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <img src="{{ index .Params.image 0 }}" class="img-responsive" alt="{{ .Title }}">
+                            </div>
+                        </div>
+                        {{ end }}
+
+                        <div class="box">
+                            <h3>Details</h3>
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <th>Price</th>
+                                        <td>${{ .Params.offers.price }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Size</th>
+                                        <td>
+                                            {{ range .Params.additionalProperty }}
+                                            {{ if eq .name "Size" }}{{ .value }}{{ end }}
+                                            {{ end }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Status</th>
+                                        <td>{{ .Params.offers.availability }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Seller</th>
+                                        <td>{{ .Params.offers.seller.name }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {{ if .Params.geo }}
+                        <div class="box">
+                            <h3>Location</h3>
+                            <p>Latitude: {{ .Params.geo.latitude }}</p>
+                            <p>Longitude: {{ .Params.geo.longitude }}</p>
+                            <!-- Map integration could go here -->
+                        </div>
+                        {{ end }}
+
+                    </div>
+                    <!-- /#blog-post -->
+
+                    <!-- *** LEFT COLUMN END *** -->
+
+                    <!-- *** RIGHT COLUMN *** -->
+
+                    <div class="col-md-3">
+
+                        <!-- *** MENUS AND WIDGETS *** -->
+
+                        <div class="panel panel-default sidebar-menu">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Contact</h3>
+                            </div>
+                            <div class="panel-body">
+                                <p>Interested in this lot?</p>
+                                <a href="/contact/" class="btn btn-template-main">Contact Us</a>
+                            </div>
+                        </div>
+
+                        <!-- *** MENUS AND FILTERS END *** -->
+
+                    </div>
+                    <!-- /.col-md-3 -->
+
+                    <!-- *** RIGHT COLUMN END *** -->
+
+                </div>
+                <!-- /.row -->
+
+            </div>
+            <!-- /.container -->
+        </div>
+        <!-- /#content -->
+
+        {{ partial "footer.html" . }}
+
+    </div>
+    <!-- /#all -->
+
+    {{ partial "scripts.html" . }}
+
+</body>
+
+</html>

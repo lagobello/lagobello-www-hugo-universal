@@ -1,0 +1,20 @@
+{{ range (index .Site.Data "lots-structured") }}
+  {{ $content := dict 
+    "mediaType" "text/markdown"
+    "value" .description
+  }}
+  {{ $slug := .sku | lower }}
+  {{ $params := . }}
+  {{ warnf "Adding page: %s" $slug }}
+  {{ $.AddPage (dict 
+    "kind" "page"
+    "path" $slug 
+    "url" (printf "/lots/%s/" $slug)
+    "title" .name
+    "content" $content
+    "params" $params
+    "layout" "single"
+    "draft" false
+    "dates" (dict "date" (now))
+  ) }}
+{{ end }}
