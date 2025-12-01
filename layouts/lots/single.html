@@ -4,6 +4,9 @@
 <head>
     {{ partial "headers.html" . }}
     {{ partial "custom_headers.html" . }}
+    <script type="application/ld+json">
+    {{ .Params | jsonify | safeJS }}
+    </script>
 </head>
 
 <body>
