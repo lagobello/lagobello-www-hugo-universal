@@ -126,7 +126,7 @@ def convert(xlsx_path: Path) -> tuple[list[dict], list[dict]]:
             # For sold or under contract, perhaps no offers or OutOfStock
             pass  # omit offers
 
-        if status in ["Listed", "Available"]:
+        if status in ["Listed", "Available"] and record.get("Subdivision") != "Section 3":
             json_ld_records.append(json_ld)
 
     return records, json_ld_records
