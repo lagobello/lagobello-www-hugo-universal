@@ -2,6 +2,307 @@
   {
     "@context": "https://schema.org",
     "@type": "Product",
+    "name": "1304 Giuseppe Verdi Ave",
+    "description": "Lot 1304 Giuseppe Verdi Ave in Lago Bello, Unknown sqft, status: Sold",
+    "url": "https://www.lagobello.com/lots/1304-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1304-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.04998,
+      "longitude": -97.55175
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "Unknown sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "Lake"
+      }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "url": "https://www.lagobello.com/lots/1304-giuseppe-verdi-ave/",
+      "availability": "https://schema.org/Sold"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1308 Giuseppe Verdi Ave",
+    "description": "Lot 1308 Giuseppe Verdi Ave in Lago Bello, Unknown sqft, status: Sold",
+    "url": "https://www.lagobello.com/lots/1308-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1308-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05021,
+      "longitude": -97.55231
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "Unknown sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "Lake"
+      }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "url": "https://www.lagobello.com/lots/1308-giuseppe-verdi-ave/",
+      "availability": "https://schema.org/Sold"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1312 Giuseppe Verdi Ave",
+    "description": "Lot 1312 Giuseppe Verdi Ave in Lago Bello, Unknown sqft, status: Sold",
+    "url": "https://www.lagobello.com/lots/1312-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1312-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.0506,
+      "longitude": -97.55275
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "Unknown sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "Lake"
+      }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "url": "https://www.lagobello.com/lots/1312-giuseppe-verdi-ave/",
+      "availability": "https://schema.org/Sold"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1316 Giuseppe Verdi Ave",
+    "description": "Lot 1316 Giuseppe Verdi Ave in Lago Bello, Unknown sqft, status: Sold",
+    "url": "https://www.lagobello.com/lots/1316-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1316-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05081,
+      "longitude": -97.55261
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "Unknown sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "Lake"
+      }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "url": "https://www.lagobello.com/lots/1316-giuseppe-verdi-ave/",
+      "availability": "https://schema.org/Sold"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1320 Giuseppe Verdi Ave",
+    "description": "Lot 1320 Giuseppe Verdi Ave in Lago Bello, Unknown sqft, status: Sold",
+    "url": "https://www.lagobello.com/lots/1320-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1320-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05105,
+      "longitude": -97.55255
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "Unknown sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "Lake"
+      }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "url": "https://www.lagobello.com/lots/1320-giuseppe-verdi-ave/",
+      "availability": "https://schema.org/Sold"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1324 Giuseppe Verdi Ave",
+    "description": "Lot 1324 Giuseppe Verdi Ave in Lago Bello, Unknown sqft, status: Sold",
+    "url": "https://www.lagobello.com/lots/1324-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1324-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.0513,
+      "longitude": -97.55249
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "Unknown sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "Lake"
+      }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "url": "https://www.lagobello.com/lots/1324-giuseppe-verdi-ave/",
+      "availability": "https://schema.org/Sold"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1328 Giuseppe Verdi Ave",
+    "description": "Lot 1328 Giuseppe Verdi Ave in Lago Bello, Unknown sqft, status: Sold",
+    "url": "https://www.lagobello.com/lots/1328-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1328-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05156,
+      "longitude": -97.55245
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "Unknown sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "Lake"
+      }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "url": "https://www.lagobello.com/lots/1328-giuseppe-verdi-ave/",
+      "availability": "https://schema.org/Sold"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
     "name": "1332 Giuseppe Verdi Ave",
     "description": "Lot 1332 Giuseppe Verdi Ave in Lago Bello, 16142.0 sqft, status: Listed",
     "url": "https://www.lagobello.com/lots/1332-giuseppe-verdi-ave/",
@@ -198,6 +499,44 @@
   {
     "@context": "https://schema.org",
     "@type": "Product",
+    "name": "1348 Giuseppe Verdi Ave",
+    "description": "Lot 1348 Giuseppe Verdi Ave in Lago Bello, 13719.0 sqft, status: Under Contract",
+    "url": "https://www.lagobello.com/lots/1348-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1348-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05294,
+      "longitude": -97.5524
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "13719.0 sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "Lake"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
     "name": "1352 Giuseppe Verdi Ave",
     "description": "Lot 1352 Giuseppe Verdi Ave in Lago Bello, 12747.0 sqft, status: Listed",
     "url": "https://www.lagobello.com/lots/1352-giuseppe-verdi-ave/",
@@ -242,6 +581,459 @@
         "@type": "Organization",
         "name": "Luis Vera"
       }
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1356 Giuseppe Verdi Ave",
+    "description": "Lot 1356 Giuseppe Verdi Ave in Lago Bello, 12496.0 sqft, status: Reserved",
+    "url": "https://www.lagobello.com/lots/1356-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1356-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.0535,
+      "longitude": -97.5523
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "12496.0 sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "Lake"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1360 Giuseppe Verdi Ave",
+    "description": "Lot 1360 Giuseppe Verdi Ave in Lago Bello, 12888.0 sqft, status: Reserved",
+    "url": "https://www.lagobello.com/lots/1360-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1360-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05374,
+      "longitude": -97.55241
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "12888.0 sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "Lake"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1311 Giuseppe Verdi Ave",
+    "description": "Lot 1311 Giuseppe Verdi Ave in Lago Bello, Unknown sqft, status: Sold",
+    "url": "https://www.lagobello.com/lots/1311-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1311-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05063,
+      "longitude": -97.553
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "Unknown sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "School"
+      }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "url": "https://www.lagobello.com/lots/1311-giuseppe-verdi-ave/",
+      "availability": "https://schema.org/Sold"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1315 Giuseppe Verdi Ave",
+    "description": "Lot 1315 Giuseppe Verdi Ave in Lago Bello, Unknown sqft, status: Sold",
+    "url": "https://www.lagobello.com/lots/1315-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1315-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05095,
+      "longitude": -97.55303
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "Unknown sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "School"
+      }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "url": "https://www.lagobello.com/lots/1315-giuseppe-verdi-ave/",
+      "availability": "https://schema.org/Sold"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1319 Giuseppe Verdi Ave",
+    "description": "Lot 1319 Giuseppe Verdi Ave in Lago Bello, Unknown sqft, status: Sold",
+    "url": "https://www.lagobello.com/lots/1319-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1319-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05115,
+      "longitude": -97.55296
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "Unknown sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "School"
+      }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "url": "https://www.lagobello.com/lots/1319-giuseppe-verdi-ave/",
+      "availability": "https://schema.org/Sold"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1323 Giuseppe Verdi Ave",
+    "description": "Lot 1323 Giuseppe Verdi Ave in Lago Bello, Unknown sqft, status: Sold",
+    "url": "https://www.lagobello.com/lots/1323-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1323-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05135,
+      "longitude": -97.55292
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "Unknown sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "School"
+      }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "url": "https://www.lagobello.com/lots/1323-giuseppe-verdi-ave/",
+      "availability": "https://schema.org/Sold"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1327 Giuseppe Verdi Ave",
+    "description": "Lot 1327 Giuseppe Verdi Ave in Lago Bello, Unknown sqft, status: Sold",
+    "url": "https://www.lagobello.com/lots/1327-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1327-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05156,
+      "longitude": -97.55288
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "Unknown sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "School"
+      }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "url": "https://www.lagobello.com/lots/1327-giuseppe-verdi-ave/",
+      "availability": "https://schema.org/Sold"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1331 Giuseppe Verdi Ave",
+    "description": "Lot 1331 Giuseppe Verdi Ave in Lago Bello, 7135.0 sqft, status: Under Contract",
+    "url": "https://www.lagobello.com/lots/1331-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1331-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05177,
+      "longitude": -97.55282
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "7135.0 sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "School"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1335 Giuseppe Verdi Ave",
+    "description": "Lot 1335 Giuseppe Verdi Ave in Lago Bello, 6979.0 sqft, status: Under Contract",
+    "url": "https://www.lagobello.com/lots/1335-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1335-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05194,
+      "longitude": -97.55283
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "6979.0 sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "School"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1339 Giuseppe Verdi Ave",
+    "description": "Lot 1339 Giuseppe Verdi Ave in Lago Bello, 7610.0 sqft, status: Sold",
+    "url": "https://www.lagobello.com/lots/1339-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1339-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.0521,
+      "longitude": -97.5528
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "7610.0 sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "School"
+      }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "url": "https://www.lagobello.com/lots/1339-giuseppe-verdi-ave/",
+      "availability": "https://schema.org/Sold"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1343 Giuseppe Verdi Ave",
+    "description": "Lot 1343 Giuseppe Verdi Ave in Lago Bello, 7590.0 sqft, status: Sold",
+    "url": "https://www.lagobello.com/lots/1343-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1343-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05232,
+      "longitude": -97.55288
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "7590.0 sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "School"
+      }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "url": "https://www.lagobello.com/lots/1343-giuseppe-verdi-ave/",
+      "availability": "https://schema.org/Sold"
     }
   },
   {
@@ -296,6 +1088,82 @@
   {
     "@context": "https://schema.org",
     "@type": "Product",
+    "name": "1351 Giuseppe Verdi Ave",
+    "description": "Lot 1351 Giuseppe Verdi Ave in Lago Bello, 7941.0 sqft, status: Under Contract",
+    "url": "https://www.lagobello.com/lots/1351-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1351-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05272,
+      "longitude": -97.55289
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "7941.0 sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "School"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1355 Giuseppe Verdi Ave",
+    "description": "Lot 1355 Giuseppe Verdi Ave in Lago Bello, 7941.0 sqft, status: Under Contract",
+    "url": "https://www.lagobello.com/lots/1355-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1355-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05291,
+      "longitude": -97.55289
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "7941.0 sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "School"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
     "name": "1359 Giuseppe Verdi Ave",
     "description": "Lot 1359 Giuseppe Verdi Ave in Lago Bello, 7941.0 sqft, status: Listed",
     "url": "https://www.lagobello.com/lots/1359-giuseppe-verdi-ave/",
@@ -341,5 +1209,81 @@
         "name": "Ralph Burks"
       }
     }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1363 Giuseppe Verdi Ave",
+    "description": "Lot 1363 Giuseppe Verdi Ave in Lago Bello, 7854.0 sqft, status: Reserved",
+    "url": "https://www.lagobello.com/lots/1363-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1363-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.0533,
+      "longitude": -97.5528
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "7854.0 sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "School"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "1367 Giuseppe Verdi Ave",
+    "description": "Lot 1367 Giuseppe Verdi Ave in Lago Bello, 11151.0 sqft, status: Under Contract",
+    "url": "https://www.lagobello.com/lots/1367-giuseppe-verdi-ave/",
+    "image": [
+      "https://www.lagobello.com/img/lago-logo-500-500.png"
+    ],
+    "sku": "1367-Giuseppe-Verdi-Ave",
+    "brand": {
+      "@type": "Brand",
+      "name": "Lago Bello"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brownsville",
+      "addressRegion": "TX",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 26.05362,
+      "longitude": -97.55281
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Size",
+        "value": "11151.0 sqft"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Close To",
+        "value": "School"
+      }
+    ]
   }
 ]

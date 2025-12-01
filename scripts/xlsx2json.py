@@ -122,11 +122,15 @@ def convert(xlsx_path: Path) -> tuple[list[dict], list[dict]]:
                     "name": agent
                 }
             json_ld["offers"] = offers
-        elif status in ["Sold", "Under Contract", "Reserved"]:
-            # For sold or under contract, perhaps no offers or OutOfStock
-            pass  # omit offers
+        elif status == "Sold":
+             offers = {
+                "@type": "Offer",
+                "url": f"https://www.lagobello.com/lots/{record['Name'].replace(' ', '-').lower()}/",
+                "availability": "https://schema.org/Sold"
+            }
+             json_ld["offers"] = offers
 
-        if status in ["Listed", "Available"] and record.get("Subdivision") != "Section 3":
+        if record.get("Subdivision") != "Section 3":
             json_ld_records.append(json_ld)
 
     return records, json_ld_records
