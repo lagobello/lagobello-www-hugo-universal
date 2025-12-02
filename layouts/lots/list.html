@@ -23,36 +23,105 @@
 
                     <div class="col-md-9" id="blog-listing-medium">
 
-                        {{ range .Pages }}
-                        <section class="post">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="image">
-                                        <a href="{{ .Permalink }}">
-                                            {{ if .Params.image }}
-                                            <img src="{{ index .Params.image 0 }}" class="img-responsive"
-                                                alt="{{ .Title }}" />
-                                            {{ else }}
-                                            <img src="{{ " img/placeholder.png" | relURL }}" class="img-responsive"
-                                                alt="" />
-                                            {{ end }}
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-md-8">
-                                    <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
-                                    <div class="clearfix">
-                                        <p class="author-category">
-                                            {{ .Params.offers.price }} USD
-                                        </p>
-                                    </div>
-                                    <p class="intro">{{ .Params.description }}</p>
-                                    <p class="read-more"><a href="{{ .Permalink }}" class="btn btn-template-main">View
-                                            Details</a>
-                                    </p>
+                        <div class="row" style="margin-bottom: 20px;">
+                            <div class="col-md-12 text-center">
+                                <div class="btn-group" role="group" aria-label="Status Filter">
+                                    <button type="button" class="btn btn-default filter-btn"
+                                        data-filter="all">All</button>
+                                    <button type="button" class="btn btn-primary filter-btn active"
+                                        data-filter="For Sale">For
+                                        Sale</button>
+                                    <button type="button" class="btn btn-default filter-btn"
+                                        data-filter="Sold">Sold</button>
                                 </div>
                             </div>
-                        </section>
+                        </div>
+
+                        {{ range .Pages }}
+                        {{ $status := "Unknown" }}
+                        {{ $statusColor := "default" }}
+                        {{ $category := "Other" }}
+
+                        {{ if .Params.offers }}
+                        {{ if eq .Params.offers.availability "https://schema.org/InStock" }}
+                        {{ $status = "Available" }}
+                        {{ $statusColor = "success" }}
+                        {{ $category = "For Sale" }}
+                        {{ else if eq .Params.offers.availability "https://schema.org/Sold" }}
+                        {{ $status = "Sold" }}
+                        {{ $statusColor = "danger" }}
+                        {{ $category = "Sold" }}
+                        {{ end }}
+                        {{ else }}
+                        {{ if in .Params.description "status: Reserved" }}
+                        {{ $status = "Reserved" }}
+                        {{ $statusColor = "warning" }}
+                        {{ $category = "Reserved" }}
+                        {{ else if in .Params.description "status: Under Contract" }}
+                        {{ $status = "Under Contract" }}
+                        {{ $statusColor = "warning" }}
+                        {{ $category = "Under Contract" }}
+                        {{ end }}
+                        {{ end }}
+
+                        <div class="col-md-4 col-sm-6 lot-item" data-category="{{ $category }}">
+                            <div class="box-image-text blog">
+                                <div class="top">
+                                    <div class="image" style="overflow: hidden; height: 200px;">
+                                        <div class="ribbon-holder">
+                                            <div class="ribbon {{ $statusColor }}">{{ $status }}</div>
+                                            <a href="{{ .Permalink }}">
+                                                {{ $streetViewUrl := "" }}
+                                                {{ if and .Params.geo .Site.Params.googleMapsApiKey }}
+                                                {{ $lat := .Params.geo.latitude }}
+                                                {{ $lng := .Params.geo.longitude }}
+                                                {{ $streetViewUrl = printf
+                                                "https://maps.googleapis.com/maps/api/streetview?size=600x400&location=%f,%f&fov=90&pitch=0&return_error_code=true&key=%s"
+                                                $lat $lng .Site.Params.googleMapsApiKey }}
+                                                {{ end }}
+
+                                                {{ if $streetViewUrl }}
+                                                <img src="{{ $streetViewUrl }}" class="img-responsive"
+                                                    alt="Street View of {{ .Title }}"
+                                                    onerror="this.onerror=null;this.src='/img/placeholder-home.png';"
+                                                    style="width: 100%; height: 100%; object-fit: cover;">
+                                                {{ else if .Params.image }}
+                                                <img src="{{ index .Params.image 0 }}" class="img-responsive"
+                                                    alt="{{ .Title }}"
+                                                    style="width: 100%; height: 100%; object-fit: cover;">
+                                                {{ else }}
+                                                <img src="{{ " img/placeholder.png" | relURL }}" class="img-responsive"
+                                                    alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                                                {{ end }}
+                                            </a>
+                                        </div>
+                                        <div class="bg"></div>
+                                        <div class="text">
+                                            <p class="buttons">
+                                                <a href="{{ .Permalink }}"
+                                                    class="btn btn-template-transparent-primary"><i
+                                                        class="fas fa-link"></i> Read more</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="content">
+                                        <h4><a href="{{ .Permalink }}">{{ .Title }}</a></h4>
+                                        <p class="author-category">
+                                            {{ if .Params.offers.price }}
+                                            <span class="text-primary" style="font-weight: bold; font-size: 1.2em;">${{
+                                                .Params.offers.price }}</span>
+                                            {{ else }}
+                                            <span class="text-muted">Price upon request</span>
+                                            {{ end }}
+                                        </p>
+                                        <p class="intro">{{ .Params.description | truncate 100 }}</p>
+                                        <p class="read-more">
+                                            <a href="{{ .Permalink }}" class="btn btn-template-main">View Details</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         {{ end }}
 
                     </div>

@@ -28,24 +28,76 @@
 
                     <div class="col-md-9" id="blog-post">
 
-                        <h1>{{ .Title }}</h1>
-                        <p class="lead">{{ .Params.description }}</p>
+                        {{ $status := "Unknown" }}
+                        {{ $statusColor := "default" }}
 
-                        {{ if .Params.image }}
+                        {{ if .Params.offers }}
+                        {{ if eq .Params.offers.availability "https://schema.org/InStock" }}
+                        {{ $status = "Available" }}
+                        {{ $statusColor = "success" }}
+                        {{ else if eq .Params.offers.availability "https://schema.org/Sold" }}
+                        {{ $status = "Sold" }}
+                        {{ $statusColor = "danger" }}
+                        {{ end }}
+                        {{ else }}
+                        {{ if in .Params.description "status: Reserved" }}
+                        {{ $status = "Reserved" }}
+                        {{ $statusColor = "warning" }}
+                        {{ else if in .Params.description "status: Under Contract" }}
+                        {{ $status = "Under Contract" }}
+                        {{ $statusColor = "warning" }}
+                        {{ end }}
+                        {{ end }}
+
+                        <h1>{{ .Title }} <span class="label label-{{ $statusColor }}"
+                                style="font-size: 0.5em; vertical-align: middle;">{{ $status }}</span></h1>
+
+                        {{ $streetViewUrl := "" }}
+                        {{ if and .Params.geo .Site.Params.googleMapsApiKey }}
+                        {{ $lat := .Params.geo.latitude }}
+                        {{ $lng := .Params.geo.longitude }}
+                        {{ $streetViewUrl = printf
+                        "https://maps.googleapis.com/maps/api/streetview?size=600x400&location=%f,%f&fov=90&pitch=0&return_error_code=true&key=%s"
+                        $lat $lng .Site.Params.googleMapsApiKey }}
+                        {{ end }}
+
+                        {{ if $streetViewUrl }}
                         <div class="row">
                             <div class="col-md-12">
-                                <img src="{{ index .Params.image 0 }}" class="img-responsive" alt="{{ .Title }}">
+                                <div class="image"
+                                    style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden;">
+                                    <img src="{{ $streetViewUrl }}" class="img-responsive"
+                                        alt="Street View of {{ .Title }}"
+                                        onerror="this.onerror=null;this.src='/img/placeholder-home.png';"
+                                        style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+                        {{ else if .Params.image }}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="image"
+                                    style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden;">
+                                    <img src="{{ index .Params.image 0 }}" class="img-responsive" alt="{{ .Title }}"
+                                        style="width: 100%;">
+                                </div>
                             </div>
                         </div>
                         {{ end }}
 
-                        <div class="box">
+                        <div class="box" style="margin-top: 30px;">
                             <h3>Details</h3>
-                            <table class="table">
+                            <table class="table table-striped">
                                 <tbody>
                                     <tr>
                                         <th>Price</th>
-                                        <td>${{ .Params.offers.price }}</td>
+                                        <td>
+                                            {{ if .Params.offers.price }}
+                                            <strong>${{ .Params.offers.price }}</strong>
+                                            {{ else }}
+                                            <span class="text-muted">Price upon request</span>
+                                            {{ end }}
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th>Size</th>
@@ -57,7 +109,7 @@
                                     </tr>
                                     <tr>
                                         <th>Status</th>
-                                        <td>{{ .Params.offers.availability }}</td>
+                                        <td><span class="label label-{{ $statusColor }}">{{ $status }}</span></td>
                                     </tr>
                                     <tr>
                                         <th>Seller</th>
