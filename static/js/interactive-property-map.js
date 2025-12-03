@@ -886,6 +886,11 @@ var retrieveFeatureInfoTable = function (evt) {
   var listPrice = listPriceVal ? `$${listPriceVal.toLocaleString()}` : 'N/A';
 
   var saleActive = window.saleConfig && window.saleConfig.enable;
+  if (saleActive && window.saleConfig.location_filter) {
+    if (!matchedLot || matchedLot["Close-to"] !== window.saleConfig.location_filter) {
+      saleActive = false;
+    }
+  }
   var priceDisplay = listPrice;
 
   if (saleActive && listPriceVal) {
@@ -944,6 +949,14 @@ var retrieveFeatureInfoTable = function (evt) {
 
   var topLevelHtml = '';
   if (matchedLot) {
+    var extraRows = '';
+    const topLevelKeys = ["Name", "Lot Status", "List Price", "Size [sqft]", "Listing Agent", "Listing Agent Phone Number", "Listing Link", "Location"];
+    for (const key in matchedLot) {
+      if (matchedLot.hasOwnProperty(key) && !topLevelKeys.includes(key)) {
+        extraRows += `<tr><td>${key}</td><td><code>${matchedLot[key] !== null && matchedLot[key] !== undefined ? matchedLot[key] : 'N/A'}</code></td></tr>`;
+      }
+    }
+
     topLevelHtml = `
       <div class="popup-section">
         <div class="popup-section-title main-title">${titleHtml}</div>
@@ -954,6 +967,7 @@ var retrieveFeatureInfoTable = function (evt) {
           <tr><td>Listing Agent</td><td><code>${listingAgent}</code></td></tr>
           <tr><td>Agent Phone</td><td><code>${listingAgentPhone}</code> ${callNowButton}</td></tr>
           <tr><td>Listing URL</td><td>${listingLinkHtml}</td></tr>
+          ${extraRows}
         </table>
       </div>
     `;
@@ -961,29 +975,7 @@ var retrieveFeatureInfoTable = function (evt) {
 
   var toggleButtonsHtml = '';
 
-  var linkedDataContent = '<table style="width:100%">';
-  let hasLinkedProps = false;
-  if (matchedLot) {
-    const topLevelKeys = ["Name", "Lot Status", "List Price", "Size [sqft]", "Listing Agent", "Listing Agent Phone Number", "Listing Link", "Location"]; // Added Location to exclude
-    for (const key in matchedLot) {
-      if (matchedLot.hasOwnProperty(key) && !topLevelKeys.includes(key)) {
-        linkedDataContent += `<tr><td>${key}</td><td><code>${matchedLot[key] !== null && matchedLot[key] !== undefined ? matchedLot[key] : 'N/A'}</code></td></tr>`;
-        hasLinkedProps = true;
-      }
-    }
-  }
-  if (!hasLinkedProps && matchedLot) {
-    linkedDataContent += '<tr><td colspan="2">No additional linked data found.</td></tr>';
-  } else if (!matchedLot) {
-    linkedDataContent = '';
-  }
-  linkedDataContent += '</table>';
-
-  var linkedDataDumpHtml = '';
-  if (matchedLot) {
-    linkedDataDumpHtml = linkedDataContent;
-  }
-
+  // --- Restore Calculated Data Logic ---
   var areaSqFtImperial_display = '';
   var areaAcresImperial_display = '';
   if (displayUnits === 'imperial' && area) {
@@ -1003,21 +995,7 @@ var retrieveFeatureInfoTable = function (evt) {
 
     if (centroidProjected && centroidProjected.geometry && centroidProjected.geometry.coordinates) {
       var lonLatCentroid = ol.proj.transform(centroidProjected.geometry.coordinates, 'EPSG:3857', 'EPSG:4326');
-
-      const threshold = 0.01;
-      if (Math.abs(lonLatCentroid[1]) < threshold && Math.abs(lonLatCentroid[0]) < threshold) {
-        const featureExtent = feature.getGeometry().getExtent();
-        const featureCenter = ol.extent.getCenter(featureExtent);
-        const featureCenterWGS84 = ol.proj.transform(featureCenter, 'EPSG:3857', 'EPSG:4326');
-        if (Math.abs(featureCenterWGS84[1]) > 1 && Math.abs(featureCenterWGS84[0]) > 1) {
-          console.warn("Calculated WGS84 centroid is suspiciously close to (0,0) for feature:", geoJsonFeatureIdentifier);
-          centroidString = 'N/A (Invalid Calc)';
-        } else {
-          centroidString = `${lonLatCentroid[1].toFixed(5)}, ${lonLatCentroid[0].toFixed(5)}`;
-        }
-      } else {
-        centroidString = `${lonLatCentroid[1].toFixed(5)}, ${lonLatCentroid[0].toFixed(5)}`;
-      }
+      centroidString = `${lonLatCentroid[1].toFixed(5)}, ${lonLatCentroid[0].toFixed(5)}`;
     } else {
       console.warn("turf.centroid did not return valid coordinates for feature:", geoJsonFeatureIdentifier);
     }
@@ -1040,23 +1018,16 @@ var retrieveFeatureInfoTable = function (evt) {
   var clickedCoordWGS84 = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
   var clickedCoordString = `${clickedCoordWGS84[1].toFixed(5)}, ${clickedCoordWGS84[0].toFixed(5)}`;
   calculatedDataContent += `<tr><td>Clicked (Lat, Lon WGS84)</td><td><code>${clickedCoordString}</code></td></tr>`;
-
   calculatedDataContent += `</table>`;
 
-  var calculatedDataHtml = `
-    <div class="popup-section collapsible-section" style="display:none;" id="calculated-data-section">
-      <div class="popup-section-title">Calculated Data</div>
-      ${calculatedDataContent}
-    </div>
-  `;
-
+  // --- Restore GeoJSON Metadata Logic ---
   var geoJsonMetadataContent = '<table style="width:100%">';
   const geoJsonProps = feature.getProperties();
   let hasGeoJsonProps = false;
   for (const key in geoJsonProps) {
     if (key !== 'geometry' && geoJsonProps.hasOwnProperty(key)) {
       geoJsonMetadataContent += `<tr><td>${key}</td><td><code>${geoJsonProps[key]}</code></td></tr>`;
-      hasLinkedProps = true;
+      hasGeoJsonProps = true;
     }
   }
   if (!hasGeoJsonProps) {
@@ -1064,27 +1035,9 @@ var retrieveFeatureInfoTable = function (evt) {
   }
   geoJsonMetadataContent += '</table>';
 
-  var geoJsonMetadataHtml = `
-    <div class="popup-section collapsible-section" style="display:none;" id="geojson-metadata-section">
-      <div class="popup-section-title">GeoJSON Metadata</div>
-      ${geoJsonMetadataContent}
-    </div>
-  `;
-
-  // Sections for Calculated, GeoJSON, and Linked Data
-  var sectionsHtml = '';
-
-  // Linked Data Section (Expanded by default)
-  if (matchedLot && hasLinkedProps) {
-    sectionsHtml += `
-      <details class="popup-section" open>
-        <summary>Linked Data</summary>
-        ${linkedDataDumpHtml}
-      </details>`;
-  }
 
   // Calculated Data Section (Collapsed by default)
-  sectionsHtml += `
+  var sectionsHtml = `
     <details class="popup-section">
       <summary>Calculated Data</summary>
       ${calculatedDataContent}
