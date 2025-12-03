@@ -49,8 +49,13 @@
                         {{ end }}
                         {{ end }}
 
-                        <h1>{{ .Title }} <span class="label label-{{ $statusColor }}"
-                                style="font-size: 0.5em; vertical-align: middle;">{{ $status }}</span></h1>
+                        {{ $lotData := "" }}
+                        {{ $lots := transform.Unmarshal (os.ReadFile "static/data/lots.json") }}
+                        {{ range $lots }}
+                        {{ if eq .Name $.Title }}
+                        {{ $lotData = . }}
+                        {{ end }}
+                        {{ end }}
 
                         {{ $streetViewUrl := "" }}
                         {{ if and .Params.geo .Site.Params.googleMapsApiKey }}
@@ -61,72 +66,147 @@
                         $lat $lng .Site.Params.googleMapsApiKey }}
                         {{ end }}
 
-                        {{ if $streetViewUrl }}
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
+                                {{ if $streetViewUrl }}
                                 <div class="image"
-                                    style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden;">
+                                    style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 20px;">
                                     <img src="{{ $streetViewUrl }}" class="img-responsive"
                                         alt="Street View of {{ .Title }}"
                                         onerror="this.onerror=null;this.src='/img/placeholder-home.png';"
                                         style="width: 100%;">
                                 </div>
-                            </div>
-                        </div>
-                        {{ else if .Params.image }}
-                        <div class="row">
-                            <div class="col-md-12">
+                                {{ else if .Params.image }}
                                 <div class="image"
-                                    style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden;">
+                                    style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 20px;">
                                     <img src="{{ index .Params.image 0 }}" class="img-responsive" alt="{{ .Title }}"
                                         style="width: 100%;">
                                 </div>
+                                {{ end }}
+                            </div>
+                            <div class="col-md-6">
+                                <div class="box">
+                                    <h3>Details</h3>
+                                    <table class="table table-striped">
+                                        <tbody>
+                                            <tr>
+                                                <th>Status</th>
+                                                <td><span class="label label-{{ $statusColor }}">{{ $status }}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>List Price</th>
+                                                <td>
+                                                    {{ if .Params.offers.price }}
+                                                    <strong>${{ .Params.offers.price }}</strong>
+                                                    {{ else }}
+                                                    <span class="text-muted">N/A</span>
+                                                    {{ end }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Size</th>
+                                                <td>
+                                                    {{ range .Params.additionalProperty }}
+                                                    {{ if eq .name "Size" }}{{ .value }}{{ end }}
+                                                    {{ end }}
+                                                </td>
+                                            </tr>
+                                            {{ if $lotData }}
+                                            <tr>
+                                                <th>Listing Agent</th>
+                                                <td>{{ index $lotData "Listing Agent" | default "N/A" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Agent Phone</th>
+                                                <td>
+                                                    {{ $phoneRaw := index $lotData "Listing Agent Phone Number" }}
+                                                    {{ if $phoneRaw }}
+                                                    {{ $phoneStr := printf "%.0f" $phoneRaw }}
+                                                    {{ if and (eq (len $phoneStr) 11) (hasPrefix $phoneStr "1") }}
+                                                    {{ $phoneStr = substr $phoneStr 1 }}
+                                                    {{ end }}
+
+                                                    {{ $phoneFormatted := $phoneStr }}
+                                                    {{ if eq (len $phoneStr) 10 }}
+                                                    {{ $phoneFormatted = printf "(%s) %s-%s" (substr $phoneStr 0 3)
+                                                    (substr $phoneStr 3 3) (substr $phoneStr 6) }}
+                                                    {{ end }}
+                                                    {{ $agentName := index $lotData "Listing Agent" }}
+                                                    {{ $agentFirstName := index (split ($agentName | default "Agent") " ") 0 }}                                                    <a href="tel:{{ $phoneStr }}" class="btn btn-success"
+                                                        style="white-space: normal; line-height: 1.2; padding: 5px 10px; text-align: left;">
+                                                        <div style="font-weight: bold;">Call {{ $agentFirstName }}</div>
+                                                        <div style="font-size: 0.85em;">{{ $phoneFormatted }}</div>
+                                                    </a>
+                                                    {{ else }}
+                                                    N/A
+                                                    {{ end }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Listing URL</th>
+                                                <td>
+                                                    {{ $link := index $lotData "Listing Link" }}
+                                                    {{ if $link }}
+                                                    <a href="{{ $link }}" target="_blank"
+                                                        class="btn btn-default btn-sm">View Listing</a>
+                                                    {{ else }}
+                                                    N/A
+                                                    {{ end }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Listing Firm</th>
+                                                <td>
+                                                    {{ $firm := index $lotData "Listing Firm" }}
+                                                    {{ $logo := "" }}
+                                                    {{ if $firm }}
+                                                    {{ $firmLower := lower $firm }}
+                                                    {{ if in $firmLower "coldwell banker" }}
+                                                    {{ $logo = "coldwell-banker-logo.svg" }}
+                                                    {{ else if in $firmLower "keller williams" }}
+                                                    {{ $logo = "keller-williams-logo.svg" }}
+                                                    {{ else if in $firmLower "liz realty" }}
+                                                    {{ $logo = "liz-realty-logo.jpg" }}
+                                                    {{ else if in $firmLower "spi realty" }}
+                                                    {{ $logo = "spi-realty-logo.png" }}
+                                                    {{ end }}
+                                                    {{ end }}
+
+                                                    {{ if $logo }}
+                                                    <img src="/img/realtors/{{ $logo }}" alt="{{ $firm }}"
+                                                        style="max-height: 40px;">
+                                                    {{ else }}
+                                                    {{ $firm | default "N/A" }}
+                                                    {{ end }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Close-to</th>
+                                                <td>{{ index $lotData "Close-to" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Subdivision</th>
+                                                <td>{{ index $lotData "Subdivision" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Block Number</th>
+                                                <td>{{ index $lotData "Block Number" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Lot Number</th>
+                                                <td>{{ index $lotData "Lot Number" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Location</th>
+                                                <td>{{ index $lotData "Location" }}</td>
+                                            </tr>
+                                            {{ end }}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                        {{ end }}
-
-                        <div class="box" style="margin-top: 30px;">
-                            <h3>Details</h3>
-                            <table class="table table-striped">
-                                <tbody>
-                                    <tr>
-                                        <th>Price</th>
-                                        <td>
-                                            {{ if .Params.offers.price }}
-                                            <strong>${{ .Params.offers.price }}</strong>
-                                            {{ else }}
-                                            <span class="text-muted">Price upon request</span>
-                                            {{ end }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Size</th>
-                                        <td>
-                                            {{ range .Params.additionalProperty }}
-                                            {{ if eq .name "Size" }}{{ .value }}{{ end }}
-                                            {{ end }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Status</th>
-                                        <td><span class="label label-{{ $statusColor }}">{{ $status }}</span></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Seller</th>
-                                        <td>{{ .Params.offers.seller.name }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {{ if .Params.geo }}
-                        <div class="box">
-                            <h3>Location</h3>
-                            <p>Latitude: {{ .Params.geo.latitude }}</p>
-                            <p>Longitude: {{ .Params.geo.longitude }}</p>
-                            <!-- Map integration could go here -->
-                        </div>
-                        {{ end }}
 
                     </div>
                     <!-- /#blog-post -->

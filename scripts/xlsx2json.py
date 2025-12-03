@@ -42,8 +42,8 @@ DROP_COLS = {
     "Size [acres]",
 }
 
-def convert(xlsx_path: Path) -> tuple[list[dict], list[dict]]:
-    """Return a tuple of (original records, json-ld records)."""
+def convert(xlsx_path: Path) -> list[dict]:
+    """Return a list of original records."""
     # Monday export uses header row index 2 (third row)
     df = pd.read_excel(xlsx_path, header=2)
 
@@ -57,83 +57,7 @@ def convert(xlsx_path: Path) -> tuple[list[dict], list[dict]]:
     df = df.replace({np.nan: None})  # type: ignore
 
     records = df.to_dict(orient="records")  # type: ignore
-
-    # Convert to JSON-LD format
-    json_ld_records = []
-    for record in records:
-        lat, lon = record["Location"].split(", ") if record["Location"] else ("", "")
-        status = record["Lot Status"]
-        price = record["List Price"]
-        agent = record["Listing Agent"]
-        size = record["Size [sqft]"] or "Unknown"
-
-        json_ld = {
-            "@context": "https://schema.org",
-            "@type": "Product",
-            "name": record["Name"],
-            "description": f"Lot {record['Name']} in Lago Bello, {size} sqft, status: {status}",
-            "url": f"https://www.lagobello.com/lots/{record['Name'].replace(' ', '-').lower()}/",
-            "image": [
-                "https://www.lagobello.com/img/lago-logo-500-500.png"
-            ],
-            "sku": record["Name"].replace(" ", "-"),
-            "brand": {
-                "@type": "Brand",
-                "name": "Lago Bello"
-            },
-            "address": {
-                "@type": "PostalAddress",
-                "addressLocality": "Brownsville",
-                "addressRegion": "TX",
-                "addressCountry": "US"
-            },
-            "geo": {
-                "@type": "GeoCoordinates",
-                "latitude": float(lat) if lat else None,
-                "longitude": float(lon) if lon else None
-            },
-            "additionalProperty": [
-                {
-                    "@type": "PropertyValue",
-                    "name": "Size",
-                    "value": f"{size} sqft"
-                },
-                {
-                    "@type": "PropertyValue",
-                    "name": "Close To",
-                    "value": record["Close-to"]
-                }
-            ]
-        }
-
-        # Only include offers if listed and has price
-        if status in ["Listed", "Available"] and price is not None:
-            availability = "https://schema.org/InStock"
-            offers = {
-                "@type": "Offer",
-                "url": f"https://www.lagobello.com/lots/{record['Name'].replace(' ', '-').lower()}/",
-                "price": price,
-                "priceCurrency": "USD",
-                "availability": availability
-            }
-            if agent:
-                offers["seller"] = {
-                    "@type": "Organization",
-                    "name": agent
-                }
-            json_ld["offers"] = offers
-        elif status == "Sold":
-             offers = {
-                "@type": "Offer",
-                "url": f"https://www.lagobello.com/lots/{record['Name'].replace(' ', '-').lower()}/",
-                "availability": "https://schema.org/Sold"
-            }
-             json_ld["offers"] = offers
-
-        if record.get("Subdivision") != "Section 3":
-            json_ld_records.append(json_ld)
-
-    return records, json_ld_records
+    return records
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -142,10 +66,9 @@ def main() -> None:
     )
     parser.add_argument("xlsx", type=Path, help="Path to Lot_Inventory.xlsx export")
     parser.add_argument("-o", "--output", type=Path, default=Path("static/data/lots.json"), help="Output JSON path (default: static/data/lots.json)")
-    parser.add_argument("--ld-output", type=Path, default=Path("data/lots-structured.json"), help="Output LD JSON path (default: data/lots-structured.json)")
     args = parser.parse_args()
 
-    original_records, json_ld_records = convert(args.xlsx)
+    original_records = convert(args.xlsx)
 
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -153,13 +76,6 @@ def main() -> None:
         with args.output.open("w", encoding="utf-8", newline='\n') as fp:
             json.dump(original_records, fp, indent=2)
         print(f"Wrote {len(original_records)} original records -> {args.output}")
-
-        # Save LD version
-        ld_output = args.ld_output
-        ld_output.parent.mkdir(parents=True, exist_ok=True)
-        with ld_output.open("w", encoding="utf-8", newline='\n') as fp:
-            json.dump(json_ld_records, fp, indent=2)
-        print(f"Wrote {len(json_ld_records)} LD records -> {ld_output}")
     else:
         json.dump(original_records, sys.stdout, indent=2)
         print()

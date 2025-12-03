@@ -1,20 +1,87 @@
-{{ range (index .Site.Data "lots-structured") }}
-  {{ $content := dict 
-    "mediaType" "text/markdown"
-    "value" .description
-  }}
-  {{ $slug := .sku | lower }}
-  {{ $params := . }}
-  {{ warnf "Adding page: %s" $slug }}
-  {{ $.AddPage (dict 
-    "kind" "page"
-    "path" $slug 
-    "url" (printf "/lots/%s/" $slug)
-    "title" .name
-    "content" $content
-    "params" $params
-    "layout" "single"
-    "draft" false
-    "dates" (dict "date" (now))
-  ) }}
+{{ $lots := transform.Unmarshal (os.ReadFile "static/data/lots.json") }}
+{{ range $lots }}
+  {{ if ne (index . "Subdivision") "Section 3" }}
+    {{ $lat := 0.0 }}
+    {{ $lon := 0.0 }}
+    {{ if .Location }}
+      {{ $loc := split .Location ", " }}
+      {{ if eq (len $loc) 2 }}
+        {{ $lat = float (index $loc 0) }}
+        {{ $lon = float (index $loc 1) }}
+      {{ end }}
+    {{ end }}
+
+    {{ $size := index . "Size [sqft]" }}
+    {{ $sizeStr := "Unknown" }}
+    {{ if $size }}
+      {{ $sizeStr = printf "%.1f sqft" (float $size) }}
+    {{ else }}
+      {{ $sizeStr = "Unknown sqft" }}
+    {{ end }}
+
+    {{ $status := index . "Lot Status" }}
+    {{ $price := index . "List Price" }}
+    
+    {{ $sku := replace .Name " " "-" }}
+    {{ $slug := lower $sku }}
+    
+    {{ $desc := printf "Lot %s in Lago Bello, %s, status: %s" .Name $sizeStr $status }}
+
+    {{ $offers := dict }}
+    {{ if and (or (eq $status "Listed") (eq $status "Available")) $price }}
+        {{ $seller := dict }}
+        {{ if index . "Listing Agent" }}
+            {{ $seller = dict "@type" "Organization" "name" (index . "Listing Agent") }}
+        {{ end }}
+        {{ $offers = dict 
+            "@type" "Offer" 
+            "url" (printf "https://www.lagobello.com/lots/%s/" $slug)
+            "price" $price 
+            "priceCurrency" "USD" 
+            "availability" "https://schema.org/InStock"
+        }}
+        {{ if $seller }}{{ $offers = merge $offers (dict "seller" $seller) }}{{ end }}
+    {{ else if eq $status "Sold" }}
+        {{ $offers = dict 
+            "@type" "Offer" 
+            "url" (printf "https://www.lagobello.com/lots/%s/" $slug)
+            "availability" "https://schema.org/Sold"
+        }}
+    {{ end }}
+
+    {{ $geo := dict "@type" "GeoCoordinates" }}
+    {{ if ne $lat 0.0 }}{{ $geo = merge $geo (dict "latitude" $lat "longitude" $lon) }}{{ end }}
+
+    {{ $params := dict 
+        "@context" "https://schema.org"
+        "@type" "Product"
+        "name" .Name
+        "description" $desc
+        "url" (printf "https://www.lagobello.com/lots/%s/" $slug)
+        "image" (slice "https://www.lagobello.com/img/lago-logo-500-500.png")
+        "sku" $sku
+        "brand" (dict "@type" "Brand" "name" "Lago Bello")
+        "address" (dict "@type" "PostalAddress" "addressLocality" "Brownsville" "addressRegion" "TX" "addressCountry" "US")
+        "geo" $geo
+        "additionalProperty" (slice 
+            (dict "@type" "PropertyValue" "name" "Size" "value" $sizeStr)
+            (dict "@type" "PropertyValue" "name" "Close To" "value" (index . "Close-to"))
+        )
+    }}
+    
+    {{ if $offers }}{{ $params = merge $params (dict "offers" $offers) }}{{ end }}
+
+    {{ warnf "Adding page: %s" $slug }}
+    {{ $.AddPage (dict 
+      "kind" "page"
+      "path" $slug 
+      "url" (printf "/lots/%s/" $slug)
+      "title" .Name
+      "content" (dict "mediaType" "text/markdown" "value" $desc)
+      "params" $params
+      "layout" "single"
+      "draft" false
+      "dates" (dict "date" (now))
+    ) }}
+  {{ end }}
 {{ end }}
