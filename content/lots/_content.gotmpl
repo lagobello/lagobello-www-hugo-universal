@@ -67,6 +67,9 @@
             (dict "@type" "PropertyValue" "name" "Size" "value" $sizeStr)
             (dict "@type" "PropertyValue" "name" "Close To" "value" (index . "Close-to"))
         )
+        "subdivision" (index . "Subdivision")
+        "close_to" (index . "Close-to")
+        "size_sqft" $size
     }}
     
     {{ if $offers }}{{ $params = merge $params (dict "offers" $offers) }}{{ end }}
