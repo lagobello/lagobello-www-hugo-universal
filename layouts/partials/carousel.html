@@ -1,0 +1,78 @@
+{{ if default true .Site.Params.CarouselHomepage.enable }}
+<!-- DEBUG: Carousel Enabled -->
+{{ $lots := transform.Unmarshal (os.ReadFile "static/data/lots.json") }}
+{{ if $lots }}
+<!-- DEBUG: Lots Data Found -->
+{{ $listed_lots := where $lots "Lot Status" "Listed" }}
+<!-- DEBUG: Listed Lots Count: {{ len $listed_lots }} -->
+{{ if gt (len $listed_lots) 0 }}
+<section>
+    <div class="home-carousel">
+        <div class="dark-mask"></div>
+        <div class="container">
+            <div class="homepage owl-carousel"
+                data-autoplay="{{ default true .Site.Params.CarouselHomepage.auto_play }}"
+                data-slide-speed="{{ default 2000 .Site.Params.CarouselHomepage.slide_speed }}"
+                data-pagination-speed="{{ default 1000 .Site.Params.CarouselHomepage.pagination_speed }}">
+                {{ range $listed_lots }}
+                <div class="item">
+                    {{ $url := printf "/lots/%s/" (.Name | urlize) }}
+                    <a href="{{ $url }}" title="{{ .Name }}">
+                        <div class="row">
+                            <div class="col-sm-5 right">
+                                <h1>{{ .Name }}</h1>
+                                <div class="content">
+                                    <p class="author-category">
+                                        {{ if index . "List Price" }}
+                                        <span class="text-primary" style="font-weight: bold; font-size: 1.5em;">${{
+                                            printf "%.0f" (float (default 0 (index . "List Price"))) }}</span>
+                                        {{ else }}
+                                        <span class="text-muted">Price upon request</span>
+                                        {{ end }}
+                                    </p>
+                                    <ul class="list-style-none" style="font-size: 1.1em; margin-bottom: 20px;">
+                                        <li><strong>Subdivision:</strong> {{ .Subdivision }}</li>
+                                        {{ if index . "Size [sqft]" }}<li><strong>Size:</strong> {{ printf "%.0f" (float
+                                            (default 0 (index . "Size [sqft]"))) }} SqFt</li>{{ end }}
+                                        {{ if index . "Close-to" }}<li><strong>Feature:</strong> Close to {{ index .
+                                            "Close-to" }}</li>{{ end }}
+                                    </ul>
+                                    <p>
+                                        <a href="{{ $url }}" class="btn btn-template-main">View Details</a>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-sm-7">
+                                {{ $streetViewUrl := "" }}
+                                {{ $location := index . "Location" }}
+                                {{ if and $location $.Site.Params.googleMapsApiKey }}
+                                {{ $coords := split $location ", " }}
+                                {{ if eq (len $coords) 2 }}
+                                {{ $lat := index $coords 0 }}
+                                {{ $lng := index $coords 1 }}
+                                {{ $streetViewUrl = printf
+                                "https://maps.googleapis.com/maps/api/streetview?size=600x400&location=%s,%s&fov=90&pitch=0&return_error_code=true&key=%s"
+                                $lat $lng $.Site.Params.googleMapsApiKey }}
+                                {{ end }}
+                                {{ end }}
+                                <img class="img-responsive"
+                                    src="{{ if $streetViewUrl }}{{ $streetViewUrl }}{{ else }}img/carousel/lots-drawn.png{{ end }}"
+                                    alt="{{ .Name }}"
+                                    onerror="this.onerror=null;this.src='img/carousel/lots-drawn.png';">
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {{ end }}
+            </div>
+            <!-- /.project owl-slider -->
+        </div>
+    </div>
+</section>
+{{ else }}
+<!-- DEBUG: No Listed Lots Found -->
+{{ end }}
+{{ else }}
+<!-- DEBUG: Lots Data NOT Found -->
+{{ end }}
+{{ end }}
