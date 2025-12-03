@@ -76,12 +76,22 @@
                                     FOR SALE
                                 </div>
 
+                                {{ $slug := .Name | urlize }}
+                                {{ $localImg := printf "img/lots/%s.jpg" $slug }}
+                                {{ $hasLocalImg := fileExists (printf "static/%s" $localImg) }}
+
                                 <a href="{{ $url }}" title="{{ .Name }}">
+                                    {{ if $hasLocalImg }}
                                     <img class="img-responsive"
-                                        style="box-shadow: 5px 5px 15px rgba(0,0,0,0.3); max-height: 300px; width: 100%; object-fit: cover;"
+                                        style="box-shadow: 5px 5px 15px rgba(0,0,0,0.3); max-height: 450px; width: 100%; object-fit: cover;"
+                                        src="/{{ $localImg }}" alt="{{ .Name }}">
+                                    {{ else }}
+                                    <img class="img-responsive"
+                                        style="box-shadow: 5px 5px 15px rgba(0,0,0,0.3); max-height: 450px; width: 100%; object-fit: cover;"
                                         src="{{ if $streetViewUrl }}{{ $streetViewUrl }}{{ else }}img/placeholder-home.png{{ end }}"
                                         alt="{{ .Name }}"
                                         onerror="this.onerror=null;this.src='img/placeholder-home.png';">
+                                    {{ end }}
                                 </a>
 
                                 {{ if $logo }}
