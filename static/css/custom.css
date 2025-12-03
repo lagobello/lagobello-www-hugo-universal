@@ -23,11 +23,14 @@
 }
 
 /* Adjust sticky navbar if needed */
+/* Adjust sticky navbar if needed */
+/* Logo resizing removed to keep fixed size */
 .navbar-affixed-top.affix .navbar-brand img {
-    max-height: 40px;
-    /* Shrink on scroll */
+    /* max-height: 40px; */
+    /* Shrink on scroll - DISABLED */
 }
 
 .navbar-affixed-top.affix .navbar {
-    min-height: 60px;
+    /* min-height: 60px; */
+    /* DISABLED */
 }
