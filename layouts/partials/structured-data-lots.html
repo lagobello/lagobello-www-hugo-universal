@@ -1,4 +1,78 @@
-{{ $data := index .Site.Data "lots-structured" }}
-{{ range $listing := $data }}
-{{ (printf "<script type=\"application/ld+json\">%s</script>" ($listing | jsonify)) | safeHTML }}
+{{ $lots := transform.Unmarshal (os.ReadFile "static/data/lots.json") }}
+{{ range $lots }}
+{{ if ne (index . "Subdivision") "Section 3" }}
+{{ $size := index . "Size [sqft]" }}
+{{ $sizeStr := "Unknown" }}
+{{ if $size }}
+{{ $sizeStr = printf "%.1f sqft" (float $size) }}
+{{ else }}
+{{ $sizeStr = "Unknown sqft" }}
+{{ end }}
+
+{{ $status := index . "Lot Status" }}
+{{ $price := index . "List Price" }}
+
+{{ $sku := replace .Name " " "-" }}
+{{ $slug := lower $sku }}
+
+{{ $desc := printf "Lot %s in Lago Bello, %s, status: %s" .Name $sizeStr $status }}
+
+{{ $lat := 0.0 }}
+{{ $lon := 0.0 }}
+{{ if .Location }}
+{{ $loc := split .Location ", " }}
+{{ if eq (len $loc) 2 }}
+{{ $lat = float (index $loc 0) }}
+{{ $lon = float (index $loc 1) }}
+{{ end }}
+{{ end }}
+
+{{ $offers := dict }}
+{{ if and (or (eq $status "Listed") (eq $status "Available")) $price }}
+{{ $seller := dict }}
+{{ if index . "Listing Agent" }}
+{{ $seller = dict "@type" "Organization" "name" (index . "Listing Agent") }}
+{{ end }}
+{{ $offers = dict
+"@type" "Offer"
+"url" (printf "https://www.lagobello.com/lots/%s/" $slug)
+"price" $price
+"priceCurrency" "USD"
+"availability" "https://schema.org/InStock"
+}}
+{{ if $seller }}{{ $offers = merge $offers (dict "seller" $seller) }}{{ end }}
+{{ else if eq $status "Sold" }}
+{{ $offers = dict
+"@type" "Offer"
+"url" (printf "https://www.lagobello.com/lots/%s/" $slug)
+"availability" "https://schema.org/Sold"
+}}
+{{ end }}
+
+{{ $geo := dict "@type" "GeoCoordinates" }}
+{{ if ne $lat 0.0 }}{{ $geo = merge $geo (dict "latitude" $lat "longitude" $lon) }}{{ end }}
+
+{{ $jsonLd := dict
+"@context" "https://schema.org"
+"@type" "Product"
+"name" .Name
+"description" $desc
+"url" (printf "https://www.lagobello.com/lots/%s/" $slug)
+"image" (slice "https://www.lagobello.com/img/lago-logo-500-500.png")
+"sku" $sku
+"brand" (dict "@type" "Brand" "name" "Lago Bello")
+"address" (dict "@type" "PostalAddress" "addressLocality" "Brownsville" "addressRegion" "TX" "addressCountry" "US")
+"geo" $geo
+"additionalProperty" (slice
+(dict "@type" "PropertyValue" "name" "Size" "value" $sizeStr)
+(dict "@type" "PropertyValue" "name" "Close To" "value" (index . "Close-to"))
+)
+}}
+
+{{ if $offers }}{{ $jsonLd = merge $jsonLd (dict "offers" $offers) }}{{ end }}
+
+<script type="application/ld+json">
+    {{ $jsonLd | jsonify | safeJS }}
+    </script>
+{{ end }}
 {{ end }}
