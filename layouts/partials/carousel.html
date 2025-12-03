@@ -7,8 +7,9 @@
 <!-- DEBUG: Listed Lots Count: {{ len $listed_lots }} -->
 {{ if gt (len $listed_lots) 0 }}
 <section>
-    <div class="home-carousel">
-        <div class="dark-mask"></div>
+    <div class="home-carousel"
+        style="background-image: url('img/lago-gate-2025-cropped.jpg'); background-size: cover; background-position: center;">
+        <div class="dark-mask" style="background: rgba(50, 50, 50, 0.8);"></div>
         <div class="container">
             <div class="homepage owl-carousel"
                 data-autoplay="{{ default true .Site.Params.CarouselHomepage.auto_play }}" data-slide-speed="4000"
@@ -71,35 +72,38 @@
                             {{ end }}
 
                             <div style="position: relative; padding: 25px;">
-                                <div class="custom-ribbon"
-                                    style="position: absolute; top: 20px; right: 20px; background-image: url('/img/red-banner.png'); background-size: cover; background-position: center; color: white; padding: 15px 40px; font-weight: 900; z-index: 20; text-transform: uppercase; letter-spacing: 0.15em; font-size: 1.2em; text-align: center; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 80%, 0% 100%); box-shadow: 0 5px 15px rgba(0,0,0,0.4);">
-                                    FOR SALE
-                                </div>
+                                <div style="position: relative; width: 80%; margin-left: 60px;">
+                                    <div class="custom-ribbon"
+                                        style="position: absolute; top: 20px; right: -10px; background-image: url('/img/red-banner.png'); background-size: cover; background-position: center; color: white; padding: 15px 40px; font-weight: 900; z-index: 20; text-transform: uppercase; letter-spacing: 0.15em; font-size: 1.2em; text-align: center; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 80%, 0% 100%); box-shadow: 0 5px 15px rgba(0,0,0,0.4);">
+                                        FOR SALE
+                                    </div>
 
-                                {{ $slug := .Name | urlize }}
-                                {{ $localImg := printf "img/lots/%s.jpg" $slug }}
-                                {{ $hasLocalImg := fileExists (printf "static/%s" $localImg) }}
+                                    {{ $slug := .Name | urlize }}
+                                    {{ $localImg := printf "img/lots/%s.jpg" $slug }}
+                                    {{ $hasLocalImg := fileExists (printf "static/%s" $localImg) }}
 
-                                <a href="{{ $url }}" title="{{ .Name }}">
-                                    {{ if $hasLocalImg }}
-                                    <img class="img-responsive"
-                                        style="box-shadow: 5px 5px 15px rgba(0,0,0,0.3); max-height: 450px; width: 100%; object-fit: cover;"
-                                        src="/{{ $localImg }}" alt="{{ .Name }}">
-                                    {{ else }}
-                                    <img class="img-responsive"
-                                        style="box-shadow: 5px 5px 15px rgba(0,0,0,0.3); max-height: 450px; width: 100%; object-fit: cover;"
-                                        src="{{ if $streetViewUrl }}{{ $streetViewUrl }}{{ else }}img/placeholder-home.png{{ end }}"
-                                        alt="{{ .Name }}"
-                                        onerror="this.onerror=null;this.src='img/placeholder-home.png';">
+                                    <a href="{{ $url }}" title="{{ .Name }}">
+                                        {{ if $hasLocalImg }}
+                                        <img class="img-responsive"
+                                            style="box-shadow: 5px 5px 15px rgba(0,0,0,0.3); max-height: 450px; width: 100%; object-fit: cover; border: 10px solid white;"
+                                            src="/{{ $localImg }}" alt="{{ .Name }}">
+                                        {{ else }}
+                                        <img class="img-responsive"
+                                            style="box-shadow: 5px 5px 15px rgba(0,0,0,0.3); max-height: 450px; width: 100%; object-fit: cover; border: 10px solid white;"
+                                            src="{{ if $streetViewUrl }}{{ $streetViewUrl }}{{ else }}img/placeholder-home.png{{ end }}"
+                                            alt="{{ .Name }}"
+                                            onerror="this.onerror=null;this.src='img/placeholder-home.png';">
+                                        {{ end }}
+                                    </a>
+
+                                    {{ if $logo }}
+                                    <div
+                                        style="position: absolute; bottom: 20px; right: 20px; z-index: 10; background-color: rgba(255,255,255,0.9); padding: 5px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                        <img src="/img/realtors/{{ $logo }}" alt="{{ $firm }}"
+                                            style="height: 40px; width: auto;">
+                                    </div>
                                     {{ end }}
-                                </a>
-
-                                {{ if $logo }}
-                                <div
-                                    style="position: absolute; bottom: 10px; right: 10px; z-index: 10; background-color: rgba(255,255,255,0.9); padding: 5px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
-                                    <img src="/img/realtors/{{ $logo }}" alt="{{ $firm }}" style="max-height: 40px;">
                                 </div>
-                                {{ end }}
                             </div>
                         </div>
                     </div>
