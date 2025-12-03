@@ -1,9 +1,4 @@
 weight: 2
 title: "52 Residential Lots"
-description: >
-  <ul class="list-style-none">
-     <li>Varying sizes to meet different budgets</li>
-     <li>Brand-new utility installations for a low-maintenance future</li>
-     <li>There are a limited-amount of lots available! Call now!</li>
-   </ul>
+
 image: "img/carousel/lots-drawn.png"
