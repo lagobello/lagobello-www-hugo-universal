@@ -1,0 +1,16 @@
+<!-- Sale Configuration -->
+<script>
+    window.saleConfig = {
+    { { if .Site.Params.sale_config } }
+    enable: { { if .Site.Params.sale_config.enable } } true{ { else } } false{ { end } },
+    name: "{{ .Site.Params.sale_config.name }}",
+        percentage: { { .Site.Params.sale_config.percentage } },
+    location_filter: "{{ .Site.Params.sale_config.location_filter }}"
+    { { else } }
+    enable: false,
+        name: "",
+            percentage: 0,
+                location_filter: ""
+    { { end } }
+  };
+</script>

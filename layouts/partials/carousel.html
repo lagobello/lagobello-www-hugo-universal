@@ -31,8 +31,29 @@
 
                                 <p class="author-category">
                                     {{ if index . "List Price" }}
-                                    <span style="font-weight: bold; font-size: 1.5em; color: #ffffff;">${{
-                                        printf "%.0f" (float (default 0 (index . "List Price"))) }}</span>
+                                    {{ $listPrice := float (default 0 (index . "List Price")) }}
+                                    {{ if $.Site.Params.sale_config.enable }}
+                                    {{ $saleActive := true }}
+                                    {{ if $.Site.Params.sale_config.location_filter }}
+                                    {{ if ne $closeTo $.Site.Params.sale_config.location_filter }}
+                                    {{ $saleActive = false }}
+                                    {{ end }}
+                                    {{ end }}
+
+                                    {{ if $saleActive }}
+                                    {{ $salePrice := mul $listPrice (sub 1 $.Site.Params.sale_config.percentage) }}
+                                    <span style="font-weight: bold; font-size: 1.5em; color: red;">${{ printf "%.0f"
+                                        $salePrice }}</span>
+                                    <span style="text-decoration: line-through; color: #ccc; margin-left: 10px;">${{
+                                        printf "%.0f" $listPrice }}</span>
+                                    {{ else }}
+                                    <span style="font-weight: bold; font-size: 1.5em; color: #ffffff;">${{ printf "%.0f"
+                                        $listPrice }}</span>
+                                    {{ end }}
+                                    {{ else }}
+                                    <span style="font-weight: bold; font-size: 1.5em; color: #ffffff;">${{ printf "%.0f"
+                                        $listPrice }}</span>
+                                    {{ end }}
                                     {{ else }}
                                     <span class="text-muted">Price upon request</span>
                                     {{ end }}

@@ -882,7 +882,17 @@ var retrieveFeatureInfoTable = function (evt) {
 
   var parcelLegalDesc = (matchedLot && matchedLot.Name) ? matchedLot.Name : (geoJsonFeatureIdentifier || 'N/A');
   var status = matchedLot && matchedLot["Lot Status"] ? matchedLot["Lot Status"] : (feature.get('status') || 'N/A');
-  var listPrice = matchedLot && matchedLot["List Price"] ? `$${parseFloat(matchedLot["List Price"]).toLocaleString()}` : 'N/A';
+  var listPriceVal = matchedLot && matchedLot["List Price"] ? parseFloat(matchedLot["List Price"]) : null;
+  var listPrice = listPriceVal ? `$${listPriceVal.toLocaleString()}` : 'N/A';
+
+  var saleActive = window.saleConfig && window.saleConfig.enable;
+  var priceDisplay = listPrice;
+
+  if (saleActive && listPriceVal) {
+    var salePriceVal = listPriceVal * (1 - window.saleConfig.percentage);
+    var salePrice = `$${salePriceVal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+    priceDisplay = `<span style="color: red; font-weight: bold;">${salePrice}</span> <span style="text-decoration: line-through; font-size: 0.9em;">${listPrice}</span>`;
+  }
   var sqFootage = matchedLot && matchedLot["Size [sqft]"] ? `${parseFloat(matchedLot["Size [sqft]"]).toLocaleString()} sqft` : 'N/A';
   var listingAgent = matchedLot && matchedLot["Listing Agent"] ? matchedLot["Listing Agent"] : 'N/A';
   var listingAgentPhone = matchedLot && matchedLot["Listing Agent Phone Number"] ? String(matchedLot["Listing Agent Phone Number"]) : 'N/A';
@@ -939,7 +949,7 @@ var retrieveFeatureInfoTable = function (evt) {
         <div class="popup-section-title main-title">${titleHtml}</div>
         <table style="width:100%">
           <tr><td>Status</td><td><code>${status}</code></td></tr>
-          <tr><td>List Price</td><td><code>${listPrice}</code></td></tr>
+          <tr><td>Price</td><td><code>${priceDisplay}</code></td></tr>
           <tr><td>Size</td><td><code>${sqFootage}</code></td></tr>
           <tr><td>Listing Agent</td><td><code>${listingAgent}</code></td></tr>
           <tr><td>Agent Phone</td><td><code>${listingAgentPhone}</code> ${callNowButton}</td></tr>

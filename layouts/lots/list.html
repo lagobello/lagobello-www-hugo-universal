@@ -117,8 +117,32 @@
                                         <h4><a href="{{ .Permalink }}">{{ .Title }}</a></h4>
                                         <p class="author-category">
                                             {{ if .Params.offers.price }}
+                                            {{ $listPrice := float (default 0 .Params.offers.price) }}
+                                            {{ if $.Site.Params.sale_config.enable }}
+                                            {{ $saleActive := true }}
+                                            {{ if $.Site.Params.sale_config.location_filter }}
+                                            {{ $closeTo := .Params.close_to }}
+                                            {{ if ne $closeTo $.Site.Params.sale_config.location_filter }}
+                                            {{ $saleActive = false }}
+                                            {{ end }}
+                                            {{ end }}
+
+                                            {{ if $saleActive }}
+                                            {{ $salePrice := mul $listPrice (sub 1 $.Site.Params.sale_config.percentage)
+                                            }}
+                                            <span class="text-danger" style="font-weight: bold; font-size: 1.2em;">${{
+                                                printf "%.0f" $salePrice }}</span>
+                                            <span class="text-muted"
+                                                style="text-decoration: line-through; margin-left: 10px;">${{ $listPrice
+                                                }}</span>
+                                            {{ else }}
                                             <span class="text-primary" style="font-weight: bold; font-size: 1.2em;">${{
-                                                .Params.offers.price }}</span>
+                                                $listPrice }}</span>
+                                            {{ end }}
+                                            {{ else }}
+                                            <span class="text-primary" style="font-weight: bold; font-size: 1.2em;">${{
+                                                $listPrice }}</span>
+                                            {{ end }}
                                             {{ else }}
                                             <span class="text-muted">Price upon request</span>
                                             {{ end }}

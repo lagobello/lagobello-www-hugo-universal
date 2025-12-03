@@ -198,9 +198,17 @@ function renderTableBody(lotsToRender) {
       }
     }
 
-    if (tableDisplayState.mode === 'black-friday') {
-      var salePriceVal = listPriceVal * 0.9;
-      var salePrice = !isNaN(salePriceVal) ? `$${salePriceVal.toLocaleString()}` : 'N/A';
+    // Check sale config
+    var saleActive = window.saleConfig && window.saleConfig.enable;
+    if (saleActive && window.saleConfig.location_filter) {
+      if (val["Close-to"] !== window.saleConfig.location_filter) {
+        saleActive = false;
+      }
+    }
+
+    if (saleActive) {
+      var salePriceVal = listPriceVal * (1 - window.saleConfig.percentage);
+      var salePrice = !isNaN(salePriceVal) ? `$${salePriceVal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : 'N/A';
 
       // Add Sale Price to val for sorting
       val['Sale Price'] = salePriceVal;
@@ -302,7 +310,10 @@ function makeListingsTable(url, options) {
     var items = []; // Initialize items array
 
     var tableHeadersHtml = '';
-    if (options.mode === 'black-friday') {
+    var tableHeadersHtml = '';
+    var saleActive = window.saleConfig && window.saleConfig.enable;
+
+    if (saleActive) {
       tableHeadersHtml = `
           <thead>
             <tr>
@@ -388,8 +399,9 @@ function makeListingsTable(url, options) {
     });
 
     // Filter dropdown listeners
-    $('#header-filter-status, #header-filter-location').off('change').on('change', function (e) {
-      e.stopPropagation(); // Prevent th click event if selects are inside th
+    $(document).on('change', '#header-filter-status, #header-filter-location', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
       tableDisplayState.filters.status = $('#header-filter-status').val();
       tableDisplayState.filters.location = $('#header-filter-location').val();
       applyFiltersAndSortAndRender();
