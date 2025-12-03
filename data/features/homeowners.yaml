@@ -1,8 +1,4 @@
-weight: 3
+weight: 5
 name: "Homeowners Association"
 icon: "fa-solid fa-users"
-description: >
-  <ul class="list-style-none">
-     <li>Registered non-profit HOA to serve our community and maintain common areas</li>
-     <li>Common areas: Entrance, fountain, caminata, and more</li>
-   </ul>
+description: "Our registered non-profit HOA is dedicated to serving the community and maintaining common areas. Enjoy beautifully landscaped entrances, fountains, and walking paths that enhance the quality of life for all residents."
