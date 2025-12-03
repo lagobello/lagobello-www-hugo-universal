@@ -132,8 +132,9 @@
                                                     {{ $phoneFormatted = printf "(%s) %s-%s" (substr $phoneStr 0 3)
                                                     (substr $phoneStr 3 3) (substr $phoneStr 6) }}
                                                     {{ end }}
-                                                    {{ $agentName := index $lotData "Listing Agent" }}
-                                                    {{ $agentFirstName := index (split ($agentName | default "Agent") " ") 0 }}                                                    <a href="tel:{{ $phoneStr }}" class="btn btn-success"
+                                                    {{ $agentName := index $lotData "Listing Agent" | default "Agent" }}
+                                                    {{ $agentFirstName := index (split $agentName " ") 0 }}
+                                                    <a href="tel:{{ $phoneStr }}" class="btn btn-success"
                                                         style="white-space: normal; line-height: 1.2; padding: 5px 10px; text-align: left;">
                                                         <div style="font-weight: bold;">Call {{ $agentFirstName }}</div>
                                                         <div style="font-size: 0.85em;">{{ $phoneFormatted }}</div>
@@ -205,6 +206,46 @@
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p class="lead">
+                                    {{ $size := index $lotData "Size [sqft]" }}
+                                    Discover the perfect canvas for your custom home with {{ .Title }} in the highly
+                                    sought-after {{ index $lotData "Subdivision" }} of the Lago Bello subdivision.
+                                    Spanning an impressive {{ printf "%.0f" (float (default 0 $size)) }} sq. ft., this
+                                    premium {{ index $lotData "Close-to" }}-Side lot offers serene views and ample space
+                                    for a sprawling estate and outdoor living area.
+                                </p>
+                                <p>
+                                    {{ $price := index $lotData "List Price" }}
+                                    Located at {{ .Title }}, you are perfectly positioned to enjoy the tranquility of
+                                    waterfront living while remaining just minutes away from local amenities and the
+                                    South Texas Medical High School.
+                                    Priced at ${{ printf "%.0f" (float (default 0 $price)) }}, this is a rare
+                                    opportunity to secure a prime piece of real estate in a rapidly growing community.
+                                    Don't just buy a lot; invest in a lifestyle.
+                                </p>
+                                <p>
+                                    Interested in this property? Reach out to {{ index $lotData "Listing Agent" |
+                                    default "our team" }} today to schedule a viewing or discuss financing options.
+                                    {{ $phoneRaw := index $lotData "Listing Agent Phone Number" }}
+                                    {{ if $phoneRaw }}
+                                    {{ $phoneStr := printf "%.0f" $phoneRaw }}
+                                    {{ if and (eq (len $phoneStr) 11) (hasPrefix $phoneStr "1") }}
+                                    {{ $phoneStr = substr $phoneStr 1 }}
+                                    {{ end }}
+                                    {{ $phoneFormatted := $phoneStr }}
+                                    {{ if eq (len $phoneStr) 10 }}
+                                    {{ $phoneFormatted = printf "(%s) %s-%s" (substr $phoneStr 0 3) (substr $phoneStr 3
+                                    3) (substr $phoneStr 6) }}
+                                    {{ end }}
+                                    📞 Call Now: <a href="tel:{{ $phoneStr }}">{{ $phoneFormatted }}</a>
+                                    {{ end }}
+                                </p>
+                                <hr>
                             </div>
                         </div>
 

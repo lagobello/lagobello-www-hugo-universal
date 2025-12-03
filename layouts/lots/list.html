@@ -114,7 +114,13 @@
                                             <span class="text-muted">Price upon request</span>
                                             {{ end }}
                                         </p>
-                                        <p class="intro">{{ .Params.description | truncate 100 }}</p>
+                                        <p class="intro">
+                                            {{ $closeTo := .Params.close_to }}
+                                            {{ $size := .Params.size_sqft }}
+                                            Build Your {{ if or (eq $closeTo "Lake") (eq $closeTo "Canal") }}Waterfront
+                                            Dream{{ else }}Dreamhouse{{ end }} in {{ .Params.subdivision }} – Over {{
+                                            printf "%.0f" (float (default 0 $size)) }} Sq. Ft.
+                                        </p>
                                         <p class="read-more">
                                             <a href="{{ .Permalink }}" class="btn btn-template-main">View Details</a>
                                         </p>
