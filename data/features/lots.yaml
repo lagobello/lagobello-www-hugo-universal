@@ -1,9 +1,4 @@
-weight: 5
-name: "52 Residential Lots"
+weight: 4
+name: "Modern Infrastructure"
 icon: "fa-solid fa-house-chimney"
-description: >
-  <ul class="list-style-none">
-     <li>Varying sizes to meet different budgets</li>
-     <li>Brand-new utility installations for a low-maintenance future</li>
-     <li>There are a limited-amount of lots available! Call now!</li>
-   </ul>
+description: "Choose from 52 residential lots of varying sizes to suit your budget. All lots feature brand-new underground utility installations, ensuring a clean aesthetic and low-maintenance future for your home."

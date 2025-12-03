@@ -1,10 +1,4 @@
-weight: 4
-name: "Excellent Location!"
+weight: 1
+name: "Prime Location"
 icon: "fa-solid fa-map-location-dot"
-description: >
-  <ul class="list-style-none">
-     <li>Located in Brownsville, on the border, by the sea!</li>
-     <li>Only a 30 minute drive to South Padre Island</li>
-     <li>Only a 20 minute drive to Mexico</li>
-     <li>Warm weather all-year long</li>
-   </ul>
+description: "Located in Brownsville, adjacent to I-69, we are perfectly positioned for easy access. Enjoy warm weather year-round with South Padre Island just 30 minutes away and Mexico only 20 minutes from your doorstep."

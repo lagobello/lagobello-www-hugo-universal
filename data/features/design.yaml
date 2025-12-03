@@ -1,10 +1,4 @@
-weight: 2
-name: "Classic and Contemporary Designs"
+weight: 3
+name: "Exquisite Design"
 icon: "fa-solid fa-paint-brush"
-description: >
-  <ul class="list-style-none">
-    <li>Clean and elegant design</li>
-    <li>Private lakeside community</li>
-    <li>Wide-open spaces to build the home of your dreams</li>
-    <li>Resort Style Homes with Owner Proposed Designs</li>
-  </ul>
+description: "Experience a private lakeside community with classic and contemporary designs. Our resort-style homes are set in wide-open spaces, allowing you to build a custom residence that reflects your personal style."
