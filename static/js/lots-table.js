@@ -218,21 +218,24 @@ function renderTableBody(lotsToRender) {
           </tr>`
       );
     } else {
+      var lotSlug = (val.Name || '').replace(/ /g, '-').toLowerCase();
+      var addressLink = val.Name ? `<a href="/lots/${lotSlug}/" style="color: inherit; text-decoration: underline;">${val.Name}</a>` : 'N/A';
+
       tableBodyItems.push(
         `<tr data-lot-name="${val.Name}" style="cursor:pointer;">
-            <td>${val.Name || 'N/A'}</td>
-            <td>${val["Lot Status"] || 'N/A'}</td>
-            <td>${val["Block Number"] || 'N/A'}</td>
-            <td>${val["Lot Number"] || 'N/A'}</td>
-            <td>${listPrice}</td>
-            <td>${sizeSqft}</td>
-            <td>${val["Listing Agent"] || 'N/A'}</td>
-            <td>${callNowButton}</td>
-            <td>${logoHtml}</td>
-            <td>${listingLinkHtml}</td>
-            <td>${val.Location || 'N/A'}</td>
-            <td>${val["Close-to"] || 'N/A'}</td>
-          </tr>`
+                  <td>${addressLink}</td>
+                  <td>${val["Lot Status"] || 'N/A'}</td>
+                  <td>${val["Block Number"] || 'N/A'}</td>
+                  <td>${val["Lot Number"] || 'N/A'}</td>
+                  <td>${listPrice}</td>
+                  <td>${sizeSqft}</td>
+                  <td>${val["Listing Agent"] || 'N/A'}</td>
+                  <td>${callNowButton}</td>
+                  <td>${logoHtml}</td>
+                  <td>${listingLinkHtml}</td>
+                  <td>${val.Location || 'N/A'}</td>
+                  <td>${val["Close-to"] || 'N/A'}</td>
+                </tr>`
       );
     }
   });
