@@ -103,8 +103,6 @@ pagerSize = 10
     # Style options: default (light-blue), blue, green, marsala, pink, red, turquoise, violet
     style = "default"
 
-    # Enable Black Friday Sale
-    black_friday = true
 
     # Since this template is static, the contact form uses www.formspree.io as a
     # proxy. The form makes a POST request to their servers to send the actual
@@ -139,6 +137,13 @@ pagerSize = 10
       """
     latitude = "26.0497912"
     longitude = "-97.5522375"
+
+    # Sale Configuration
+    [params.sale_config]
+    enable = true
+    name = "Black Friday Sale"
+    percentage = 0.10
+    location_filter = "Lake"
 
 [Permalinks]
     blog = "/blog/:year/:month/:day/:contentbasename/"

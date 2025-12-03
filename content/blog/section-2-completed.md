@@ -19,4 +19,4 @@ Don't miss your chance to build your dream home in this exceptional community!
 
 {{< figure src="/img/blog/Lago Bello - Drone Overview Marked Up.jpg" alt="Lago Bello Drone Overview" title="Lago Bello Drone Overview" >}}
 
-{{< figure src="/img/blog/Lago Bello Section 2 Plat.tif" alt="Lago Bello Section 2 Plat" title="Lago Bello Section 2 Plat" >}}
+{{< figure src="/img/blog/Lago Bello Section 2 Plat.png" alt="Lago Bello Section 2 Plat" title="Lago Bello Section 2 Plat" >}}
