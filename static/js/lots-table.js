@@ -198,26 +198,39 @@ function renderTableBody(lotsToRender) {
       }
     }
 
-    // Check sale config
-    var saleActive = window.saleConfig && window.saleConfig.enable;
-    if (saleActive && window.saleConfig.location_filter) {
-      if (val["Close-to"] !== window.saleConfig.location_filter) {
-        saleActive = false;
+    // Check global sale config to determine table structure
+    var globalSaleActive = window.saleConfig && window.saleConfig.enable;
+
+    if (globalSaleActive) {
+      // 8-column Sale Layout
+      var lotQualifies = true;
+      if (window.saleConfig.location_filter && val["Close-to"] !== window.saleConfig.location_filter) {
+        lotQualifies = false;
       }
-    }
 
-    if (saleActive) {
-      var salePriceVal = listPriceVal * (1 - window.saleConfig.percentage);
-      var salePrice = !isNaN(salePriceVal) ? `$${salePriceVal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : 'N/A';
+      var salePriceDisplay = '-';
+      var listPriceDisplay = listPrice;
+      var salePriceStyle = '';
+      var listPriceStyle = '';
 
-      // Add Sale Price to val for sorting
-      val['Sale Price'] = salePriceVal;
+      if (lotQualifies) {
+        var salePriceVal = listPriceVal * (1 - window.saleConfig.percentage);
+        salePriceDisplay = !isNaN(salePriceVal) ? `$${salePriceVal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : 'N/A';
+        salePriceStyle = 'color: red; font-weight: bold;';
+        listPriceStyle = 'text-decoration: line-through;';
+
+        // Add Sale Price to val for sorting
+        val['Sale Price'] = salePriceVal;
+      } else {
+        // Ensure we don't break sorting if 'Sale Price' is missing
+        val['Sale Price'] = -1;
+      }
 
       tableBodyItems.push(
         `<tr data-lot-name="${val.Name}" style="cursor:pointer;">
             <td>${val.Name || 'N/A'}</td>
-            <td style="color: red; font-weight: bold;">${salePrice}</td>
-            <td style="text-decoration: line-through;">${listPrice}</td>
+            <td style="${salePriceStyle}">${salePriceDisplay}</td>
+            <td style="${listPriceStyle}">${listPriceDisplay}</td>
             <td>${sizeSqft}</td>
             <td>${val["Listing Agent"] || 'N/A'}</td>
             <td>${callNowButton}</td>
@@ -226,6 +239,7 @@ function renderTableBody(lotsToRender) {
           </tr>`
       );
     } else {
+      // 12-column Standard Layout
       var lotSlug = (val.Name || '').replace(/ /g, '-').toLowerCase();
       var addressLink = val.Name ? `<a href="/lots/${lotSlug}/" style="color: inherit; text-decoration: underline;">${val.Name}</a>` : 'N/A';
 
