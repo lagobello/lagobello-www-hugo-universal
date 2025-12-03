@@ -52,13 +52,25 @@
 {{ $geo := dict "@type" "GeoCoordinates" }}
 {{ if ne $lat 0.0 }}{{ $geo = merge $geo (dict "latitude" $lat "longitude" $lon) }}{{ end }}
 
+{{ $imgUrl := "https://www.lagobello.com/img/lago-logo-500-500.png" }}
+{{ $localImg := printf "img/lots/%s.jpg" $slug }}
+{{ if fileExists (printf "static/%s" $localImg) }}
+{{ $imgUrl = printf "https://www.lagobello.com/%s" $localImg }}
+{{ else }}
+{{ if and $lat $lon $.Site.Params.googleMapsApiKey }}
+{{ $imgUrl = printf
+"https://maps.googleapis.com/maps/api/streetview?size=600x400&location=%f,%f&fov=90&pitch=0&return_error_code=true&key=%s"
+$lat $lon $.Site.Params.googleMapsApiKey }}
+{{ end }}
+{{ end }}
+
 {{ $jsonLd := dict
 "@context" "https://schema.org"
 "@type" "Product"
 "name" .Name
 "description" $desc
 "url" (printf "https://www.lagobello.com/lots/%s/" $slug)
-"image" (slice "https://www.lagobello.com/img/lago-logo-500-500.png")
+"image" (slice $imgUrl)
 "sku" $sku
 "brand" (dict "@type" "Brand" "name" "Lago Bello")
 "address" (dict "@type" "PostalAddress" "addressLocality" "Brownsville" "addressRegion" "TX" "addressCountry" "US")
