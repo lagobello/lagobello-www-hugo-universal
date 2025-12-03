@@ -1,7 +1,7 @@
 {{ partial "sale_config.html" . }}
 <meta name="facebook-domain-verification" content="lw3ll2i6cyd3qid1buvozoqa6o33sd" />
-{{ if ne .Section "lots" }}
-{{ partial "json-ld-product" . }}
+{{ if and (eq .Section "lots") .IsPage }}
+{{ partial "json-ld-product.html" . }}
 {{ end }}
 <!-- Meta Pixel Code -->
 <script>
