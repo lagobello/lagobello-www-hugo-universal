@@ -926,11 +926,17 @@ var retrieveFeatureInfoTable = function (evt) {
     }
   }
 
+  var titleHtml = parcelLegalDesc;
+  if (matchedLot && matchedLot.Name) {
+    var slug = matchedLot.Name.replace(/ /g, '-').toLowerCase();
+    titleHtml = `<a href="/lots/${slug}/" style="color: inherit; text-decoration: underline;">${parcelLegalDesc}</a>`;
+  }
+
   var topLevelHtml = '';
   if (matchedLot) {
     topLevelHtml = `
       <div class="popup-section">
-        <div class="popup-section-title main-title">${parcelLegalDesc}</div>
+        <div class="popup-section-title main-title">${titleHtml}</div>
         <table style="width:100%">
           <tr><td>Status</td><td><code>${status}</code></td></tr>
           <tr><td>List Price</td><td><code>${listPrice}</code></td></tr>
