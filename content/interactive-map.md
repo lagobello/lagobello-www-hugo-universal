@@ -4,6 +4,7 @@ keywords = ["Lago Bello properties", "Lago Bello properties", "lots for sale", "
 title = "Discover Your Dream Property at Lago Bello: Interactive Map"
 type = "page"
 date = "2025-11-20"
+aliases = ["/properties/"]
 sitemap = { changefreq = "weekly", priority = 0.8 }
 +++
 
