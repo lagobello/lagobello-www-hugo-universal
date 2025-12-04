@@ -335,7 +335,7 @@ function makeListingsTable(url, options) {
               <th>Sale Price</th>
               <th>List Price</th>
               <th>Size (sqft)</th>
-              <th>Agent</th>
+              <th>Listing Agent</th>
               <th>Agent Phone</th>
               <th>Listing Firm</th>
               <th>Listing</th>
@@ -351,7 +351,7 @@ function makeListingsTable(url, options) {
               <th>Lot</th>
               <th>Price</th>
               <th>Size (sqft)</th>
-              <th>Agent</th>
+              <th>Listing Agent</th>
               <th>Agent Phone</th>
               <th>Listing Firm</th>
               <th>Listing</th>
