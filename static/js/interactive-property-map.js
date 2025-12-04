@@ -140,6 +140,17 @@ var layerMapboxSatellite = new ol.layer.Tile({
   source: new ol.source.XYZ({
     url: 'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/tiles/256/{z}/{x}/{y}?access_token=' + mapboxKey
   }),
+  visible: false,
+  opacity: 1.0
+});
+
+var layerGoogleHybrid = new ol.layer.Tile({
+  title: 'Google Maps Satellite',
+  type: 'base',
+  source: new ol.source.XYZ({
+    url: 'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+    attributions: '© Google'
+  }),
   visible: true,
   opacity: 1.0
 });
@@ -308,6 +319,7 @@ var layerVectorStreetS1 = new ol.layer.Vector({
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-ROW-S1.geojson'
   }),
   style: styleStreet,
+  visible: false,
   opacity: 0.8
 });
 
@@ -318,6 +330,7 @@ var layerVectorStreetS2 = new ol.layer.Vector({
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-ROW-S2.geojson'
   }),
   style: styleStreet,
+  visible: false,
   opacity: 0.8
 });
 
@@ -348,6 +361,7 @@ var layerVectorStreetAccess = new ol.layer.Vector({
     url: 'https://lagobello.github.io/lagobello-drawings/web/PLAT-HATCH-ROW-ACCESS.geojson'
   }),
   style: styleStreet,
+  visible: false,
   opacity: 0.8
 });
 
@@ -366,7 +380,7 @@ var layerVectorDrawings = new ol.layer.Vector({
 
 var olLayerGroupBasemaps = new ol.layer.Group({
   title: 'Base maps',
-  layers: [layerMapboxSatellite, layerOsmStreet]
+  layers: [layerMapboxSatellite, layerGoogleHybrid, layerOsmStreet]
 
 });
 
@@ -714,7 +728,7 @@ if (layerSwitcher && layerSwitcher.panel) {
         lyr.set('title', folder);
         lyr.set('type', 'overlay');
         olLayerGroupDrone.getLayers().push(lyr);
-        if (idx === folders.length - 1) lyr.setVisible(true);
+        // if (idx === folders.length - 1) lyr.setVisible(true);
       });
       layerSwitcher.renderPanel();
     })
