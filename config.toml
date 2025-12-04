@@ -35,7 +35,7 @@ pagerSize = 10
 
 [[menu.main]]
     name = "Interactive Map"
-    url  = "/properties/"
+    url  = "/interactive-map/"
     weight = 3
 
 [[menu.main]]
@@ -189,7 +189,7 @@ pagerSize = 10
     icon = "far fa-file-alt"
     title = "Do you want to see more?"
     subtitle = "We have prepared for you more than 52 different residential lots, with 5 different variations in positioning with respect to the lake.."
-    link_url = "properties"
+    link_url = "interactive-map"
     link_text = "Check our property lots"
 
 [params.clients]
