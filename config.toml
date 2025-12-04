@@ -7,7 +7,7 @@ languageCode = "en-us"
 # Site language. Available translations in the theme's `/i18n` directory.
 defaultContentLanguage = "en"
 # Enable Google Analytics by entering your tracking code
-googleAnalytics = "G-4QJX5C6RZR"
+# googleAnalytics = ""
 ignoreErrors = ["error-missing-instagram-accesstoken"]
 
 # Disable taxonomy pages since we don't use tags/categories
