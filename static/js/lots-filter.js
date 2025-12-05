@@ -4,7 +4,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function applyFilter(filterValue) {
         lotItems.forEach(item => {
-            if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
+            const category = item.getAttribute('data-category');
+            if (filterValue === 'all') {
+                item.style.display = 'block';
+            } else if (category === filterValue) {
                 item.style.display = 'block';
             } else {
                 item.style.display = 'none';
