@@ -1,7 +1,7 @@
 +++
 description = "How much does solar cost?"
 keywords = ["solar","energy","renewable","sustainable","ecological","solar-roof","calculator","NASA","irradiation","profitable"]
-title = "Solar"
+title = "Solar Calculator"
 date = "2019-12-07T00:17:08+01:00"
 draft = "false"
 banner = "img/tools/1-solarpanel.jpg"
