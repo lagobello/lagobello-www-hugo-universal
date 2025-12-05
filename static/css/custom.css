@@ -22,15 +22,38 @@
     /* Standard height */
 }
 
-/* Adjust sticky navbar if needed */
-/* Adjust sticky navbar if needed */
-/* Logo resizing removed to keep fixed size */
-.navbar-affixed-top.affix .navbar-brand img {
-    /* max-height: 40px; */
-    /* Shrink on scroll - DISABLED */
+/* Image overrides */
+.bar.background-image-fixed-2 {
+    background-image: url('../img/photographs/works-compressed.jpg') !important;
 }
 
-.navbar-affixed-top.affix .navbar {
-    /* min-height: 60px; */
-    /* DISABLED */
+.home-carousel {
+    background-image: url('../img/photographs/lago-gate-2025-cropped.jpg') !important;
+}
+
+#heading-breadcrumbs {
+    background-image: url('../img/texture-bw.png') !important;
+    background-size: auto !important;
+    background-repeat: repeat !important;
+    background-position: center center !important;
+}
+
+/* Remove underline from nav links except Black Friday Sale */
+#navigation .navbar-nav>li>a:not(.black-friday-nav-link) {
+    text-decoration: none !important;
+    border-bottom: none !important;
+}
+
+/* Reduce nav link padding to prevent overflow */
+#navigation .navbar-nav>li>a {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    font-size: 13px !important;
+}
+
+#navigation .navbar-nav>li>a:not(.black-friday-nav-link):hover,
+#navigation .navbar-nav>li>a:not(.black-friday-nav-link):focus,
+#navigation .navbar-nav>li.active>a:not(.black-friday-nav-link) {
+    text-decoration: none !important;
+    border-bottom: none !important;
 }
