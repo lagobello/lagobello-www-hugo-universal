@@ -17,11 +17,18 @@ Wake up to the gentle sounds of water and breathtaking sunrises. Lago Bello's wa
 *   **Premium Views:** Unobstructed vistas of the water and surrounding nature.
 *   **Tranquility:** A secluded retreat just minutes from the city.
 
-## Lake Ownership & Usage
+## The Lake
 
+Nestled at the heart of the community is a 16-acre fresh water lake, the only one of its kind in Brownsville. When full, at its deepest point it will be around 20 feet deep, permitting large non-combustion watercraft with an accompanying dock. Currently, the water level is maintained to only "resaca" depth to support construction activities.
+
+*   **Privately Owned:** The lake, streets, and Caminata are privately owned by the lot owners through the home owners association.
 *   **HOA Maintained:** The lake and retention wall are fully owned and maintained by the Home Owners Association, ensuring pristine conditions year-round.
 *   **Private Docks:** Homeowners have the right to build a private dock within the lake property at no additional charge.
 *   **Eco-Friendly:** To preserve the tranquility and environment, only combustion-free watercraft (electric boats, kayaks, paddleboards, sail boats) are permitted.
+
+## The Caminata
+
+Complementing the waterfront lifestyle is *The Caminata*, a scenic trail system that offers residents a perfect setting for walking, jogging, and enjoying the natural beauty of Lago Bello.
 
 ## Exclusive Gated Community
 

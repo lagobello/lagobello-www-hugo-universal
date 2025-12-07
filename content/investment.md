@@ -22,5 +22,10 @@ We have established relationships with local banks to facilitate:
 *   Lot Loans
 *   Construction-to-Permanent Loans
 *   Investment Property Loans
+*   Foreign National / International Borrower Loans
+
+## International Buyers
+
+We fully support international investors. Whether you are looking to build a vacation home or diversify your portfolio, we can assist with the unique requirements of foreign property ownership.
 
 Contact our sales team to discuss specific financial models and projected returns.
