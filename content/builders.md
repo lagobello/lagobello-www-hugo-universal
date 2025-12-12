@@ -23,6 +23,22 @@ Detailed technical data for construction and development at Lago Bello.
 *   **Setbacks:** Standard city setbacks apply (refer to plat map).
 *   **Soil Conditions:** Geotechnical reports available upon request.
 
+## Desirable Flood Zone Status
+
+*   **Lower Risk:** Located in Zones X and X (Shaded)—a distinct upgrade over typical Brownsville flood plains.
+*   **Lower Costs:** No federal mandate for flood insurance, potentially saving you thousands.
+*   **Secure Investment:** Buy where the water is less likely to go.
+
+*(Current as of 2025. Maps subject to change.)*
+
+<div class="row">
+    <div class="col-md-4">
+        <a href="/img/drawings/lagobello_flood_hazard_boundaries.png" data-toggle="lightbox" data-gallery="builders-gallery" data-title="Flood Hazard Boundaries">
+            <img src="/img/drawings/lagobello_flood_hazard_boundaries.png" alt="Flood Hazard Boundaries" class="img-responsive img-thumbnail">
+        </a>
+    </div>
+</div>
+
 ## Construction Guidelines
 
 *   **Architectural Control:** All plans must be approved by the Architectural Control Committee (ACC).
