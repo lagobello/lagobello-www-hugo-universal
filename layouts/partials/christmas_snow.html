@@ -1,0 +1,9 @@
+{{ if .Site.Params.christmas.enable }}
+<div id="snow-container">
+    {{ range seq 20 }}
+    <div class="snowflake">
+        <div class="snowflake-inner"></div>
+    </div>
+    {{ end }}
+</div>
+{{ end }}

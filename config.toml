@@ -203,3 +203,6 @@ pagerSize = 10
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+
+[params.christmas]
+    enable = true
