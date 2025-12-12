@@ -1,0 +1,36 @@
+{{ if .Site.Params.christmas.enable }}
+{{ $showTop := .top | default false }}
+{{ $showBottom := .bottom | default false }}
+
+<!-- Christmas Lights -->
+{{ if $showTop }}
+<div class="navbar-lights-container lights-top">
+    <div class="navbar-lights-wire-bg"></div>
+    <div class="lights-flex">
+        {{ range seq 26 }}
+        <div class="light-unit">
+            <div class="light-shadow"></div>
+            <div class="light-glow"></div>
+            <div class="light-socket"></div>
+            <div class="light-bulb"></div>
+        </div>
+        {{ end }}
+    </div>
+</div>
+{{ end }}
+
+{{ if $showBottom }}
+<div class="navbar-lights-container lights-bottom">
+    <div class="navbar-lights-wire-bg"></div>
+    <div class="lights-flex">
+        {{ range seq 26 }}
+        <div class="light-unit">
+            <div class="light-glow"></div>
+            <div class="light-socket"></div>
+            <div class="light-bulb"></div>
+        </div>
+        {{ end }}
+    </div>
+</div>
+{{ end }}
+{{ end }}

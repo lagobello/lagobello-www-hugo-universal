@@ -168,6 +168,12 @@
       </div>
       <!--/.nav-collapse -->
     </div>
+    <!--/.nav-collapse -->
+  </div>
+  <!-- Christmas Lights -->
+  {{ partial "christmas_snow.html" . }}
+  {{ partial "christmas_lights.html" (dict "Site" .Site "top" false "bottom" true) }}
+
   </div>
 </header>
 

@@ -57,3 +57,43 @@
     text-decoration: none !important;
     border-bottom: none !important;
 }
+
+/* Features Section - Modernization */
+.box-simple {
+    padding: 30px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    border: 1px solid #eee;
+}
+
+.box-simple:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.box-simple .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: #f8f9fa;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.box-simple:hover .icon {
+    background: #333;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.box-simple h3 {
+    margin-bottom: 15px;
+    font-weight: 600;
+}

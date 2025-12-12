@@ -1,0 +1,634 @@
+/* Christmas Theme Overrides */
+
+/* Prevent Horizontal Scroll */
+html,
+body {
+    overflow-x: hidden;
+}
+
+/* DOM-Based Snow System */
+#snow-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.snowflake {
+    position: absolute;
+    top: -10vh;
+    /* Start above screen */
+    width: 100px;
+    height: 100px;
+    /* Fall Animation: Moves vertically */
+    animation: snow-fall linear infinite;
+}
+
+.snowflake-inner {
+    width: 100%;
+    height: 100%;
+    background-image: url("/img/svg/snowflake.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    /* Glass / Glisten Effect */
+    opacity: 0.6;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.6));
+
+    /* Rotation & Glisten Animation */
+    animation:
+        snow-rotate linear infinite,
+        snow-glisten 3s ease-in-out infinite alternate;
+}
+
+@keyframes snow-fall {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(120vh);
+    }
+}
+
+@keyframes snow-rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes snow-glisten {
+    0% {
+        opacity: 0.4;
+        filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.4));
+    }
+
+    100% {
+        opacity: 0.9;
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
+    }
+}
+
+/* Randomization for 20 Flakes */
+.snowflake:nth-child(1) {
+    left: 5%;
+    animation-duration: 15s;
+    animation-delay: -2s;
+}
+
+.snowflake:nth-child(1) .snowflake-inner {
+    animation-duration: 4s, 3s;
+}
+
+.snowflake:nth-child(2) {
+    left: 12%;
+    animation-duration: 22s;
+    animation-delay: -8s;
+    transform: scale(0.8);
+}
+
+.snowflake:nth-child(2) .snowflake-inner {
+    animation-duration: 6s, 4s;
+    animation-direction: reverse, alternate;
+}
+
+.snowflake:nth-child(3) {
+    left: 18%;
+    animation-duration: 18s;
+    animation-delay: -12s;
+}
+
+.snowflake:nth-child(3) .snowflake-inner {
+    animation-duration: 5s, 2.5s;
+}
+
+.snowflake:nth-child(4) {
+    left: 25%;
+    animation-duration: 12s;
+    animation-delay: -5s;
+    transform: scale(1.2);
+}
+
+.snowflake:nth-child(4) .snowflake-inner {
+    animation-duration: 3s, 3s;
+    animation-direction: reverse, alternate;
+}
+
+.snowflake:nth-child(5) {
+    left: 32%;
+    animation-duration: 25s;
+    animation-delay: -15s;
+    transform: scale(0.6);
+}
+
+.snowflake:nth-child(5) .snowflake-inner {
+    animation-duration: 8s, 5s;
+}
+
+.snowflake:nth-child(6) {
+    left: 38%;
+    animation-duration: 16s;
+    animation-delay: -3s;
+}
+
+.snowflake:nth-child(6) .snowflake-inner {
+    animation-duration: 4.5s, 3.5s;
+    animation-direction: reverse, alternate;
+}
+
+.snowflake:nth-child(7) {
+    left: 45%;
+    animation-duration: 20s;
+    animation-delay: -10s;
+    transform: scale(0.9);
+}
+
+.snowflake:nth-child(7) .snowflake-inner {
+    animation-duration: 5.5s, 4s;
+}
+
+.snowflake:nth-child(8) {
+    left: 52%;
+    animation-duration: 14s;
+    animation-delay: -6s;
+    transform: scale(1.1);
+}
+
+.snowflake:nth-child(8) .snowflake-inner {
+    animation-duration: 3.5s, 2s;
+    animation-direction: reverse, alternate;
+}
+
+.snowflake:nth-child(9) {
+    left: 58%;
+    animation-duration: 23s;
+    animation-delay: -18s;
+    transform: scale(0.7);
+}
+
+.snowflake:nth-child(9) .snowflake-inner {
+    animation-duration: 7s, 6s;
+}
+
+.snowflake:nth-child(10) {
+    left: 65%;
+    animation-duration: 17s;
+    animation-delay: -9s;
+}
+
+.snowflake:nth-child(10) .snowflake-inner {
+    animation-duration: 5s, 3s;
+    animation-direction: reverse, alternate;
+}
+
+.snowflake:nth-child(11) {
+    left: 72%;
+    animation-duration: 13s;
+    animation-delay: -4s;
+    transform: scale(1.3);
+}
+
+.snowflake:nth-child(11) .snowflake-inner {
+    animation-duration: 3s, 2.5s;
+}
+
+.snowflake:nth-child(12) {
+    left: 78%;
+    animation-duration: 21s;
+    animation-delay: -14s;
+    transform: scale(0.5);
+}
+
+.snowflake:nth-child(12) .snowflake-inner {
+    animation-duration: 7.5s, 5.5s;
+    animation-direction: reverse, alternate;
+}
+
+.snowflake:nth-child(13) {
+    left: 85%;
+    animation-duration: 19s;
+    animation-delay: -1s;
+}
+
+.snowflake:nth-child(13) .snowflake-inner {
+    animation-duration: 5.2s, 3.2s;
+}
+
+.snowflake:nth-child(14) {
+    left: 92%;
+    animation-duration: 11s;
+    animation-delay: -7s;
+    transform: scale(1.15);
+}
+
+.snowflake:nth-child(14) .snowflake-inner {
+    animation-duration: 3.2s, 2.8s;
+    animation-direction: reverse, alternate;
+}
+
+.snowflake:nth-child(15) {
+    left: 8%;
+    animation-duration: 24s;
+    animation-delay: -16s;
+    transform: scale(0.85);
+}
+
+.snowflake:nth-child(15) .snowflake-inner {
+    animation-duration: 6.5s, 4.5s;
+}
+
+.snowflake:nth-child(16) {
+    left: 22%;
+    animation-duration: 15s;
+    animation-delay: -11s;
+}
+
+.snowflake:nth-child(16) .snowflake-inner {
+    animation-duration: 4.2s, 3.8s;
+    animation-direction: reverse, alternate;
+}
+
+.snowflake:nth-child(17) {
+    left: 42%;
+    animation-duration: 22s;
+    animation-delay: -19s;
+    transform: scale(0.65);
+}
+
+.snowflake:nth-child(17) .snowflake-inner {
+    animation-duration: 7.2s, 5.2s;
+}
+
+.snowflake:nth-child(18) {
+    left: 62%;
+    animation-duration: 13s;
+    animation-delay: -2s;
+}
+
+.snowflake:nth-child(18) .snowflake-inner {
+    animation-duration: 3.8s, 2.2s;
+    animation-direction: reverse, alternate;
+}
+
+.snowflake:nth-child(19) {
+    left: 82%;
+    animation-duration: 18s;
+    animation-delay: -13s;
+    transform: scale(1.05);
+}
+
+.snowflake:nth-child(19) .snowflake-inner {
+    animation-duration: 5.8s, 4.2s;
+}
+
+.snowflake:nth-child(20) {
+    left: 95%;
+    animation-duration: 26s;
+    animation-delay: -20s;
+    transform: scale(0.75);
+}
+
+.snowflake:nth-child(20) .snowflake-inner {
+    animation-duration: 8.5s, 6.5s;
+    animation-direction: reverse, alternate;
+}
+
+/* Festive Header Colors */
+/* Festive Header Colors */
+#top {
+    background: #228b22 !important;
+    /* Forest Green */
+    border-bottom: 2px solid #8b0000;
+    /* Dark Red */
+}
+
+.navbar-default .navbar-nav>.active>a,
+.navbar-default .navbar-nav>.active>a:hover,
+.navbar-default .navbar-nav>.active>a:focus {
+    background-color: #8b0000 !important;
+    /* Dark Red */
+    color: white !important;
+    border-color: #8b0000 !important;
+}
+
+/* Add a touch of holiday cheer to buttons */
+.btn-template-main {
+    background-color: #228b22;
+    border-color: #228b22;
+}
+
+.btn-template-main:hover {
+    background-color: #1a6b1a;
+    border-color: #1a6b1a;
+}
+
+/* Make the footer festive */
+#footer {
+    background: #1a2e1a !important;
+    /* Dark Green */
+    color: #e0f2f1;
+}
+
+#copyright {
+    background: #0f1c0f !important;
+}
+
+/* Festive Features */
+.box-simple {
+    border-color: #d4af37 !important;
+    /* Gold border */
+    background-color: #1a2e1a !important;
+    /* Dark Green Background */
+    color: #fff !important;
+    /* White Text */
+}
+
+.box-simple h3 {
+    color: #fff !important;
+}
+
+.box-simple .icon {
+    background: #fff !important;
+    /* White circle */
+    color: #8b0000 !important;
+    /* Dark Red Icon */
+}
+
+.box-simple:hover .icon {
+    background: #d4af37 !important;
+    /* Gold */
+    color: #1a2e1a !important;
+    /* Dark Green */
+}
+
+
+/* Navbar Blinking Lights */
+
+/* Navbar Blinking Lights - Ultra Realistic Style with SVGs */
+#navbar {
+    position: relative;
+    border-bottom: none !important;
+    overflow: visible;
+}
+
+
+/* Navbar Blinking Lights - Ultra Realistic Style with SVGs */
+#navbar {
+    position: relative;
+    border-bottom: none !important;
+    overflow: visible;
+}
+
+/* Shared Light Container */
+.navbar-lights-container {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    z-index: 2000;
+    pointer-events: none;
+    /* Center the lights */
+    display: flex;
+    justify-content: center;
+    overflow: visible;
+}
+
+/* Continuous Wire Background */
+.navbar-lights-wire-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    z-index: 1999;
+    background-image: url("/img/svg/christmas-wire.svg");
+    background-size: 100px 60px;
+    background-repeat: repeat-x;
+    /* Shift by 50px (half period) to align Low Point with Bulb Unit Centers */
+    background-position: calc(50% - 50px) top;
+    /* Animation sway for the wire */
+    animation: jiggle-wire 2s ease-in-out infinite alternate;
+}
+
+/* Flex Container for Units */
+.lights-flex {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    pointer-events: none;
+    /* Move with sway to match wire */
+    animation: jiggle-wire 2s ease-in-out infinite alternate;
+}
+
+/* Individual Light Unit (100px wide) */
+.light-unit {
+    position: relative;
+    width: 100px;
+    height: 60px;
+    flex-shrink: 0;
+    /* Pivot Point: Center X (50px), Wire Y (35px) */
+    transform-origin: 50% 35px;
+    /* Default Swing Animation - Faster & Wider */
+    animation: swing 1.5s infinite ease-in-out alternate;
+}
+
+/* "Up" Orientation (Even Units) */
+.light-unit:nth-child(even) {
+    /* Reverse Swing Logic for variety */
+    animation: swing 1.5s infinite ease-in-out alternate-reverse;
+}
+
+/* Internal Components */
+.light-socket,
+.light-bulb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 60px;
+    background-repeat: no-repeat;
+    background-position: center;
+    /* Pivot around Socket Center (~38px) so Flip keeps it on the wire (37.5px) */
+    transform-origin: 50% 38px;
+}
+
+.light-socket {
+    z-index: 2000;
+    background-image: url("/img/svg/christmas-socket.svg");
+}
+
+.light-bulb {
+    z-index: 2001;
+    -webkit-mask-image: url("/img/svg/christmas-bulb-mask.svg");
+    mask-image: url("/img/svg/christmas-bulb-mask.svg");
+    -webkit-mask-size: 100px 60px;
+    mask-size: 100px 60px;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+
+    /* Animation: Flash */
+    animation: flash 2s infinite;
+}
+
+/* "Up" Orientation Flip (Sockets/Bulbs only) */
+.light-unit:nth-child(even) .light-socket,
+.light-unit:nth-child(even) .light-bulb {
+    transform: scaleY(-1);
+}
+
+/* Glow Only (Shadow Removed) */
+.light-glow {
+    position: absolute;
+    left: 0;
+    width: 100px;
+    height: 300px;
+    /* Large canvas */
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+}
+
+.light-glow {
+    z-index: 2002;
+    top: -150px;
+    /* Pivots around center */
+
+    -webkit-mask-image: url("/img/svg/christmas-glow.svg");
+    mask-image: url("/img/svg/christmas-glow.svg");
+    -webkit-mask-size: 100px 300px;
+    mask-size: 100px 300px;
+
+    mix-blend-mode: screen;
+}
+
+/* Adjust Glow for "Up" Units */
+.light-unit:nth-child(even) .light-glow {
+    top: -180px;
+}
+
+
+/* Colors (Cyclical Pattern) */
+/* 1: Red */
+.light-unit:nth-child(4n+1) .light-bulb,
+.light-unit:nth-child(4n+1) .light-glow {
+    background-color: red;
+}
+
+/* 2: Gold */
+.light-unit:nth-child(4n+2) .light-bulb,
+.light-unit:nth-child(4n+2) .light-glow {
+    background-color: gold;
+}
+
+/* 3: Green */
+.light-unit:nth-child(4n+3) .light-bulb,
+.light-unit:nth-child(4n+3) .light-glow {
+    background-color: green;
+}
+
+/* 4: Blue */
+.light-unit:nth-child(4n+4) .light-bulb,
+.light-unit:nth-child(4n+4) .light-glow {
+    background-color: blue;
+}
+
+/* Global Positioning */
+.lights-bottom {
+    bottom: -40px;
+    background-position: 0 bottom;
+}
+
+.lights-top {
+    top: -25px;
+    background-position: 0 top;
+}
+
+/* Animations */
+@keyframes flash {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3)) brightness(1);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)) brightness(1.4);
+    }
+}
+
+/* Faster, Jittery Wire Movement */
+@keyframes jiggle-wire {
+    0% {
+        transform: translateX(0) skewX(0);
+    }
+
+    25% {
+        transform: translateX(1px) skewX(-1deg);
+    }
+
+    50% {
+        transform: translateX(-1px) skewX(0.5deg);
+    }
+
+    75% {
+        transform: translateX(0.5px) skewX(1deg);
+    }
+
+    100% {
+        transform: translateX(-0.5px) skewX(-0.5deg);
+    }
+}
+
+/* Wider, Faster Bulb Swing */
+@keyframes swing {
+    0% {
+        transform: rotate(-12deg);
+    }
+
+    100% {
+        transform: rotate(12deg);
+    }
+}
+
+
+/* --- CHAOS ENGINE: Randomize Lights --- */
+
+/* Modulo 2: Speed Variation */
+.light-unit:nth-child(2n) {
+    animation-duration: 1.7s;
+}
+
+/* Modulo 3: Speed + Jittery Phase */
+.light-unit:nth-child(3n) {
+    animation-duration: 1.3s;
+    animation-delay: -0.5s;
+}
+
+/* Modulo 5: Extra Fast & Out of Phase */
+.light-unit:nth-child(5n) {
+    animation-duration: 1.1s;
+    animation-delay: -1.2s;
+}
+
+/* Modulo 7: Slow & Reverse */
+.light-unit:nth-child(7n) {
+    animation-duration: 2.1s;
+    animation-delay: -2.5s;
+    animation-direction: alternate-reverse;
+}
+
+/* Modulo 11: Just Weird */
+.light-unit:nth-child(11n) {
+    animation-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    /* Bouncy */
+}
