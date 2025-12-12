@@ -112,8 +112,8 @@ function applyFiltersAndSortAndRender() {
 function renderTableBody(lotsToRender) {
   var tableBodyItems = [];
 
-  // Apply Black Friday specific filtering if mode is active
-  if (tableDisplayState.mode === 'black-friday') {
+  // Apply Sale specific filtering if mode is active (Black Friday or Christmas Sale)
+  if (tableDisplayState.mode === 'black-friday' || tableDisplayState.mode === 'christmas-sale') {
     lotsToRender = lotsToRender.filter(function (lot) {
       return lot["Close-to"] === "Lake";
     });

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+
+<head>
+    {{ partial "headers.html" . }}
+    {{ partial "custom_headers.html" . }}
+</head>
+
+<body>
+
+    <div id="all">
+
+        {{ partial "top.html" . }}
+
+        {{ partial "nav.html" . }}
+
+        {{ partial "breadcrumbs.html" . }}
+
+        <div id="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- Flyer Image -->
+                        <div class="text-center" style="margin-bottom: 30px;">
+                            <img src="/img/sales/Lago%20Bello%20-%20Christmas%20Sale.png" alt="Christmas Sale"
+                                class="img-responsive" style="margin: 0 auto; max-width: 800px;">
+                        </div>
+
+                        <!-- Sale Details Box -->
+                        <div class="sales-pitch text-center"
+                            style="margin-bottom: 30px; background-color: #d4af37; color: #8b0000; padding: 20px; border-radius: 5px; border: 2px solid #8b0000;">
+                            <h3 style="color: #8b0000; margin-top: 0; font-weight: bold;">Christmas Exclusive Offer</h3>
+                            <ul style="list-style: none; padding: 0; font-size: 1.2em;">
+                                <li style="margin-bottom: 10px;"><strong>10% OFF</strong> all Lake-Side Lots!</li>
+                                <li style="margin-bottom: 10px;">Contact us for details.</li>
+                            </ul>
+                        </div>
+
+                        <style>
+                            #lot-table table {
+                                border: 2px solid #8b0000;
+                            }
+
+                            #lot-table thead th {
+                                background-color: #d4af37;
+                                color: #8b0000;
+                                border-bottom: 2px solid #8b0000;
+                            }
+
+                            #lot-table tbody tr:hover {
+                                background-color: #fff8e1;
+                                /* Light gold/cream */
+                            }
+
+                            #lot-table td {
+                                border-color: #8b0000;
+                            }
+                        </style>
+
+                        <div id="lot-table"></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{ partial "footer.html" . }}
+
+    </div>
+    <!-- /#all -->
+
+    {{ partial "scripts.html" . }}
+    <script src="/js/lots-table.js"></script>
+    <script>
+        $(document).ready(function () {
+            if (typeof makeListingsTable === 'function') {
+                makeListingsTable('/data/lots.json', { mode: 'christmas-sale' });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

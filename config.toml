@@ -135,7 +135,7 @@ pagerSize = 10
     [params.sale_config]
     enable = true
     show_nav_link = false
-    name = "Black Friday Sale"
+    name = "Christmas Sale"
     percentage = 0.10
     location_filter = "Lake"
 
