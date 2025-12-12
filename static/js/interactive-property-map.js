@@ -365,6 +365,20 @@ var layerVectorStreetAccess = new ol.layer.Vector({
   opacity: 0.8
 });
 
+var layerVectorFloodHazard = new ol.layer.Vector({
+  title: 'FEMA Flood Hazard Boundaries - 2/16/2018',
+  source: new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: '/files/lagobello_flood_hazard_boundaries.geojson'
+  }),
+  style: new ol.style.Style({
+    stroke: new ol.style.Stroke({ color: 'rgba(255, 0, 0, 0.7)', width: 2 }),
+    fill: new ol.style.Fill({ color: 'rgba(255, 0, 0, 0.1)' })
+  }),
+  visible: false,
+  opacity: 0.8
+});
+
 var genericSource = new ol.source.Vector();
 var drawingLayerSource = new ol.source.Vector();
 
@@ -403,7 +417,8 @@ var olLayerGroupOverlays = new ol.layer.Group({
     layerVectorStreetS2,
     layerVectorStreetS3,
     layerVectorStreetReserved,
-    layerVectorStreetAccess
+    layerVectorStreetAccess,
+    layerVectorFloodHazard
 
   ],
   zIndex: 10
