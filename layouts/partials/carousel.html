@@ -1,4 +1,5 @@
-{{ if default true .Site.Params.CarouselHomepage.enable }}
+<!-- DEBUG: Partial Loaded -->
+{{ if default true .Site.Params.carousel.enable }}
 <!-- DEBUG: Carousel Enabled -->
 {{ $lots := transform.Unmarshal (os.ReadFile "static/data/lots.json") }}
 {{ if $lots }}
@@ -11,10 +12,41 @@
         style="background-image: url('img/photographs/lago-gate-2025-cropped.jpg'); background-size: cover; background-position: center;">
         <div class="dark-mask" style="background: rgba(50, 50, 50, 0.8);"></div>
         <div class="container">
-            <div class="homepage owl-carousel"
-                data-autoplay="{{ default true .Site.Params.CarouselHomepage.auto_play }}" data-slide-speed="4000"
-                data-pagination-speed="{{ default 1000 .Site.Params.CarouselHomepage.pagination_speed }}">
+            <div class="homepage owl-carousel" data-autoplay="{{ default true .Site.Params.carousel.auto_play }}"
+                data-slide-speed="8000"
+                data-pagination-speed="{{ default 1000 .Site.Params.carousel.pagination_speed }}">
+
+                <!-- STATIC CHRISTMAS SALE SLIDE -->
+                <div class="item">
+                    <div class="row">
+                        <div class="col-sm-5 right">
+                            <h1><a href="/christmas-sale/" style="text-decoration: none; color: inherit;">Christmas
+                                    Sale</a></h1>
+                            <div class="content">
+                                <p class="lead" style="margin-bottom: 20px;">
+                                    Make your holiday season brighter with your dream home at Lago Bello!
+                                    <br><br>
+                                    <strong>10% OFF all Lake-Side Lots</strong> for a limited time.
+                                </p>
+                                <p class="author-category">
+                                    <span style="font-weight: bold; font-size: 1.5em; color: red;">Limited Time
+                                        Offer</span>
+                                </p>
+                                <p>
+                                    <a href="/christmas-sale/" class="btn btn-template-main">View Sale Details</a>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-sm-7" style="text-align: center; padding: 50px;">
+                            <img class="img-responsive" src="/img/svg/christmas-tree-icon.svg" alt="Christmas Tree"
+                                style="max-height: 350px; display: inline-block;">
+                        </div>
+                    </div>
+                </div>
+
                 {{ range $listed_lots }}
+                {{ $closeTo := index . "Close-to" }}
+                {{ if eq $closeTo "Lake" }} <!-- LAKE LOTS ONLY FILTER -->
                 <div class="item">
                     {{ $url := printf "/lots/%s/" (.Name | urlize) }}
                     <div class="row">
@@ -22,10 +54,8 @@
                             <h1><a href="{{ $url }}" style="text-decoration: none; color: inherit;">{{ .Name }}</a></h1>
                             <div class="content">
                                 {{ $size := index . "Size [sqft]" }}
-                                {{ $closeTo := index . "Close-to" }}
                                 <p class="lead" style="margin-bottom: 20px;">
-                                    Build Your {{ if or (eq $closeTo "Lake") (eq $closeTo "Canal") }}Waterfront
-                                    Dream{{ else }}Dreamhouse{{ end }} in {{ .Subdivision }} – Over {{ printf "%.0f"
+                                    Build Your Waterfront Dream in {{ .Subdivision }} – Over {{ printf "%.0f"
                                     (float (default 0 $size)) }} Sq. Ft.
                                 </p>
 
@@ -129,6 +159,7 @@
                         </div>
                     </div>
                 </div>
+                {{ end }} <!-- END LAKE FILTER -->
                 {{ end }}
             </div>
             <!-- /.project owl-slider -->
