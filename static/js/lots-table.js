@@ -112,10 +112,10 @@ function applyFiltersAndSortAndRender() {
 function renderTableBody(lotsToRender) {
   var tableBodyItems = [];
 
-  // Apply Sale specific filtering if mode is active (Black Friday or Christmas Sale)
-  if (tableDisplayState.mode === 'black-friday' || tableDisplayState.mode === 'christmas-sale') {
+  // Apply Global Sale Configuration Filtering
+  if (window.saleConfig && window.saleConfig.enable && window.saleConfig.location_filter) {
     lotsToRender = lotsToRender.filter(function (lot) {
-      return lot["Close-to"] === "Lake";
+      return lot["Close-to"] === window.saleConfig.location_filter;
     });
   }
 
