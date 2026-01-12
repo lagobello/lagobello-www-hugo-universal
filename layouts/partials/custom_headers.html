@@ -1,5 +1,7 @@
 {{ if .Site.Params.christmas.enable }}
-<link rel="stylesheet" href="{{ "css/christmas.css" | relURL }}">{{ end }}
+<link rel="stylesheet" href="{{ " css/christmas.css" | relURL }}">{{ end }}
+{{ if .Site.Params.new_year_sale.enable }}
+{{ partial "new_year_fireworks.html" . }}{{ end }}
 {{ partial "sale_config.html" . }}
 {{ partial "facebook-verification.html" . }}
 {{ if and (eq .Section "lots") .IsPage }}

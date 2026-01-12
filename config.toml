@@ -134,8 +134,8 @@ pagerSize = 10
     # Sale Configuration
     [params.sale_config]
     enable = true
-    show_nav_link = false
-    name = "Christmas Sale"
+    show_nav_link = true
+    name = "New Year's Sale"
     percentage = 0.10
     location_filter = "Lake"
 
@@ -205,4 +205,7 @@ pagerSize = 10
       unsafe = true
 
 [params.christmas]
+    enable = false
+
+[params.fireworks]
     enable = true

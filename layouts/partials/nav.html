@@ -143,23 +143,16 @@
           {{ end }}
           {{ end }}
 
-          {{ if and .Site.Params.sale_config.enable .Site.Params.sale_config.show_nav_link }}
+          {{ if .Site.Params.sale_config.enable }}
+          {{ if .Site.Params.sale_config.show_nav_link }}
           <li class="dropdown">
-            <a href="/black-friday-sale/" class="black-friday-nav-link"
-              style="background-color: #000; color: #ff6600; font-weight: bold; border-radius: 0; margin-left: 10px; padding: 21px 15px; text-transform: uppercase; letter-spacing: 1px;">
+            <a href="/new-years-sale/" class="sale-nav-link"
+              style="background-color: #000; color: gold; font-weight: bold; border-radius: 0; margin-left: 10px; padding: 21px 15px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; border: 2px solid gold;">
+              <img src="/img/svg/new-year-icon.svg" alt="2026" style="height: 24px; margin-right: 8px;">
               {{ .Site.Params.sale_config.name }}
             </a>
           </li>
           {{ end }}
-
-          {{ if .Site.Params.christmas.enable }}
-          <li class="dropdown">
-            <a href="/christmas-sale/" class="christmas-nav-link"
-              style="background-color: #d4af37; color: #8b0000; font-weight: bold; border-radius: 0; margin-left: 10px; padding: 21px 15px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; border: 2px solid #8b0000;">
-              <img src="/img/svg/christmas-tree-icon.svg" alt="Tree" style="height: 24px; margin-right: 8px;">
-              Christmas Sale
-            </a>
-          </li>
           {{ end }}
 
         </ul>
@@ -183,6 +176,7 @@
   <!-- Christmas Lights -->
   {{ partial "christmas_snow.html" . }}
   {{ partial "christmas_lights.html" (dict "Site" .Site "top" false "bottom" true) }}
+
 
   </div>
 </header>
