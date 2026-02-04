@@ -21,7 +21,7 @@ Detailed technical data for construction and development at Lago Bello.
 
 *   **Zoning:** Residential Single Family.
 *   **Setbacks:** Standard city setbacks apply (refer to plat map).
-*   **Soil Conditions:** Geotechnical reports available upon request.
+
 
 ## Desirable Flood Zone Status
 
