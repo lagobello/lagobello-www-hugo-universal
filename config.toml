@@ -117,7 +117,7 @@ pagerSize = 10
     contact_form_ajax = false
 	
     about_us = "<p>We are a small Real Estate Developer interested in helping South Texas Grow!</p>"
-    copyright = "Copyright (c) 2017 - 2025, Hacienda Lakeview Inc; all rights reserved."
+    copyright = "© 2017 - 2026 Lago Bello. Developed and Marketed by Hacienda Lakeview Inc."
 
     # Format dates with Go's time formatting
     date_format = "January 2, 2006"
