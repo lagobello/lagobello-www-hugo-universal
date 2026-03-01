@@ -135,7 +135,7 @@ pagerSize = 10
     [params.sale_config]
     enable = true
     show_nav_link = true
-    name = "New Year's Sale"
+    name = "Waterfront Sale"
     percentage = 0.10
     location_filter = "Lake"
 
@@ -208,4 +208,4 @@ pagerSize = 10
     enable = false
 
 [params.fireworks]
-    enable = true
+    enable = false
