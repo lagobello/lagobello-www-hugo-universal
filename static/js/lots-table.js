@@ -14,7 +14,8 @@ var companyLogos = {
   'coldwell banker': 'coldwell-banker-logo.svg',
   'keller williams': 'keller-williams-logo.svg',
   'liz realty': 'liz-realty-logo.jpg',
-  'spi realty': 'spi-realty-logo.png'
+  'spi realty': 'spi-realty-logo.png',
+  'lago bello': '../lago-logo-500-500.png'
 };
 
 // Helper sort function
@@ -146,7 +147,8 @@ function renderTableBody(lotsToRender) {
       }
     }
 
-    var agentPhoneStr = val["Listing Agent Phone Number"] ? String(val["Listing Agent Phone Number"]).replace(/\D/g, '') : '';
+    var agentPhoneRaw = val["Listing Agent Phone Number"] ? String(val["Listing Agent Phone Number"]).split('.')[0] : '';
+    var agentPhoneStr = agentPhoneRaw.replace(/\D/g, '');
 
     // Helper to format phone number
     var formatPhone = function (str) {
@@ -163,12 +165,17 @@ function renderTableBody(lotsToRender) {
 
     var formattedPhone = formatPhone(agentPhoneStr);
     var agentName = val["Listing Agent"] || '';
-    var agentFirstName = agentName.split(' ')[0] || 'Agent';
+    
+    // Check if the agent is "For Sale By Owner"
+    var isOwnerSale = (val["Listing Firm"] && val["Listing Firm"].toLowerCase() === 'for sale by owner') || 
+                      (agentName && agentName.toLowerCase().includes('owner'));
+    var agentFirstName = isOwnerSale ? 'Owner' : (agentName.split(' ')[0] || 'Agent');
 
     // Button with integrated phone number
+    var buttonTitle = isOwnerSale ? 'Call Owner' : `Call ${agentFirstName}`;
     var callNowButton = agentPhoneStr ?
       `<a href="tel:${agentPhoneStr}" class="btn btn-success call-now-btn" style="white-space: normal; line-height: 1.2; padding: 5px 10px;">
-        <div style="font-weight: bold;">Call ${agentFirstName}</div>
+        <div style="font-weight: bold;">${buttonTitle}</div>
         <div style="font-size: 0.85em;">${formattedPhone}</div>
       </a>` : 'N/A';
 
@@ -247,8 +254,8 @@ function renderTableBody(lotsToRender) {
         `<tr data-lot-name="${val.Name}" style="cursor:pointer;">
                   <td>${addressLink}</td>
                   <td>${val["Lot Status"] || 'N/A'}</td>
-                  <td>${val["Block Number"] || 'N/A'}</td>
-                  <td>${val["Lot Number"] || 'N/A'}</td>
+                  <td>${val["Block Number"] ? String(val["Block Number"]).split('.')[0] : 'N/A'}</td>
+                  <td>${val["Lot Number"] ? String(val["Lot Number"]).split('.')[0] : 'N/A'}</td>
                   <td>${listPrice}</td>
                   <td>${sizeSqft}</td>
                   <td>${val["Listing Agent"] || 'N/A'}</td>
