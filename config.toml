@@ -140,7 +140,7 @@ pagerSize = 10
 # Enable or disable top bar with social icons
 [params.topbar]
     enable = true
-    text = """<p class="hidden-sm hidden-xs">Contact us at <a href="tel:+19563055246">+1 (956)305-LAGO</a> or <a href="tel:+19563055246">+1 (956)305-5246</a></p>
+    text = """<p class="hidden-sm hidden-xs">Contact us at <a href="tel:+19563055246">+1 (956)305-LAGO</a> // <a href="tel:+19563055246">+1 (956)305-5246</a> or through our <a href="/contact/">Contact Form</a></p>
       <p class="hidden-md hidden-lg"><a href="#" data-animate-hover="pulse"><i class="fas fa-phone"></i></a>
       </p>
       """
