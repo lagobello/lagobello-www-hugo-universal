@@ -75,12 +75,6 @@ pagerSize = 10
     url = "http://twitter.com"
     pre = "<i class='fab fa-2x fa-twitter'></i>"
 
-[[menu.topbar]]
-    weight = 4
-    name = "Email"
-    url = "mailto:info@lagobello.com"
-    pre = "<i class='fas fa-2x fa-envelope'></i>"
-
 [params]
     viewMorePostLink = "/blog/"
     author = "Vittorio"
@@ -113,7 +107,7 @@ pagerSize = 10
     # - you're done. Happy mailing!
     #
     # Enable the contact form by entering your Formspree.io email
-    email = "info@lagobello.com"
+    email = ""
     contact_form_ajax = false
 	
     about_us = "<p>We are a small Real Estate Developer interested in helping South Texas Grow!</p>"
@@ -146,9 +140,8 @@ pagerSize = 10
 # Enable or disable top bar with social icons
 [params.topbar]
     enable = true
-    text = """<p class="hidden-sm hidden-xs">Contact us at <a href="tel:+19563055246">+1 (956)305-LAGO</a> or <a href="tel:+19563055246">+1 (956)305-5246</a> or <a href="mailto:info@lagobello.com">info@lagobello.com</a></p>
+    text = """<p class="hidden-sm hidden-xs">Contact us at <a href="tel:+19563055246">+1 (956)305-LAGO</a> or <a href="tel:+19563055246">+1 (956)305-5246</a></p>
       <p class="hidden-md hidden-lg"><a href="#" data-animate-hover="pulse"><i class="fas fa-phone"></i></a>
-      <a href="#" data-animate-hover="pulse"><i class="fas fa-envelope"></i></a>
       </p>
       """
 
