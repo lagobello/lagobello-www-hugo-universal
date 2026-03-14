@@ -15,7 +15,12 @@
 {{ $sku := replace .Name " " "-" }}
 {{ $slug := lower $sku }}
 
-{{ $desc := printf "Lot %s in Lago Bello, %s, status: %s" .Name $sizeStr $status }}
+{{ $desc := printf "Residential lot %s in Lago Bello, Brownsville TX — %s" .Name $sizeStr }}
+{{ if or (eq $status "Listed") (eq $status "Available") }}
+{{ $desc = printf "%s, listed for sale" $desc }}
+{{ else if eq $status "Sold" }}
+{{ $desc = printf "%s, sold" $desc }}
+{{ end }}
 
 {{ $lat := 0.0 }}
 {{ $lon := 0.0 }}
@@ -31,7 +36,7 @@
 {{ if and (or (eq $status "Listed") (eq $status "Available")) $price }}
 {{ $seller := dict }}
 {{ if index . "Listing Agent" }}
-{{ $seller = dict "@type" "Organization" "name" (index . "Listing Agent") }}
+{{ $seller = dict "@type" "RealEstateAgent" "name" (index . "Listing Agent") }}
 {{ end }}
 {{ $offers = dict
 "@type" "Offer"
@@ -64,21 +69,27 @@ $lat $lon $.Site.Params.googleMapsApiKey }}
 {{ end }}
 {{ end }}
 
+{{ $place := dict
+"@type" "Place"
+"name" (printf "%s — Lago Bello" .Name)
+"address" (dict "@type" "PostalAddress" "addressLocality" "Brownsville" "addressRegion" "TX" "addressCountry" "US")
+"geo" $geo
+"additionalProperty" (slice
+(dict "@type" "PropertyValue" "name" "Lot Size" "value" $sizeStr)
+(dict "@type" "PropertyValue" "name" "Subdivision" "value" (index . "Subdivision"))
+(dict "@type" "PropertyValue" "name" "Close To" "value" (index . "Close-to"))
+)
+}}
+
 {{ $jsonLd := dict
 "@context" "https://schema.org"
-"@type" "Product"
+"@type" "RealEstateListing"
 "name" .Name
 "description" $desc
 "url" (printf "https://www.lagobello.com/lots/%s/" $slug)
 "image" (slice $imgUrl)
-"sku" $sku
-"brand" (dict "@type" "Brand" "name" "Lago Bello")
-"address" (dict "@type" "PostalAddress" "addressLocality" "Brownsville" "addressRegion" "TX" "addressCountry" "US")
-"geo" $geo
-"additionalProperty" (slice
-(dict "@type" "PropertyValue" "name" "Size" "value" $sizeStr)
-(dict "@type" "PropertyValue" "name" "Close To" "value" (index . "Close-to"))
-)
+"datePosted" (now.Format "2006-01-02")
+"about" $place
 }}
 
 {{ if $offers }}{{ $jsonLd = merge $jsonLd (dict "offers" $offers) }}{{ end }}

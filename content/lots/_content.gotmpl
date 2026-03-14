@@ -25,25 +25,30 @@
     {{ $sku := replace .Name " " "-" }}
     {{ $slug := lower $sku }}
     
-    {{ $desc := printf "Lot %s in Lago Bello, %s, status: %s" .Name $sizeStr $status }}
+    {{ $desc := printf "Residential lot %s in Lago Bello, Brownsville TX — %s" .Name $sizeStr }}
+    {{ if or (eq $status "Listed") (eq $status "Available") }}
+        {{ $desc = printf "%s, listed for sale" $desc }}
+    {{ else if eq $status "Sold" }}
+        {{ $desc = printf "%s, sold" $desc }}
+    {{ end }}
 
     {{ $offers := dict }}
     {{ if and (or (eq $status "Listed") (eq $status "Available")) $price }}
         {{ $seller := dict }}
         {{ if index . "Listing Agent" }}
-            {{ $seller = dict "@type" "Organization" "name" (index . "Listing Agent") }}
+            {{ $seller = dict "@type" "RealEstateAgent" "name" (index . "Listing Agent") }}
         {{ end }}
-        {{ $offers = dict 
-            "@type" "Offer" 
+        {{ $offers = dict
+            "@type" "Offer"
             "url" (printf "https://www.lagobello.com/lots/%s/" $slug)
-            "price" $price 
-            "priceCurrency" "USD" 
+            "price" $price
+            "priceCurrency" "USD"
             "availability" "https://schema.org/InStock"
         }}
         {{ if $seller }}{{ $offers = merge $offers (dict "seller" $seller) }}{{ end }}
     {{ else if eq $status "Sold" }}
-        {{ $offers = dict 
-            "@type" "Offer" 
+        {{ $offers = dict
+            "@type" "Offer"
             "url" (printf "https://www.lagobello.com/lots/%s/" $slug)
             "availability" "https://schema.org/Sold"
         }}
@@ -52,18 +57,10 @@
     {{ $geo := dict "@type" "GeoCoordinates" }}
     {{ if ne $lat 0.0 }}{{ $geo = merge $geo (dict "latitude" $lat "longitude" $lon) }}{{ end }}
 
-    {{ $params := dict 
-        "@context" "https://schema.org"
-        "@type" "Product"
-        "name" .Name
+    {{ $params := dict
         "description" $desc
-        "url" (printf "https://www.lagobello.com/lots/%s/" $slug)
-        "image" (slice "https://www.lagobello.com/img/lago-logo-500-500.png")
-        "sku" $sku
-        "brand" (dict "@type" "Brand" "name" "Lago Bello")
-        "address" (dict "@type" "PostalAddress" "addressLocality" "Brownsville" "addressRegion" "TX" "addressCountry" "US")
         "geo" $geo
-        "additionalProperty" (slice 
+        "additionalProperty" (slice
             (dict "@type" "PropertyValue" "name" "Size" "value" $sizeStr)
             (dict "@type" "PropertyValue" "name" "Close To" "value" (index . "Close-to"))
         )
@@ -71,7 +68,7 @@
         "close_to" (index . "Close-to")
         "size_sqft" $size
     }}
-    
+
     {{ if $offers }}{{ $params = merge $params (dict "offers" $offers) }}{{ end }}
 
     {{ warnf "Adding page: %s" $slug }}
