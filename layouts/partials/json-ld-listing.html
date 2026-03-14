@@ -1,7 +1,7 @@
 {{ $geo := .Params.geo }}
 {{ $desc := .Params.description }}
 
-{{ $imgUrl := "https://www.lagobello.com/img/lago-logo-500-500.png" }}
+{{ $imgUrl := "https://www.lagobello.com/img/photographs/lago-gate-2025-cropped.jpg" }}
 {{ $slug := lower (replace .Title " " "-") }}
 {{ $localImg := printf "img/lots/%s.jpg" $slug }}
 {{ if fileExists (printf "static/%s" $localImg) }}
@@ -17,7 +17,7 @@ $geo.latitude $geo.longitude $.Site.Params.googleMapsApiKey }}
 {{ $place := dict
 "@type" "Place"
 "name" (printf "%s — Lago Bello" .Title)
-"address" (dict "@type" "PostalAddress" "addressLocality" "Brownsville" "addressRegion" "TX" "addressCountry" "US")
+"address" (dict "@type" "PostalAddress" "streetAddress" "1000 Vittorio Alfieri Avenue" "addressLocality" "Olmito" "addressRegion" "TX" "postalCode" "78575" "addressCountry" "US")
 "geo" $geo
 "additionalProperty" (slice
 (dict "@type" "PropertyValue" "name" "Lot Size" "value" (index .Params "size_sqft"))
