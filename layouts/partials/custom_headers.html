@@ -5,7 +5,7 @@
 {{ partial "sale_config.html" . }}
 {{ partial "facebook-verification.html" . }}
 {{ if and (eq .Section "lots") .IsPage }}
-{{ partial "json-ld-product.html" . }}
+{{ partial "json-ld-listing.html" . }}
 {{ end }}
 {{ partial "meta-pixel-head.html" . }}
 {{ partial "gtm-head.html" . }}
@@ -16,6 +16,17 @@
   "@type": "Organization",
   "name": "Lago Bello",
   "url": "https://www.lagobello.com",
-  "logo": "https://www.lagobello.com/img/lago-logo-500-500.png"
+  "logo": "https://www.lagobello.com/img/lago-logo-500-500.png",
+  "telephone": "+1-956-305-5246",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Brownsville",
+    "addressRegion": "TX",
+    "addressCountry": "US"
+  },
+  "sameAs": [
+    "https://www.facebook.com/lagobellosouthtexas",
+    "https://twitter.com/lagosouthtexas"
+  ]
 }
 </script>
