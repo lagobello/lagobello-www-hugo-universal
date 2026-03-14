@@ -36,7 +36,7 @@
     {{ if and (or (eq $status "Listed") (eq $status "Available")) $price }}
         {{ $seller := dict }}
         {{ if index . "Listing Agent" }}
-            {{ $seller = dict "@type" "RealEstateAgent" "name" (index . "Listing Agent") }}
+            {{ $seller = dict "@type" "Organization" "name" (index . "Listing Agent") }}
         {{ end }}
         {{ $offers = dict
             "@type" "Offer"

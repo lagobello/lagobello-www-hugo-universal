@@ -1,101 +1,50 @@
-{{ $lots := transform.Unmarshal (os.ReadFile "static/data/lots.json") }}
-{{ range $lots }}
-{{ if ne (index . "Subdivision") "Section 3" }}
-{{ $size := index . "Size [sqft]" }}
-{{ $sizeStr := "Unknown" }}
-{{ if $size }}
-{{ $sizeStr = printf "%.1f sqft" (float $size) }}
-{{ else }}
-{{ $sizeStr = "Unknown sqft" }}
-{{ end }}
-
-{{ $status := index . "Lot Status" }}
-{{ $price := index . "List Price" }}
-
-{{ $sku := replace .Name " " "-" }}
-{{ $slug := lower $sku }}
-
-{{ $desc := printf "Residential lot %s in Lago Bello, Brownsville TX — %s" .Name $sizeStr }}
-{{ if or (eq $status "Listed") (eq $status "Available") }}
-{{ $desc = printf "%s, listed for sale" $desc }}
-{{ else if eq $status "Sold" }}
-{{ $desc = printf "%s, sold" $desc }}
-{{ end }}
-
-{{ $lat := 0.0 }}
-{{ $lon := 0.0 }}
-{{ if .Location }}
-{{ $loc := split .Location ", " }}
-{{ if eq (len $loc) 2 }}
-{{ $lat = float (index $loc 0) }}
-{{ $lon = float (index $loc 1) }}
-{{ end }}
-{{ end }}
-
-{{ $offers := dict }}
-{{ if and (or (eq $status "Listed") (eq $status "Available")) $price }}
-{{ $seller := dict }}
-{{ if index . "Listing Agent" }}
-{{ $seller = dict "@type" "RealEstateAgent" "name" (index . "Listing Agent") }}
-{{ end }}
-{{ $offers = dict
-"@type" "Offer"
-"url" (printf "https://www.lagobello.com/lots/%s/" $slug)
-"price" $price
-"priceCurrency" "USD"
-"availability" "https://schema.org/InStock"
-}}
-{{ if $seller }}{{ $offers = merge $offers (dict "seller" $seller) }}{{ end }}
-{{ else if eq $status "Sold" }}
-{{ $offers = dict
-"@type" "Offer"
-"url" (printf "https://www.lagobello.com/lots/%s/" $slug)
-"availability" "https://schema.org/Sold"
-}}
-{{ end }}
-
-{{ $geo := dict "@type" "GeoCoordinates" }}
-{{ if ne $lat 0.0 }}{{ $geo = merge $geo (dict "latitude" $lat "longitude" $lon) }}{{ end }}
+{{ $geo := .Params.geo }}
+{{ $desc := .Params.description }}
 
 {{ $imgUrl := "https://www.lagobello.com/img/lago-logo-500-500.png" }}
+{{ $slug := lower (replace .Title " " "-") }}
 {{ $localImg := printf "img/lots/%s.jpg" $slug }}
 {{ if fileExists (printf "static/%s" $localImg) }}
 {{ $imgUrl = printf "https://www.lagobello.com/%s" $localImg }}
 {{ else }}
-{{ if and $lat $lon $.Site.Params.googleMapsApiKey }}
+{{ if and $geo.latitude $geo.longitude $.Site.Params.googleMapsApiKey }}
 {{ $imgUrl = printf
 "https://maps.googleapis.com/maps/api/streetview?size=600x400&location=%f,%f&fov=90&pitch=0&return_error_code=true&key=%s"
-$lat $lon $.Site.Params.googleMapsApiKey }}
+$geo.latitude $geo.longitude $.Site.Params.googleMapsApiKey }}
 {{ end }}
 {{ end }}
 
 {{ $place := dict
 "@type" "Place"
-"name" (printf "%s — Lago Bello" .Name)
+"name" (printf "%s — Lago Bello" .Title)
 "address" (dict "@type" "PostalAddress" "addressLocality" "Brownsville" "addressRegion" "TX" "addressCountry" "US")
 "geo" $geo
 "additionalProperty" (slice
-(dict "@type" "PropertyValue" "name" "Lot Size" "value" $sizeStr)
-(dict "@type" "PropertyValue" "name" "Subdivision" "value" (index . "Subdivision"))
-(dict "@type" "PropertyValue" "name" "Close To" "value" (index . "Close-to"))
+(dict "@type" "PropertyValue" "name" "Lot Size" "value" (index .Params "size_sqft"))
+(dict "@type" "PropertyValue" "name" "Subdivision" "value" .Params.subdivision)
+(dict "@type" "PropertyValue" "name" "Close To" "value" .Params.close_to)
 )
 }}
 
 {{ $jsonLd := dict
 "@context" "https://schema.org"
 "@type" "RealEstateListing"
-"name" .Name
+"name" .Title
 "description" $desc
-"url" (printf "https://www.lagobello.com/lots/%s/" $slug)
+"url" .Permalink
 "image" (slice $imgUrl)
 "datePosted" (now.Format "2006-01-02")
 "about" $place
 }}
 
-{{ if $offers }}{{ $jsonLd = merge $jsonLd (dict "offers" $offers) }}{{ end }}
+{{ if .Params.offers }}
+{{ $offers := .Params.offers }}
+{{ if $offers.seller }}
+{{ $offers = merge $offers (dict "seller" (dict "@type" "Organization" "name" $offers.seller.name)) }}
+{{ end }}
+{{ $jsonLd = merge $jsonLd (dict "offers" $offers) }}
+{{ end }}
 
 <script type="application/ld+json">
-    {{ $jsonLd | jsonify | safeJS }}
-    </script>
-{{ end }}
-{{ end }}
+{{ $jsonLd | jsonify | safeJS }}
+</script>
