@@ -103,7 +103,7 @@ pagerSize = 10
 
     # Social media
     facebook_site = "https://www.facebook.com/lagobellosouthtexas" # the Facebook handle of your site ('https://www.facebook.com/HANDLE')
-    twitter_site = "GoHugoIO" # the Twitter handle of your site (without the '@')
+    twitter_site = "lagosouthtexas" # the Twitter handle of your site (without the '@')
     default_sharing_image = "img/lago-logo-500-500.png"
 
     # Google Maps API key (if not set will default to not passing a key.)
