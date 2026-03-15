@@ -216,6 +216,26 @@ pagerSize = 10
     [markup.goldmark.renderer]
       unsafe = true
 
+[params.organization]
+    name = "Lago Bello"
+    telephone = "+1-956-305-5246"
+    logo = "/img/lago-logo-500-500.png"
+    image = "/img/photographs/lago-gate-2025-cropped.jpg"
+    description = "Lago Bello, a residential real estate development, is a new subdivision with 52 property lots available for sale in Brownsville, Texas."
+    founding_date = "2017"
+    same_as = [
+        "https://www.facebook.com/lagobellosouthtexas",
+        "https://x.com/lagosouthtexas",
+        "https://www.instagram.com/lagobellosouthtexas/"
+    ]
+
+    [params.organization.address]
+    street = "1000 Vittorio Alfieri Avenue"
+    locality = "Olmito"
+    region = "TX"
+    postal_code = "78575"
+    country = "US"
+
 [params.christmas]
     enable = false
 
