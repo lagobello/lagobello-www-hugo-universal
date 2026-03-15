@@ -3,6 +3,7 @@ title: "Phase 1 completed"
 date: "2018-04-27T18:01:49+00:00"
 banner: "img/blog/logo-spacing.png"
 draft: false
+description: "Phase 1 of Lago Bello subdivision in Brownsville TX is complete. Lots now available in Phase 2 of this lakefront community."
 ---
 Phase 1 of the project has been completed, and most lots have been sold.  
 We are currently developing lots for phase 2 of the project.  

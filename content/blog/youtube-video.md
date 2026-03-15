@@ -3,6 +3,7 @@ title: "Welcome to South Texas"
 date: 2017-12-27T00:20:08+01:00
 draft: false
 banner: "img/blog/yt_logo_rgb_light.png"
+description: "Watch video tours of South Texas scenery near Lago Bello subdivision in Brownsville, TX."
 ---
 
 Here is a short video of some scenery from South Texas!

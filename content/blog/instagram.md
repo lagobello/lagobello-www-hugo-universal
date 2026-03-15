@@ -2,7 +2,7 @@
 title: Instagram feeds
 date: 2018-04-29 15:21:53 +0100
 banner: "img/blog/instagram.jpg"
-
+description: "Follow Lago Bello on Instagram for photos and updates from our lakefront subdivision in Brownsville TX."
 ---
 
 These are a collection of Instagram feeds to give you a feeling of South Texas!  

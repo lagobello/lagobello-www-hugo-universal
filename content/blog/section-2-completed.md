@@ -3,6 +3,7 @@ title: "Section 2 Completed"
 date: "2025-03-14T12:00:00+00:00"
 banner: "img/blog/Lago Bello - Drone Overview Marked Up.jpg"
 draft: false
+description: "Section 2 of Lago Bello is complete with 18 new lots — 10 school-side and 8 lakefront properties in Brownsville TX."
 ---
 
 We are proud to announce that Section 2 of Lago Bello Subdivision is now complete and officially approved as of March 14, 2025!
