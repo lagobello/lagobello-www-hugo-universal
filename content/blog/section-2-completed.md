@@ -16,7 +16,7 @@ With this major milestone, we are thrilled to release our premium residential lo
 
 Don't miss your chance to build your dream home in this exceptional community!
 
-📞 Contact us today to reserve your lot and start your next chapter in Lago Bello!
+[Browse available lots](/lots/) | [Waterfront lots](/waterfront/) | [Contact us](/contact/) to reserve your lot and start your next chapter in Lago Bello!
 
 {{< figure src="/img/blog/Lago Bello - Drone Overview Marked Up.jpg" alt="Lago Bello Drone Overview" title="Lago Bello Drone Overview" >}}
 

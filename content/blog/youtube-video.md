@@ -8,3 +8,5 @@ description: "Watch video tours of South Texas scenery near Lago Bello subdivisi
 
 Here is a short video of some scenery from South Texas!
 {{< youtube id="trLfTHpX_qs" autoplay="true" >}}
+
+[View available lots](/lots/) | [Waterfront living](/waterfront/)

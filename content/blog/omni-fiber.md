@@ -27,3 +27,5 @@ For our current and future residents, this isn't just about checking emails—it
 Omni Fiber is setting a new standard for internet in Brownsville, and we are proud that Lago Bello is at the forefront of this movement.
 
 Come see why Lago Bello isn't just a place to live—it's a place to thrive.
+
+[Explore available lots](/lots/) | [Contact us](/contact/)
