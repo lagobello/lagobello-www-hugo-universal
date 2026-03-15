@@ -10,6 +10,7 @@ defaultContentLanguage = "en"
 # googleAnalytics = ""
 ignoreErrors = ["error-missing-instagram-accesstoken"]
 
+
 # Disable taxonomy pages since we don't use tags/categories
 disableKinds = ["taxonomy", "term"]
 
@@ -71,9 +72,27 @@ pagerSize = 10
 
 [[menu.topbar]]
     weight = 3
-    name = "Twitter"
-    url = "http://twitter.com"
-    pre = "<i class='fab fa-2x fa-twitter'></i>"
+    name = "X"
+    url = "https://x.com/lagosouthtexas"
+    pre = "<i class='fab fa-2x fa-x-twitter'></i>"
+
+[[menu.topbar]]
+    weight = 4
+    name = "Instagram"
+    url = "https://www.instagram.com/lagobellosouthtexas/"
+    pre = "<i class='fab fa-2x fa-instagram'></i>"
+
+[[menu.topbar]]
+    weight = 6
+    name = "Phone"
+    url = "tel:+19563055246"
+    pre = "<i class='fas fa-2x fa-phone'></i>"
+
+[[menu.topbar]]
+    weight = 7
+    name = "Contact"
+    url = "/contact/"
+    pre = "<i class='fas fa-2x fa-envelope'></i>"
 
 [params]
     viewMorePostLink = "/blog/"
