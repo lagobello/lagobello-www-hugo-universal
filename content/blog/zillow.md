@@ -3,6 +3,7 @@ title: "We are on Zillow"
 date: 2019-11-09T00:20:08+01:00
 draft: false
 banner: "img/blog/Zillow_square.png"
+description: "Find Lago Bello lots on Zillow with current pricing. Browse lakefront and school-side lots in Brownsville TX."
 ---
 
 
