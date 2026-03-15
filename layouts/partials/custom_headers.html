@@ -3,11 +3,8 @@
 {{ if .Site.Params.new_year_sale.enable }}
 {{ partial "new_year_fireworks.html" . }}{{ end }}
 {{ partial "sale_config.html" . }}
-{{ partial "facebook-verification.html" . }}
 {{ partial "json-ld-organization.html" . }}
 {{ if and (eq .Section "lots") .IsPage }}
 {{ partial "json-ld-listing.html" . }}
 {{ end }}
-{{ partial "meta-pixel-head.html" . }}
-{{ partial "gtm-head.html" . }}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css" />
