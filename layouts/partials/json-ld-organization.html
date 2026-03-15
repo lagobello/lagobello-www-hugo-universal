@@ -1,0 +1,31 @@
+{{- with .Site.Params.organization -}}
+{{- $org := dict
+  "@context" "https://schema.org"
+  "@type" "Organization"
+  "name" .name
+  "url" ($.Site.BaseURL | strings.TrimRight "/")
+-}}
+
+{{- with .logo }}{{ $org = merge $org (dict "logo" (printf "%s%s" ($.Site.BaseURL | strings.TrimRight "/") .)) }}{{ end -}}
+{{- with .telephone }}{{ $org = merge $org (dict "telephone" .) }}{{ end -}}
+{{- with .image }}{{ $org = merge $org (dict "image" (printf "%s%s" ($.Site.BaseURL | strings.TrimRight "/") .)) }}{{ end -}}
+{{- with .email }}{{ $org = merge $org (dict "email" .) }}{{ end -}}
+{{- with .description }}{{ $org = merge $org (dict "description" .) }}{{ end -}}
+{{- with .founding_date }}{{ $org = merge $org (dict "foundingDate" .) }}{{ end -}}
+
+{{- with .address -}}
+{{- $addr := dict "@type" "PostalAddress" -}}
+{{- with .street }}{{ $addr = merge $addr (dict "streetAddress" .) }}{{ end -}}
+{{- with .locality }}{{ $addr = merge $addr (dict "addressLocality" .) }}{{ end -}}
+{{- with .region }}{{ $addr = merge $addr (dict "addressRegion" .) }}{{ end -}}
+{{- with .postal_code }}{{ $addr = merge $addr (dict "postalCode" .) }}{{ end -}}
+{{- with .country }}{{ $addr = merge $addr (dict "addressCountry" .) }}{{ end -}}
+{{- $org = merge $org (dict "address" $addr) -}}
+{{- end -}}
+
+{{- with .same_as }}{{ $org = merge $org (dict "sameAs" .) }}{{ end -}}
+
+<script type="application/ld+json">
+{{ $org | jsonify | safeJS }}
+</script>
+{{- end -}}
