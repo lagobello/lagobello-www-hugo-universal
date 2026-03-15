@@ -1,6 +1,6 @@
 baseurl = "https://www.lagobello.com/"
 relativeurls = "true"
-title = "Lago Bello"
+title = "Lago Bello - Brownsville TX"
 theme = "hugo-universal-theme"
 themesDir = "themes/"
 languageCode = "en-us"
