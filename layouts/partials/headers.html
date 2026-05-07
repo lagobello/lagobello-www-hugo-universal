@@ -4,7 +4,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- Preconnect to third-party origins we still depend on. -->
-<link rel="preconnect" href="//use.fontawesome.com" crossorigin>
 <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
 
 {{/* Make the LCP image (homepage carousel CSS background) discoverable. */}}
@@ -50,11 +49,12 @@
     - Roboto                                 — font-metric swap caused text reflow
 -->
 
-<!-- Critical (render-blocking). Roboto and Bootstrap are self-hosted. FA is
-     still on the use.fontawesome.com CDN for now (subset + self-host follows). -->
+<!-- Critical (render-blocking). All third-party origins eliminated.
+     Roboto, Bootstrap, FontAwesome are self-hosted. FA is subsetted to just
+     the icons used on this site (~5KB total vs ~300KB for the full font set). -->
 <link rel="stylesheet" href="{{ "css/roboto.css" | relURL }}">
 <link rel="stylesheet" href="{{ "css/bootstrap.min.css" | relURL }}">
-<link rel="stylesheet" href="//use.fontawesome.com/releases/v6.7.2/css/all.css">
+<link rel="stylesheet" href="{{ "css/fa-subset.css" | relURL }}">
 {{ with .Site.Params.style }}
   <link href="{{ "css/style" | relURL }}.{{ . }}.css" rel="stylesheet" id="theme-stylesheet">
 {{ else }}
