@@ -162,9 +162,10 @@
       <div class="collapse clearfix" id="search">
         <form class="navbar-form" role="search">
           <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search">
+            <label for="site-search" class="sr-only">Search the site</label>
+            <input type="search" id="site-search" name="q" class="form-control" placeholder="Search" aria-label="Search the site">
             <span class="input-group-btn">
-              <button type="submit" class="btn btn-template-main"><i class="fas fa-search"></i></button>
+              <button type="submit" class="btn btn-template-main" aria-label="Submit search"><i class="fas fa-search" aria-hidden="true"></i></button>
             </span>
           </div>
         </form>

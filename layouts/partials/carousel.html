@@ -137,20 +137,23 @@
                                         {{ if $hasLocalImg }}
                                         <img class="img-responsive"
                                             style="box-shadow: 5px 5px 15px rgba(0,0,0,0.3); max-height: 450px; width: 100%; object-fit: cover; border: 10px solid white;"
-                                            src="/{{ $localImg }}" alt="{{ .Name }}">
+                                            src="/{{ $localImg }}" alt="Photo of {{ .Name }} for sale at Lago Bello"
+                                            width="800" height="450" loading="lazy" decoding="async">
                                         {{ else }}
                                         <img class="img-responsive"
                                             style="box-shadow: 5px 5px 15px rgba(0,0,0,0.3); max-height: 450px; width: 100%; object-fit: cover; border: 10px solid white;"
-                                            src="{{ if $streetViewUrl }}{{ $streetViewUrl }}{{ else }}img/placeholder-home.png{{ end }}"
-                                            alt="{{ .Name }}"
-                                            onerror="this.onerror=null;this.src='img/placeholder-home.png';">
+                                            src="{{ if $streetViewUrl }}{{ $streetViewUrl }}{{ else }}/img/placeholder-home.png{{ end }}"
+                                            alt="Street view of {{ .Name }} at Lago Bello"
+                                            width="800" height="450" loading="lazy" decoding="async"
+                                            onerror="this.onerror=null;this.src='/img/placeholder-home.png';">
                                         {{ end }}
                                     </a>
 
                                     {{ if $logo }}
                                     <div
                                         style="position: absolute; bottom: 20px; right: 20px; z-index: 10; background-color: rgba(255,255,255,0.9); padding: 5px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
-                                        <img src="/img/realtors/{{ $logo }}" alt="{{ $firm }}"
+                                        <img src="/img/realtors/{{ $logo }}" alt="{{ $firm }} listing"
+                                            width="120" height="40" loading="lazy"
                                             style="height: 40px; width: auto;">
                                     </div>
                                     {{ end }}
