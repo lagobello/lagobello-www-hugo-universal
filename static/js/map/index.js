@@ -35,7 +35,7 @@ window.focusLotByName = function (lotName) {
   const platLayers = [map.layers.platS1, map.layers.platS2, map.layers.platS3].filter(Boolean);
   const onceReady = () => {
     const feature = findFeatureForLot(lot, platLayers);
-    if (feature) map.panToLotFeature(feature);
+    if (feature) map.panToFeature(feature);
   };
   // If sources are still loading, retry briefly.
   let tries = 0;

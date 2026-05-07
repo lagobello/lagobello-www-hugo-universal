@@ -1,15 +1,15 @@
-// lots-table.js - Handles the lots table functionality
+// lots-table.js — Handles the lots table. Vanilla JS (no jQuery).
+// Reads /data/lots.json, sets `window.lotsData`, renders a sortable / filterable
+// table into #lot-table, and bridges row clicks to the map via window.focusLotByName.
 
-// Global store for current filters and sort state
 var tableDisplayState = {
   filters: {
-    location: '', // "Close-to"
-    status: ''     // "Lot Status" - this will be ANDed with the default "Available/Listed"
+    location: '',
+    status: ''
   },
   sort: { column: 'List Price', order: 'asc' }
 };
 
-// Mapping of Company Name to Logo Filename
 var companyLogos = {
   'coldwell banker': 'coldwell-banker-logo.svg',
   'keller williams': 'keller-williams-logo.svg',
@@ -18,34 +18,27 @@ var companyLogos = {
   'lago bello': '../lago-logo-500-500.png'
 };
 
-// Helper sort function
 function sortLotsData(lotsArray, columnKey, order) {
   return lotsArray.sort(function (a, b) {
     var valA = a[columnKey];
     var valB = b[columnKey];
 
-    // Handle numeric sort for price and size
     if (columnKey === 'List Price' || columnKey === 'Size [sqft]' || columnKey === 'Sale Price') {
       valA = parseFloat(valA);
       valB = parseFloat(valB);
-      if (isNaN(valA)) valA = (order === 'asc' ? Infinity : -Infinity); // Push NaNs to end/start
+      if (isNaN(valA)) valA = (order === 'asc' ? Infinity : -Infinity);
       if (isNaN(valB)) valB = (order === 'asc' ? Infinity : -Infinity);
-    } else { // Handle string sort for Name and Company
+    } else {
       valA = String(valA || '').toLowerCase();
       valB = String(valB || '').toLowerCase();
     }
 
-    if (valA < valB) {
-      return order === 'asc' ? -1 : 1;
-    }
-    if (valA > valB) {
-      return order === 'asc' ? 1 : -1;
-    }
+    if (valA < valB) return order === 'asc' ? -1 : 1;
+    if (valA > valB) return order === 'asc' ? 1 : -1;
     return 0;
   });
 }
 
-// Function to apply filters and sort, then render table
 function applyFiltersAndSortAndRender() {
   if (!lotsData) return;
   if (!Array.isArray(lotsData)) {
@@ -53,167 +46,128 @@ function applyFiltersAndSortAndRender() {
     return;
   }
 
-  // 1. Apply base filter (Available or Listed lots)
   var currentLots = lotsData.filter(function (lot) {
-    return lot["Lot Status"] === "Available" || lot["Lot Status"] === "Listed";
+    return lot['Lot Status'] === 'Available' || lot['Lot Status'] === 'Listed';
   });
 
-  // 2. Apply "Close-to" (Location) filter from header dropdown
-  var locationFilterValue = $('#header-filter-location').val();
+  var locationSelect = document.getElementById('header-filter-location');
+  var locationFilterValue = locationSelect ? locationSelect.value : '';
   if (locationFilterValue) {
     currentLots = currentLots.filter(function (lot) {
-      return lot["Close-to"] && lot["Close-to"].toLowerCase() === locationFilterValue.toLowerCase();
+      return lot['Close-to'] && lot['Close-to'].toLowerCase() === locationFilterValue.toLowerCase();
     });
   }
 
-
-
-  // 4. Apply sorting from tableDisplayState
   currentLots = sortLotsData(currentLots, tableDisplayState.sort.column, tableDisplayState.sort.order);
-
-  // 5. Render
   renderTableBody(currentLots);
 
+  // Update sort indicators in headers
+  var headers = document.querySelectorAll('#lot-table thead th');
+  var columnKeyMappings = { 'Address': 'Name', 'Size (sqft)': 'Size [sqft]', 'Price': 'List Price', 'Listing Firm': 'Listing Firm' };
 
-  // Update sort indicators in table headers
-  $('#lot-table thead th').each(function () {
-    var $this = $(this);
-    // Normalize header text by removing existing indicators and extra spaces for reliable matching
-    var headerText = $this.clone().children('.sort-arrow').remove().end().text().trim();
-    var indicatorSpan = $this.find('span.sort-arrow');
-    if (indicatorSpan.length === 0 && ['Address', 'Size (sqft)', 'Price', 'Listing Firm'].includes(headerText)) {
-      // Ensure span exists for sortable columns if not already there
-      $this.append(' <span class="sort-arrow"></span>');
-      indicatorSpan = $this.find('span.sort-arrow'); // Re-find it
+  headers.forEach(function (th) {
+    var clone = th.cloneNode(true);
+    var existingArrow = clone.querySelector('.sort-arrow');
+    if (existingArrow) existingArrow.remove();
+    var headerText = clone.textContent.trim();
+
+    var indicatorSpan = th.querySelector('span.sort-arrow');
+    if (!indicatorSpan && ['Address', 'Size (sqft)', 'Price', 'Listing Firm'].indexOf(headerText) >= 0) {
+      th.insertAdjacentHTML('beforeend', ' <span class="sort-arrow"></span>');
+      indicatorSpan = th.querySelector('span.sort-arrow');
     }
 
-    var indicatorChar = ''; // Default to no indicator
-    var columnKeyMappings = { 'Address': 'Name', 'Size (sqft)': 'Size [sqft]', 'Price': 'List Price', 'Listing Firm': 'Listing Firm' };
+    var indicatorChar = '';
     var currentHeaderKey = columnKeyMappings[headerText];
-
-    if (currentHeaderKey) { // If it's a sortable column
-      $this.css('cursor', 'pointer');
+    if (currentHeaderKey) {
+      th.style.cursor = 'pointer';
       if (currentHeaderKey === tableDisplayState.sort.column) {
         indicatorChar = tableDisplayState.sort.order === 'asc' ? '▲' : '▼';
       }
-      if (indicatorSpan.length) {
-        indicatorSpan.text(indicatorChar); // Set text of existing span
-      } else if (indicatorChar) {
-        // This case should be less common if span is added above, but as a fallback
-        $this.append(' <span class="sort-arrow">' + indicatorChar + '</span>');
-      }
+      if (indicatorSpan) indicatorSpan.textContent = indicatorChar;
     } else {
-      $this.css('cursor', 'default');
-      if (indicatorSpan.length) indicatorSpan.text(''); // Clear indicator for non-sortable if any somehow existed
+      th.style.cursor = 'default';
+      if (indicatorSpan) indicatorSpan.textContent = '';
     }
   });
 }
 
-// Helper function to render the table body based on provided lots data
 function renderTableBody(lotsToRender) {
   var tableBodyItems = [];
 
-  // Apply Global Sale Configuration Filtering
   if (window.saleConfig && window.saleConfig.enable && window.saleConfig.location_filter) {
     lotsToRender = lotsToRender.filter(function (lot) {
-      return lot["Close-to"] === window.saleConfig.location_filter;
+      return lot['Close-to'] === window.saleConfig.location_filter;
     });
   }
 
-  $.each(lotsToRender, function (key, val) {
-    var listPriceVal = parseFloat(val["List Price"]);
-    var listPrice = val["List Price"] ? `$${listPriceVal.toLocaleString()}` : 'N/A';
-    var sizeSqft = val["Size [sqft]"] ? `${parseFloat(val["Size [sqft]"]).toLocaleString()} sqft` : 'N/A';
+  lotsToRender.forEach(function (val) {
+    var listPriceVal = parseFloat(val['List Price']);
+    var listPrice = val['List Price'] ? '$' + listPriceVal.toLocaleString() : 'N/A';
+    var sizeSqft = val['Size [sqft]'] ? parseFloat(val['Size [sqft]']).toLocaleString() + ' sqft' : 'N/A';
 
     var listingLinkHtml = 'N/A';
-    if (val["Listing Link"]) {
-      var rawLink = val["Listing Link"];
-      // Attempt to extract URL if it's embedded, e.g. "Zillow Link - https://..."
+    if (val['Listing Link']) {
+      var rawLink = val['Listing Link'];
       var urlMatch = rawLink.match(/https?:\/\/[^\s]+/i);
       var actualUrl = urlMatch && urlMatch[0] ? urlMatch[0] : (rawLink.toLowerCase().startsWith('http') ? rawLink : null);
 
       if (actualUrl) {
-        var linkText = "View Listing"; // Default text
+        var linkText = 'View Listing';
         try {
           var domain = new URL(actualUrl).hostname;
-          linkText = domain.replace(/^www\./, ''); // Show domain as link text
-        } catch (e) { /* use default linkText */ }
-        // Apply truncation via CSS class if needed, e.g., class="truncated-link"
-        listingLinkHtml = `<a href="${actualUrl}" target="_blank" rel="noopener noreferrer" class="listing-link-cell" title="${actualUrl}">${linkText}</a>`;
+          linkText = domain.replace(/^www\./, '');
+        } catch (e) { /* keep default */ }
+        listingLinkHtml = '<a href="' + actualUrl + '" target="_blank" rel="noopener noreferrer" class="listing-link-cell" title="' + actualUrl + '">' + linkText + '</a>';
       } else {
-        // If no valid URL, display the text but not as a link
-        // If no valid URL, display the text but not as a link
-        listingLinkHtml = `<span title="${rawLink}">${rawLink.substring(0, 30)}${rawLink.length > 30 ? '...' : ''}</span>`;
+        listingLinkHtml = '<span title="' + rawLink + '">' + rawLink.substring(0, 30) + (rawLink.length > 30 ? '...' : '') + '</span>';
       }
     }
 
-    var agentPhoneRaw = val["Listing Agent Phone Number"] ? String(val["Listing Agent Phone Number"]).split('.')[0] : '';
+    var agentPhoneRaw = val['Listing Agent Phone Number'] ? String(val['Listing Agent Phone Number']).split('.')[0] : '';
     var agentPhoneStr = agentPhoneRaw.replace(/\D/g, '');
 
-    // Helper to format phone number
     var formatPhone = function (str) {
       if (!str) return '';
-      // Assuming US numbers starting with 1
-      if (str.length === 11 && str.startsWith('1')) {
-        str = str.substring(1);
-      }
-      if (str.length === 10) {
-        return '(' + str.substring(0, 3) + ') ' + str.substring(3, 6) + '-' + str.substring(6);
-      }
+      if (str.length === 11 && str.startsWith('1')) str = str.substring(1);
+      if (str.length === 10) return '(' + str.substring(0, 3) + ') ' + str.substring(3, 6) + '-' + str.substring(6);
       return str;
     };
 
     var formattedPhone = formatPhone(agentPhoneStr);
-    var agentName = val["Listing Agent"] || '';
-    
-    // Check if the agent is "For Sale By Owner"
-    var isOwnerSale = (val["Listing Firm"] && val["Listing Firm"].toLowerCase() === 'for sale by owner') || 
-                      (agentName && agentName.toLowerCase().includes('owner'));
+    var agentName = val['Listing Agent'] || '';
+
+    var isOwnerSale = (val['Listing Firm'] && val['Listing Firm'].toLowerCase() === 'for sale by owner') ||
+      (agentName && agentName.toLowerCase().includes('owner'));
     var agentFirstName = isOwnerSale ? 'Owner' : (agentName.split(' ')[0] || 'Agent');
 
-    // Button with integrated phone number
-    var buttonTitle = isOwnerSale ? 'Call Owner' : `Call ${agentFirstName}`;
+    var buttonTitle = isOwnerSale ? 'Call Owner' : 'Call ' + agentFirstName;
     var callNowButton = agentPhoneStr ?
-      `<a href="tel:${agentPhoneStr}" class="btn btn-success call-now-btn" style="white-space: normal; line-height: 1.2; padding: 5px 10px;">
-        <div style="font-weight: bold;">${buttonTitle}</div>
-        <div style="font-size: 0.85em;">${formattedPhone}</div>
-      </a>` : 'N/A';
+      '<a href="tel:' + agentPhoneStr + '" class="btn btn-success call-now-btn" style="white-space: normal; line-height: 1.2; padding: 5px 10px;">' +
+      '<div style="font-weight: bold;">' + buttonTitle + '</div>' +
+      '<div style="font-size: 0.85em;">' + formattedPhone + '</div>' +
+      '</a>' : 'N/A';
 
-    // We no longer need a separate display string since it's in the button
-    // var agentPhoneDisplay = ... (removed)
-
-    // Handle Listing Company and Logo
-    var companyName = val["Listing Firm"] || 'N/A';
+    var companyName = val['Listing Firm'] || 'N/A';
     var logoHtml = '';
     if (companyName !== 'N/A') {
       var lowerName = companyName.toLowerCase().trim();
-      // Try exact match or partial match
       var logoFile = null;
       for (var key in companyLogos) {
-        if (lowerName.includes(key)) {
-          logoFile = companyLogos[key];
-          break;
-        }
+        if (lowerName.includes(key)) { logoFile = companyLogos[key]; break; }
       }
-
       if (logoFile) {
-        // Added title attribute for tooltip
-        logoHtml = `<img src="/img/realtors/${logoFile}" alt="${companyName}" title="${companyName}" style="max-height: 30px; max-width: 80px;">`;
+        logoHtml = '<img src="/img/realtors/' + logoFile + '" alt="' + companyName + '" title="' + companyName + '" style="max-height: 30px; max-width: 80px;">';
       } else {
-        // Fallback to text if no logo found but company name exists
-        logoHtml = `<span title="${companyName}">${companyName}</span>`;
+        logoHtml = '<span title="' + companyName + '">' + companyName + '</span>';
       }
     }
 
-    // Check global sale config to determine table structure
     var globalSaleActive = window.saleConfig && window.saleConfig.enable;
 
     if (globalSaleActive) {
-      // 8-column Sale Layout
       var lotQualifies = true;
-      if (window.saleConfig.location_filter && val["Close-to"] !== window.saleConfig.location_filter) {
-        lotQualifies = false;
-      }
+      if (window.saleConfig.location_filter && val['Close-to'] !== window.saleConfig.location_filter) lotQualifies = false;
 
       var salePriceDisplay = '-';
       var listPriceDisplay = listPrice;
@@ -222,72 +176,67 @@ function renderTableBody(lotsToRender) {
 
       if (lotQualifies) {
         var salePriceVal = listPriceVal * (1 - window.saleConfig.percentage);
-        salePriceDisplay = !isNaN(salePriceVal) ? `$${salePriceVal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : 'N/A';
+        salePriceDisplay = !isNaN(salePriceVal) ? '$' + salePriceVal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : 'N/A';
         salePriceStyle = 'color: red; font-weight: bold;';
         listPriceStyle = 'text-decoration: line-through;';
-
-        // Add Sale Price to val for sorting
         val['Sale Price'] = salePriceVal;
       } else {
-        // Ensure we don't break sorting if 'Sale Price' is missing
         val['Sale Price'] = -1;
       }
 
       tableBodyItems.push(
-        `<tr data-lot-name="${val.Name}" style="cursor:pointer;">
-            <td>${val.Name || 'N/A'}</td>
-            <td style="${salePriceStyle}">${salePriceDisplay}</td>
-            <td style="${listPriceStyle}">${listPriceDisplay}</td>
-            <td>${sizeSqft}</td>
-            <td>${val["Listing Agent"] || 'N/A'}</td>
-            <td>${callNowButton}</td>
-            <td>${logoHtml}</td>
-            <td>${listingLinkHtml}</td>
-          </tr>`
+        '<tr data-lot-name="' + val.Name + '" style="cursor:pointer;">' +
+        '<td>' + (val.Name || 'N/A') + '</td>' +
+        '<td style="' + salePriceStyle + '">' + salePriceDisplay + '</td>' +
+        '<td style="' + listPriceStyle + '">' + listPriceDisplay + '</td>' +
+        '<td>' + sizeSqft + '</td>' +
+        '<td>' + (val['Listing Agent'] || 'N/A') + '</td>' +
+        '<td>' + callNowButton + '</td>' +
+        '<td>' + logoHtml + '</td>' +
+        '<td>' + listingLinkHtml + '</td>' +
+        '</tr>'
       );
     } else {
-      // 12-column Standard Layout
       var lotSlug = (val.Name || '').replace(/ /g, '-').toLowerCase();
-      var addressLink = val.Name ? `<a href="/lots/${lotSlug}/" style="color: inherit; text-decoration: underline;">${val.Name}</a>` : 'N/A';
+      var addressLink = val.Name ? '<a href="/lots/' + lotSlug + '/" style="color: inherit; text-decoration: underline;">' + val.Name + '</a>' : 'N/A';
 
       tableBodyItems.push(
-        `<tr data-lot-name="${val.Name}" style="cursor:pointer;">
-                  <td>${addressLink}</td>
-                  <td>${val["Lot Status"] || 'N/A'}</td>
-                  <td>${val["Block Number"] ? String(val["Block Number"]).split('.')[0] : 'N/A'}</td>
-                  <td>${val["Lot Number"] ? String(val["Lot Number"]).split('.')[0] : 'N/A'}</td>
-                  <td>${listPrice}</td>
-                  <td>${sizeSqft}</td>
-                  <td>${val["Listing Agent"] || 'N/A'}</td>
-                  <td>${callNowButton}</td>
-                  <td>${logoHtml}</td>
-                  <td>${listingLinkHtml}</td>
-                  <td>${val.Location || 'N/A'}</td>
-                  <td>${val["Close-to"] || 'N/A'}</td>
-                </tr>`
+        '<tr data-lot-name="' + val.Name + '" style="cursor:pointer;">' +
+        '<td>' + addressLink + '</td>' +
+        '<td>' + (val['Lot Status'] || 'N/A') + '</td>' +
+        '<td>' + (val['Block Number'] ? String(val['Block Number']).split('.')[0] : 'N/A') + '</td>' +
+        '<td>' + (val['Lot Number'] ? String(val['Lot Number']).split('.')[0] : 'N/A') + '</td>' +
+        '<td>' + listPrice + '</td>' +
+        '<td>' + sizeSqft + '</td>' +
+        '<td>' + (val['Listing Agent'] || 'N/A') + '</td>' +
+        '<td>' + callNowButton + '</td>' +
+        '<td>' + logoHtml + '</td>' +
+        '<td>' + listingLinkHtml + '</td>' +
+        '<td>' + (val.Location || 'N/A') + '</td>' +
+        '<td>' + (val['Close-to'] || 'N/A') + '</td>' +
+        '</tr>'
       );
     }
   });
-  $('#lot-table tbody').html(tableBodyItems.join(''));
+
+  var tbody = document.querySelector('#lot-table tbody');
+  if (!tbody) return;
+  tbody.innerHTML = tableBodyItems.join('');
 
   // Re-attach row click listeners
-  $('#lot-table tbody tr').on('click', function (e) { // Added event 'e'
-    var $target = $(e.target); // Get the actual clicked element
-
-    // Prevent row click if the click was on a button or a link inside the row
-    if ($target.is('a, button') || $target.closest('a, button').length) {
-      // If it's a link or button, or inside one, let its default action proceed.
-      // No need to e.stopPropagation() unless other row-level behaviors are unintentionally triggered by link/button.
-      return;
-    }
-
-    var lotName = $(this).data('lot-name');
-    if (!lotName) return;
-    $('#lot-table tbody tr').removeClass('table-info');
-    $(this).addClass('table-info');
-    if (typeof window.focusLotByName === 'function') {
-      window.focusLotByName(lotName);
-    }
+  tbody.querySelectorAll('tr').forEach(function (tr) {
+    tr.addEventListener('click', function (e) {
+      if (e.target.closest('a, button')) return;
+      var lotName = tr.dataset.lotName;
+      if (!lotName) return;
+      tbody.querySelectorAll('tr').forEach(function (otherTr) {
+        otherTr.classList.remove('table-info');
+      });
+      tr.classList.add('table-info');
+      if (typeof window.focusLotByName === 'function') {
+        window.focusLotByName(lotName);
+      }
+    });
   });
 }
 
@@ -297,127 +246,91 @@ function makeListingsTable(url, options) {
     if (!r.ok) throw new Error('Failed to load ' + url);
     return r.json();
   }).then(function (data) {
-    lotsData = data; // Store fetched data globally for reuse
+    lotsData = data;
     window.lotsData = data;
 
-    // Remove old global filter container if it exists from previous versions of the script
-    $('#table-filters-container').remove();
+    var staleFilters = document.getElementById('table-filters-container');
+    if (staleFilters) staleFilters.remove();
 
-    // Generate options for "Close To" filter (fixed for Section 2)
-    var closeToOptionsHtml = `
-        <option value="">All Locations</option>
-        <option value="Lake">Lake</option>
-        <option value="School">School</option>
-    `;
+    var closeToOptionsHtml =
+      '<option value="">All Locations</option>' +
+      '<option value="Lake">Lake</option>' +
+      '<option value="School">School</option>';
 
-    // Generate options for "Status" filter (fixed for now, could also be dynamic)
-    var statusOptionsHtml = `
-        <option value="">All Statuses</option>
-        <option value="Available">Available</option>
-        <option value="Listed">Listed</option>
-    `;
-    // The base filter in applyFiltersAndSortAndRender already limits to Available/Listed.
-    // This dropdown will further refine *within* that set if a specific status is chosen.
-
-    var items = []; // Initialize items array
-
-    var tableHeadersHtml = '';
-    var tableHeadersHtml = '';
     var saleActive = window.saleConfig && window.saleConfig.enable;
+    var tableHeadersHtml = '';
 
     if (saleActive) {
-      tableHeadersHtml = `
-          <thead>
-            <tr>
-              <th>Address</th>
-              <th>Sale Price</th>
-              <th>List Price</th>
-              <th>Size (sqft)</th>
-              <th>Listing Agent</th>
-              <th>Agent Phone</th>
-              <th>Listing Firm</th>
-              <th>Listing</th>
-            </tr>
-          </thead>`;
+      tableHeadersHtml = '<thead><tr>' +
+        '<th>Address</th><th>Sale Price</th><th>List Price</th><th>Size (sqft)</th>' +
+        '<th>Listing Agent</th><th>Agent Phone</th><th>Listing Firm</th><th>Listing</th>' +
+        '</tr></thead>';
     } else {
-      tableHeadersHtml = `
-          <thead>
-            <tr>
-              <th>Address</th>
-              <th>Status</th>
-              <th>Block</th>
-              <th>Lot</th>
-              <th>Price</th>
-              <th>Size (sqft)</th>
-              <th>Listing Agent</th>
-              <th>Agent Phone</th>
-              <th>Listing Firm</th>
-              <th>Listing</th>
-              <th>Location</th>
-              <th>Close To <br><select id="header-filter-location" class="header-filter form-control form-control-sm" style="width: 90%; margin-top: 4px; padding: 0.15rem 0.5rem; font-size: 0.85em; height: auto; color: #495057; background-color: #fff;">${closeToOptionsHtml}</select></th>
-            </tr>
-          </thead>`;
+      tableHeadersHtml = '<thead><tr>' +
+        '<th>Address</th><th>Status</th><th>Block</th><th>Lot</th><th>Price</th>' +
+        '<th>Size (sqft)</th><th>Listing Agent</th><th>Agent Phone</th>' +
+        '<th>Listing Firm</th><th>Listing</th><th>Location</th>' +
+        '<th>Close To <br><select id="header-filter-location" class="header-filter form-control form-control-sm" style="width: 90%; margin-top: 4px; padding: 0.15rem 0.5rem; font-size: 0.85em; height: auto; color: #495057; background-color: #fff;">' + closeToOptionsHtml + '</select></th>' +
+        '</tr></thead>';
     }
 
-    items.push(tableHeadersHtml); // Push headers to items
-    items.push('<tbody></tbody>'); // Empty tbody, populated by applyFiltersAndSortAndRender
+    var container = document.getElementById('lot-table');
+    if (!container) return;
+    container.replaceChildren();
+    var tableEl = document.createElement('table');
+    tableEl.className = 'lot-table table table-striped table-hover';
+    tableEl.innerHTML = tableHeadersHtml + '<tbody></tbody>';
+    container.appendChild(tableEl);
 
-    var tableElement = $('<table/>', {
-      class: 'lot-table table table-striped table-hover',
-      html: items.join('')
-    });
-
-    // Clear existing table content and append new table structure
-    $('#lot-table').empty().append(tableElement);
-
-    // Set initial values for dropdowns if they exist in tableDisplayState (e.g. from previous interaction before a full reload)
     if (tableDisplayState.filters.location) {
-      $('#header-filter-location').val(tableDisplayState.filters.location);
+      var loc = document.getElementById('header-filter-location');
+      if (loc) loc.value = tableDisplayState.filters.location;
     }
 
-    // Override applyFiltersAndSortAndRender for Black Friday mode if needed, or modify it to handle options
-    // For simplicity, we'll modify the global applyFiltersAndSortAndRender to check a global flag or pass options if we refactored more.
-    // Since applyFiltersAndSortAndRender is global, let's attach the mode to tableDisplayState
     tableDisplayState.mode = options.mode;
 
-    applyFiltersAndSortAndRender(); // Initial render which also sets up sort indicators
+    applyFiltersAndSortAndRender();
 
-    $('#lot-table thead th').off('click').on('click', function (e) {
-      if ($(e.target).is('select.header-filter')) {
-        e.stopPropagation(); // Prevent sorting when clicking on the select dropdown itself
-        return;
-      }
-      // Use clone to get text without children like select or span.sort-arrow
-      var columnText = $(this).clone().children().remove().end().text().trim();
-      var columnKey;
-      switch (columnText) {
-        case 'Address': columnKey = 'Name'; break;
-        case 'Size (sqft)': columnKey = 'Size [sqft]'; break;
-        case 'Price': columnKey = 'List Price'; break;
-        case 'List Price': columnKey = 'List Price'; break;
-        case 'Sale Price': columnKey = 'Sale Price'; break; // We'll need to handle this in sort
-        case 'Listing Firm': columnKey = 'Listing Firm'; break;
-        // Status and Close To are handled by their select, not direct th click for sorting
-        default: return;
-      }
-
-      if (tableDisplayState.sort.column === columnKey) {
-        tableDisplayState.sort.order = tableDisplayState.sort.order === 'asc' ? 'desc' : 'asc';
-      } else {
-        tableDisplayState.sort.column = columnKey;
-        tableDisplayState.sort.order = 'asc'; // Default to asc on new column
-      }
-      applyFiltersAndSortAndRender();
+    // Header sort + filter listeners
+    var headers = tableEl.querySelectorAll('thead th');
+    headers.forEach(function (th) {
+      th.addEventListener('click', function (e) {
+        if (e.target.matches('select.header-filter')) {
+          e.stopPropagation();
+          return;
+        }
+        var clone = th.cloneNode(true);
+        clone.querySelectorAll('select, span.sort-arrow').forEach(function (el) { el.remove(); });
+        var columnText = clone.textContent.trim();
+        var columnKey;
+        switch (columnText) {
+          case 'Address': columnKey = 'Name'; break;
+          case 'Size (sqft)': columnKey = 'Size [sqft]'; break;
+          case 'Price':
+          case 'List Price': columnKey = 'List Price'; break;
+          case 'Sale Price': columnKey = 'Sale Price'; break;
+          case 'Listing Firm': columnKey = 'Listing Firm'; break;
+          default: return;
+        }
+        if (tableDisplayState.sort.column === columnKey) {
+          tableDisplayState.sort.order = tableDisplayState.sort.order === 'asc' ? 'desc' : 'asc';
+        } else {
+          tableDisplayState.sort.column = columnKey;
+          tableDisplayState.sort.order = 'asc';
+        }
+        applyFiltersAndSortAndRender();
+      });
     });
 
-    // Filter dropdown listeners
-    $(document).on('change', '#header-filter-status, #header-filter-location', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      tableDisplayState.filters.status = $('#header-filter-status').val();
-      tableDisplayState.filters.location = $('#header-filter-location').val();
-      applyFiltersAndSortAndRender();
-    });
+    var locationSelect = tableEl.querySelector('#header-filter-location');
+    if (locationSelect) {
+      locationSelect.addEventListener('change', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        tableDisplayState.filters.location = locationSelect.value;
+        applyFiltersAndSortAndRender();
+      });
+    }
 
   }).catch(function (err) {
     console.error('Failed to load lots data:', err);
@@ -425,4 +338,4 @@ function makeListingsTable(url, options) {
   return true;
 }
 
-// Feature lookup is now handled by the map module via window.focusLotByName().
+// Feature lookup is handled by the map module via window.focusLotByName().
