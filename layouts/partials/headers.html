@@ -39,17 +39,19 @@
 
 <!--
   CSS critical path:
-    - Bootstrap and the theme's style.default.css shape above-the-fold layout.
-    - owl.carousel + owl.theme stay critical too because the home-carousel is
-      above the fold and deferring them caused a 0.896 CLS (the carousel items
-      stack tall before owl loads, then collapse to a single ~500px slide).
+    - Bootstrap and style.default shape above-the-fold layout.
+    - owl.carousel + owl.theme: avoiding the carousel collapse-then-expand
+      shift (each carousel item full-height before owl loads).
+    - FontAwesome: each <i class="fa-solid"> is 0×0 before FA loads, then
+      expands to ~3em — feature-section icons made the whole page below
+      shift by 0.847 CLS when deferred.
     - Everything else loads with media="print" + onload swap so the browser
-      fetches it without blocking the first paint, then applies it once the
-      document is interactive. <noscript> fallback for users with JS disabled.
+      fetches it without blocking the first paint. <noscript> fallback.
 -->
 
 <!-- Critical (render-blocking) -->
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v6.7.2/css/all.css">
 {{ with .Site.Params.style }}
   <link href="{{ "css/style" | relURL }}.{{ . }}.css" rel="stylesheet" id="theme-stylesheet">
 {{ else }}
@@ -60,12 +62,10 @@
 
 <!-- Deferred (non-critical) — load asynchronously, apply when ready -->
 <link rel="stylesheet" media="print" onload="this.media='all'" href="//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800&display=swap">
-<link rel="stylesheet" media="print" onload="this.media='all'" href="//use.fontawesome.com/releases/v6.7.2/css/all.css">
 <link rel="stylesheet" media="print" onload="this.media='all'" href="{{ "css/animate.css" | relURL }}">
 <link rel="stylesheet" media="print" onload="this.media='all'" href="{{ "css/custom.css" | relURL }}">
 <noscript>
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800&display=swap">
-  <link rel="stylesheet" href="//use.fontawesome.com/releases/v6.7.2/css/all.css">
   <link rel="stylesheet" href="{{ "css/animate.css" | relURL }}">
   <link rel="stylesheet" href="{{ "css/custom.css" | relURL }}">
 </noscript>
