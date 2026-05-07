@@ -78,15 +78,35 @@ function applyFiltersAndSortAndRender() {
     }
 
     var indicatorChar = '';
+    var srLabel = '';
     var currentHeaderKey = columnKeyMappings[headerText];
     if (currentHeaderKey) {
       th.style.cursor = 'pointer';
+      th.setAttribute('role', 'button');
+      th.setAttribute('tabindex', '0');
       if (currentHeaderKey === tableDisplayState.sort.column) {
-        indicatorChar = tableDisplayState.sort.order === 'asc' ? '▲' : '▼';
+        if (tableDisplayState.sort.order === 'asc') { indicatorChar = '▲'; srLabel = 'sorted ascending'; }
+        else { indicatorChar = '▼'; srLabel = 'sorted descending'; }
+        th.setAttribute('aria-sort', tableDisplayState.sort.order === 'asc' ? 'ascending' : 'descending');
+      } else {
+        th.setAttribute('aria-sort', 'none');
       }
-      if (indicatorSpan) indicatorSpan.textContent = indicatorChar;
+      if (indicatorSpan) {
+        indicatorSpan.textContent = indicatorChar;
+        indicatorSpan.setAttribute('aria-hidden', 'true');
+        // Drop any existing sr-only sibling first
+        var prevSr = indicatorSpan.previousElementSibling;
+        if (prevSr && prevSr.classList && prevSr.classList.contains('sr-only-sort')) prevSr.remove();
+        if (srLabel) {
+          var srSpan = document.createElement('span');
+          srSpan.className = 'sr-only sr-only-sort';
+          srSpan.textContent = ' (' + srLabel + ')';
+          indicatorSpan.insertAdjacentElement('beforebegin', srSpan);
+        }
+      }
     } else {
       th.style.cursor = 'default';
+      th.removeAttribute('aria-sort');
       if (indicatorSpan) indicatorSpan.textContent = '';
     }
   });
@@ -270,7 +290,7 @@ function makeListingsTable(url, options) {
         '<th>Address</th><th>Status</th><th>Block</th><th>Lot</th><th>Price</th>' +
         '<th>Size (sqft)</th><th>Listing Agent</th><th>Agent Phone</th>' +
         '<th>Listing Firm</th><th>Listing</th><th>Location</th>' +
-        '<th>Close To <br><select id="header-filter-location" class="header-filter form-control form-control-sm" style="width: 90%; margin-top: 4px; padding: 0.15rem 0.5rem; font-size: 0.85em; height: auto; color: #495057; background-color: #fff;">' + closeToOptionsHtml + '</select></th>' +
+        '<th><label for="header-filter-location">Close To</label><br><select id="header-filter-location" name="header-filter-location" aria-label="Filter lots by proximity to landmark" class="header-filter form-control form-control-sm" style="width: 90%; margin-top: 4px; padding: 0.15rem 0.5rem; font-size: 0.85em; height: auto; color: #495057; background-color: #fff;">' + closeToOptionsHtml + '</select></th>' +
         '</tr></thead>';
     }
 

@@ -71,7 +71,8 @@
                                 {{ if $hasLocalImg }}
                                 <div class="image"
                                     style="box-shadow: 0 8px 25px rgba(0,0,0,0.15); border-radius: 12px; overflow: hidden; margin-bottom: 20px; border: 1px solid #efefef;">
-                                    <img src="/{{ $localImg }}" class="img-responsive" alt="{{ .Title }}"
+                                    <img src="/{{ $localImg }}" class="img-responsive" alt="Photo of {{ .Title }}"
+                                        width="800" height="533"
                                         style="width: 100%; height: auto; object-fit: cover; transition: transform 0.3s ease;"
                                         onmouseover="this.style.transform='scale(1.02)';"
                                         onmouseout="this.style.transform='scale(1)';">
@@ -81,7 +82,8 @@
                                 <div class="image"
                                     style="box-shadow: 0 8px 25px rgba(0,0,0,0.15); border-radius: 12px; overflow: hidden; margin-bottom: 20px; border: 1px solid #efefef;">
                                     <img src="{{ $streetViewUrl }}" class="img-responsive"
-                                        alt="Street View of {{ .Title }}"
+                                        alt="Street view of {{ .Title }}"
+                                        width="600" height="400"
                                         onerror="this.onerror=null;this.src='/img/placeholder-home.png';"
                                         style="width: 100%; transition: transform 0.3s ease;"
                                         onmouseover="this.style.transform='scale(1.02)';"
@@ -90,7 +92,8 @@
                                 {{ else if .Params.image }}
                                 <div class="image"
                                     style="box-shadow: 0 8px 25px rgba(0,0,0,0.15); border-radius: 12px; overflow: hidden; margin-bottom: 20px; border: 1px solid #efefef;">
-                                    <img src="{{ index .Params.image 0 }}" class="img-responsive" alt="{{ .Title }}"
+                                    <img src="{{ index .Params.image 0 }}" class="img-responsive" alt="Photo of {{ .Title }}"
+                                        width="800" height="533"
                                         style="width: 100%; transition: transform 0.3s ease;"
                                         onmouseover="this.style.transform='scale(1.02)';"
                                         onmouseout="this.style.transform='scale(1)';">
