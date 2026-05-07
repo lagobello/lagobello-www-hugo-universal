@@ -37,33 +37,43 @@
 
 {{ hugo.Generator }}
 
-<!-- Font -->
-<link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
+<!--
+  CSS critical path:
+    - Bootstrap and the theme's style.default.css are render-blocking
+      because they shape above-the-fold layout.
+    - Everything else is loaded with media="print" + onload swap so the
+      browser fetches it without blocking the first paint, then applies
+      it once the document is interactive. Each link has a <noscript>
+      fallback for users with JS disabled.
+-->
 
-<!-- Bootstrap and Font Awesome CSS -->
-<link rel="stylesheet" href="//use.fontawesome.com/releases/v6.7.2/css/all.css">
+<!-- Critical (render-blocking) -->
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
-
-<!-- CSS animations  -->
-<link href="{{ "css/animate.css" | relURL }}" rel="stylesheet">
-
-<!-- Theme stylesheet, if possible do not edit this stylesheet -->
 {{ with .Site.Params.style }}
   <link href="{{ "css/style" | relURL }}.{{ . }}.css" rel="stylesheet" id="theme-stylesheet">
 {{ else }}
   <link href="{{ "css/style.default.css" | relURL }}" rel="stylesheet" id="theme-stylesheet">
 {{ end }}
 
-<!-- Custom stylesheet - for your changes -->
-<link href="{{ "css/custom.css" | relURL }}" rel="stylesheet">
+<!-- Deferred (non-critical) — load asynchronously, apply when ready -->
+<link rel="stylesheet" media="print" onload="this.media='all'" href="//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800&display=swap">
+<link rel="stylesheet" media="print" onload="this.media='all'" href="//use.fontawesome.com/releases/v6.7.2/css/all.css">
+<link rel="stylesheet" media="print" onload="this.media='all'" href="{{ "css/animate.css" | relURL }}">
+<link rel="stylesheet" media="print" onload="this.media='all'" href="{{ "css/custom.css" | relURL }}">
+<link rel="stylesheet" media="print" onload="this.media='all'" href="{{ "css/owl.carousel.css" | relURL }}">
+<link rel="stylesheet" media="print" onload="this.media='all'" href="{{ "css/owl.theme.css" | relURL }}">
+<noscript>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800&display=swap">
+  <link rel="stylesheet" href="//use.fontawesome.com/releases/v6.7.2/css/all.css">
+  <link rel="stylesheet" href="{{ "css/animate.css" | relURL }}">
+  <link rel="stylesheet" href="{{ "css/custom.css" | relURL }}">
+  <link rel="stylesheet" href="{{ "css/owl.carousel.css" | relURL }}">
+  <link rel="stylesheet" href="{{ "css/owl.theme.css" | relURL }}">
+</noscript>
 
 <!-- Favicon and Apple touch icons-->
 <link rel="shortcut icon" href="{{ "img/favicon.ico" | relURL }}" type="image/x-icon" />
 <link rel="apple-touch-icon" href="{{ "img/apple-touch-icon.png" | relURL }}" />
-
-<!-- owl carousel CSS -->
-<link href="{{ "css/owl.carousel.css" | relURL }}" rel="stylesheet">
-<link href="{{ "css/owl.theme.css" | relURL }}" rel="stylesheet">
 
 <!-- RSS feed -->
 <link rel="alternate" href="{{ "/index.xml" | absURL }}" type="application/rss+xml" title="{{ .Site.Title }}">
