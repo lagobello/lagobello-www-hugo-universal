@@ -1,37 +1,48 @@
-# Cloudflare Pages Cache-Control. Hugo copies /static/_headers verbatim into
-# /public/_headers, which Pages reads at deploy time.
+# Cloudflare Pages reads this at deploy time. Hugo copies /static/_headers
+# verbatim into /public/_headers.
 #
-# Specific rules win over generic ones; the trailing /* catch-all applies to
-# everything (mostly HTML).
+# IMPORTANT: Cloudflare Pages applies ALL matching rules and concatenates
+# duplicate header values. So the /* catch-all must NOT set Cache-Control,
+# otherwise the catch-all's max-age stacks on top of every specific rule and
+# the shortest max-age wins per RFC 7234. Specific rules also can't overlap
+# each other; e.g. /img/lots/* ⊂ /img/* would double-stack on lot photos.
+# Each Cache-Control rule below covers a non-overlapping path set.
 
-# Hugo image-pipeline output is content-hashed (filenames include `_hu_<hash>`).
-# Safe to cache forever.
+# Hugo image-pipeline output (content-hashed via `_hu_<hash>`).
 /img/lots/*
   Cache-Control: public, max-age=31536000, immutable
 
-# Other static images, CSS, JS — paths are NOT content-hashed, so cap the TTL
-# at 30 days. A redeploy can be combined with a Cloudflare cache purge if a
-# ground-truth image needs to flip sooner.
-/img/*
+# Other image subdirectories — enumerated to avoid /img/* overlapping with
+# /img/lots/* and double-stacking Cache-Control on lot photos.
+/img/photographs/*
   Cache-Control: public, max-age=2592000
+/img/blog/*
+  Cache-Control: public, max-age=2592000
+/img/clients/*
+  Cache-Control: public, max-age=2592000
+/img/realtors/*
+  Cache-Control: public, max-age=2592000
+/img/tools/*
+  Cache-Control: public, max-age=2592000
+
+# Static assets without content hashes — long-ish TTL; redeploy + Cloudflare
+# purge to flip sooner if needed.
 /css/*
   Cache-Control: public, max-age=2592000
 /js/*
   Cache-Control: public, max-age=2592000
+/webfonts/*
+  Cache-Control: public, max-age=31536000, immutable
 
-# Map and lots data — keep moderate TTL so price/status updates show within
-# a day even without a redeploy.
+# Frequently-updated data.
 /files/*
   Cache-Control: public, max-age=86400
 /data/*
   Cache-Control: public, max-age=86400
 
-# Webfonts: long-lived.
-/webfonts/*
-  Cache-Control: public, max-age=31536000, immutable
-
-# HTML (catch-all): short cache so content edits propagate quickly.
+# Catch-all: security headers ONLY (no Cache-Control to avoid stacking).
+# HTML and any path not covered above falls through to Cloudflare Pages'
+# default Cache-Control, which is short-lived and appropriate for HTML.
 /*
-  Cache-Control: public, max-age=600, must-revalidate
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
