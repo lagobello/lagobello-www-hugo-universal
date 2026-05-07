@@ -3,10 +3,8 @@
 <meta name="googlebot" content="index,follow,snippet,archive">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- Preconnect to third-party origins we depend on. -->
-<link rel="preconnect" href="//fonts.googleapis.com" crossorigin>
+<!-- Preconnect to third-party origins we still depend on. -->
 <link rel="preconnect" href="//use.fontawesome.com" crossorigin>
-<link rel="preconnect" href="//maxcdn.bootstrapcdn.com" crossorigin>
 <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
 
 {{/* Make the LCP image (homepage carousel CSS background) discoverable. */}}
@@ -52,9 +50,10 @@
     - Roboto                                 — font-metric swap caused text reflow
 -->
 
-<!-- Critical (render-blocking) -->
-<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800&display=swap">
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+<!-- Critical (render-blocking). Roboto and Bootstrap are self-hosted. FA is
+     still on the use.fontawesome.com CDN for now (subset + self-host follows). -->
+<link rel="stylesheet" href="{{ "css/roboto.css" | relURL }}">
+<link rel="stylesheet" href="{{ "css/bootstrap.min.css" | relURL }}">
 <link rel="stylesheet" href="//use.fontawesome.com/releases/v6.7.2/css/all.css">
 {{ with .Site.Params.style }}
   <link href="{{ "css/style" | relURL }}.{{ . }}.css" rel="stylesheet" id="theme-stylesheet">
