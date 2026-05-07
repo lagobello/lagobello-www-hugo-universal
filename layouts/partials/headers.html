@@ -38,18 +38,22 @@
 {{ hugo.Generator }}
 
 <!--
-  CSS critical path:
-    - Bootstrap and style.default shape above-the-fold layout.
-    - owl.carousel + owl.theme: avoiding the carousel collapse-then-expand
-      shift (each carousel item full-height before owl loads).
-    - FontAwesome: each <i class="fa-solid"> is 0×0 before FA loads, then
-      expands to ~3em — feature-section icons made the whole page below
-      shift by 0.847 CLS when deferred.
-    - Everything else loads with media="print" + onload swap so the browser
-      fetches it without blocking the first paint. <noscript> fallback.
+  CSS critical path: contains every stylesheet that affects above-the-fold
+  layout. Anything that resizes elements as it loads (icon dimensions, font
+  metrics, navbar min-height, carousel container, etc.) causes CLS — so it
+  has to be render-blocking. Only animate.css (transforms-only) is left
+  deferred.
+
+  Critical:
+    - bootstrap.min.css, style.default.css   — base layout
+    - all.css (FontAwesome)                  — icons in feature section
+    - owl.carousel.css, owl.theme.css        — home carousel sizing
+    - custom.css                             — navbar min-height, .home-carousel bg
+    - Roboto                                 — font-metric swap caused text reflow
 -->
 
 <!-- Critical (render-blocking) -->
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800&display=swap">
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
 <link rel="stylesheet" href="//use.fontawesome.com/releases/v6.7.2/css/all.css">
 {{ with .Site.Params.style }}
@@ -59,15 +63,12 @@
 {{ end }}
 <link rel="stylesheet" href="{{ "css/owl.carousel.css" | relURL }}">
 <link rel="stylesheet" href="{{ "css/owl.theme.css" | relURL }}">
+<link rel="stylesheet" href="{{ "css/custom.css" | relURL }}">
 
-<!-- Deferred (non-critical) — load asynchronously, apply when ready -->
-<link rel="stylesheet" media="print" onload="this.media='all'" href="//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800&display=swap">
+<!-- Deferred (non-critical) — animate.css is transforms-only, no layout effect -->
 <link rel="stylesheet" media="print" onload="this.media='all'" href="{{ "css/animate.css" | relURL }}">
-<link rel="stylesheet" media="print" onload="this.media='all'" href="{{ "css/custom.css" | relURL }}">
 <noscript>
-  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800&display=swap">
   <link rel="stylesheet" href="{{ "css/animate.css" | relURL }}">
-  <link rel="stylesheet" href="{{ "css/custom.css" | relURL }}">
 </noscript>
 
 <!-- Favicon and Apple touch icons-->
