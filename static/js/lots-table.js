@@ -285,29 +285,20 @@ function renderTableBody(lotsToRender) {
     if (!lotName) return;
     $('#lot-table tbody tr').removeClass('table-info');
     $(this).addClass('table-info');
-    var lotDataEntry = lotsData.find(ld => ld.Name === lotName);
-    if (lotDataEntry && lotDataEntry.Location) {
-      const targetFeature = findFeatureByLotName(lotName);
-      if (targetFeature) {
-        var featureCenter = ol.extent.getCenter(targetFeature.getGeometry().getExtent());
-        olMap.getView().animate({ center: featureCenter, zoom: 19, duration: 500 });
-        var pseudoEvt = { pixel: olMap.getPixelFromCoordinate(featureCenter), coordinate: featureCenter };
-
-        // Use the new global function to show the card
-        if (window.showMapCard) {
-          window.showMapCard(targetFeature, pseudoEvt);
-        } else {
-          console.error("showMapCard function not found");
-        }
-      }
+    if (typeof window.focusLotByName === 'function') {
+      window.focusLotByName(lotName);
     }
   });
 }
 
 function makeListingsTable(url, options) {
   options = options || {};
-  $.getJSON(url, function (data) {
+  fetch(url).then(function (r) {
+    if (!r.ok) throw new Error('Failed to load ' + url);
+    return r.json();
+  }).then(function (data) {
     lotsData = data; // Store fetched data globally for reuse
+    window.lotsData = data;
 
     // Remove old global filter container if it exists from previous versions of the script
     $('#table-filters-container').remove();
@@ -428,52 +419,10 @@ function makeListingsTable(url, options) {
       applyFiltersAndSortAndRender();
     });
 
+  }).catch(function (err) {
+    console.error('Failed to load lots data:', err);
   });
   return true;
 }
 
-// Helper function to find a feature by its 'Name' property from lots.json
-// This might be slow if there are many features.
-// Consider adding 'Name' property directly to GeoJSON features during conversion if possible.
-function findFeatureByLotName(lotName) {
-  let foundFeature = null;
-  const layersToSearch = [layerVectorLotsPlatS1, layerVectorLotsPlatS2, layerVectorLotsPlatS3];
-
-  for (const layer of layersToSearch) {
-    if (foundFeature) break;
-    const source = layer.getSource();
-    if (source && source.getFeatures) {
-      const features = source.getFeatures();
-      for (const feature of features) {
-        // This is the tricky part: GeoJSON features might not have a direct 'Name' property
-        // that matches lots.json. We rely on spatial matching for popups.
-        // For reverse (map to table), we need a reliable link.
-        // This placeholder shows the need for such a link.
-        // If features are guaranteed to have a unique ID that maps to lotName:
-        // if (feature.get('id_property_that_matches_lotName') === lotName) {
-        //    foundFeature = feature;
-        //    break;
-        // }
-
-        // Fallback: if lotsData is available, try to match by location, then check if this feature contains that location
-        const lotJsonEntry = lotsData.find(l => l.Name === lotName);
-        if (lotJsonEntry && lotJsonEntry.Location) {
-          const parts = lotJsonEntry.Location.split(',');
-          if (parts.length === 2) {
-            const lat = parseFloat(parts[0].trim());
-            const lon = parseFloat(parts[1].trim());
-            if (!isNaN(lat) && !isNaN(lon)) {
-              const lotPointWGS84 = [lon, lat];
-              const lotPointInFeatureProj = ol.proj.transform(lotPointWGS84, 'EPSG:4326', 'EPSG:3857');
-              if (feature.getGeometry().intersectsCoordinate(lotPointInFeatureProj)) {
-                foundFeature = feature;
-                break;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  return foundFeature;
-}
+// Feature lookup is now handled by the map module via window.focusLotByName().

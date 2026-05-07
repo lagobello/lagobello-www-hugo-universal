@@ -25,18 +25,12 @@
   </div>
 
   <br>
-  <!-- Removed the old form-inline dropdown -->
   <div id="info" style="display: none;"></div>
 
   <br>
   <div align="center" id="lot-table"></div>
   <script type="application/javascript" src="/js/lots-table.js"></script>
-  <script type="application/javascript" src="/js/interactive-property-map.js"></script>
-  <script>
-    $(document).ready(function() {
-      makeListingsTable('/data/lots.json');
-    });
-  </script>
+  <script type="module" src="/js/map/index.js"></script>
   <br>
   <h6>Disclaimer:</h6>
   <p><small>Information shown on these drawings/maps/charts/tables is compiled from numerous sources and may not be
