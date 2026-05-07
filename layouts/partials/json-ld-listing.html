@@ -3,15 +3,15 @@
 
 {{ $imgUrl := "https://www.lagobello.com/img/photographs/lago-gate-2025-cropped.jpg" }}
 {{ $slug := lower (replace .Title " " "-") }}
-{{ $localImg := printf "img/lots/%s.jpg" $slug }}
-{{ if fileExists (printf "static/%s" $localImg) }}
-{{ $imgUrl = printf "https://www.lagobello.com/%s" $localImg }}
-{{ else }}
-{{ if and $geo.latitude $geo.longitude $.Site.Params.googleMapsApiKey }}
-{{ $imgUrl = printf
-"https://maps.googleapis.com/maps/api/streetview?size=600x400&location=%f,%f&fov=90&pitch=0&return_error_code=true&key=%s"
-$geo.latitude $geo.longitude $.Site.Params.googleMapsApiKey }}
-{{ end }}
+{{ $assetPath := printf "img/lots/%s.jpg" $slug }}
+{{ $img := resources.Get $assetPath }}
+{{ if $img }}
+  {{ $sized := $img.Resize "1200x q85" }}
+  {{ $imgUrl = $sized.Permalink }}
+{{ else if and $geo.latitude $geo.longitude $.Site.Params.googleMapsApiKey }}
+  {{ $imgUrl = printf
+  "https://maps.googleapis.com/maps/api/streetview?size=600x400&location=%f,%f&fov=90&pitch=0&return_error_code=true&key=%s"
+  $geo.latitude $geo.longitude $.Site.Params.googleMapsApiKey }}
 {{ end }}
 
 {{ $place := dict

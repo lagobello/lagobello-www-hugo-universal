@@ -65,17 +65,20 @@
                         <div class="row">
                             <div class="col-md-6">
                                 {{ $slug := .Title | urlize }}
-                                {{ $localImg := printf "img/lots/%s.jpg" $slug }}
-                                {{ $hasLocalImg := fileExists (printf "static/%s" $localImg) }}
+                                {{ $hasLocalImg := fileExists (printf "assets/img/lots/%s.jpg" $slug) }}
 
                                 {{ if $hasLocalImg }}
                                 <div class="image"
                                     style="box-shadow: 0 8px 25px rgba(0,0,0,0.15); border-radius: 12px; overflow: hidden; margin-bottom: 20px; border: 1px solid #efefef;">
-                                    <img src="/{{ $localImg }}" class="img-responsive" alt="Photo of {{ .Title }}"
-                                        width="800" height="533"
-                                        style="width: 100%; height: auto; object-fit: cover; transition: transform 0.3s ease;"
-                                        onmouseover="this.style.transform='scale(1.02)';"
-                                        onmouseout="this.style.transform='scale(1)';">
+                                    {{ partial "lot-image.html" (dict
+                                        "slug" $slug
+                                        "alt" (printf "Photo of %s" .Title)
+                                        "class" "img-responsive"
+                                        "style" "width: 100%; height: auto; object-fit: cover; transition: transform 0.3s ease;"
+                                        "sizes" "(max-width: 768px) 100vw, 600px"
+                                        "loading" "eager"
+                                        "fetchpriority" "high"
+                                    ) }}
                                 </div>
                                 {{ else }}
                                 {{ if $streetViewUrl }}

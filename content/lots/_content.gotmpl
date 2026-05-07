@@ -43,8 +43,8 @@
         {{ $desc = printf "%s Residential lot in the Lago Bello waterfront community." $desc }}
     {{ end }}
 
-    {{ $localImg := printf "img/lots/%s.jpg" $slug }}
-    {{ $hasLocalImg := fileExists (printf "static/%s" $localImg) }}
+    {{/* Lot photos live in /assets/img/lots/<slug>.jpg and are processed at
+         render time. headers.html and partials/lot-image.html resolve them. */}}
 
     {{ $offers := dict }}
     {{ if and (or (eq $status "Listed") (eq $status "Available")) $price }}
@@ -83,7 +83,6 @@
         "size_sqft" $size
     }}
 
-    {{ if $hasLocalImg }}{{ $params = merge $params (dict "banner" $localImg) }}{{ end }}
     {{ if $offers }}{{ $params = merge $params (dict "offers" $offers) }}{{ end }}
 
     {{ warnf "Adding page: %s" $slug }}

@@ -2,6 +2,13 @@
 <meta name="robots" content="all,follow">
 <meta name="googlebot" content="index,follow,snippet,archive">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Preconnect to third-party origins we depend on. -->
+<link rel="preconnect" href="//fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="//use.fontawesome.com" crossorigin>
+<link rel="preconnect" href="//maxcdn.bootstrapcdn.com" crossorigin>
+<link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+
 {{ $title_plain := .Title | markdownify | plainify }}
 <title>{{ $title_plain }}{{ if not .IsHome }} | {{ .Site.Title }}{{ end }}</title>
 <meta name="author" content="{{ .Param "author" }}" />
@@ -45,14 +52,6 @@
 <!-- Custom stylesheet - for your changes -->
 <link href="{{ "css/custom.css" | relURL }}" rel="stylesheet">
 
-<!-- Responsivity for older IE -->
-{{ `
-  <!--[if lt IE 9]>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
-  <![endif]-->
-` | safeHTML }}
-
 <!-- Favicon and Apple touch icons-->
 <link rel="shortcut icon" href="{{ "img/favicon.ico" | relURL }}" type="image/x-icon" />
 <link rel="apple-touch-icon" href="{{ "img/apple-touch-icon.png" | relURL }}" />
@@ -67,31 +66,63 @@
 <!-- Facebook OpenGraph tags -->
 {{ $is_blog := and (eq .Type "blog") (eq .Kind "page") }}
 {{ $is_lot := and (eq .Section "lots") .IsPage }}
-{{ $has_image := isset .Params "banner" }}
-{{ $image := cond $has_image .Params.banner (.Site.Params.default_sharing_image | default "img/sharing-default.png") }}
-{{ $is_valid_image := print "static/" $image | fileExists }}
+
+{{/* Image resolution:
+       1. lot page with /assets/img/lots/<slug>.jpg → resize to 1200×800 (og recommended)
+       2. .Params.banner (legacy static path)
+       3. site default_sharing_image
+*/}}
+{{ $og_image_url := "" }}
+{{ $og_image_w := 0 }}
+{{ $og_image_h := 0 }}
+{{ $og_image_ext := "" }}
+
+{{ if $is_lot }}
+  {{ $slug := .Title | urlize }}
+  {{ $assetPath := printf "img/lots/%s.jpg" $slug }}
+  {{ $img := resources.Get $assetPath }}
+  {{ if $img }}
+    {{ $sized := $img.Fill "1200x630 q85" }}
+    {{ $og_image_url = $sized.Permalink }}
+    {{ $og_image_w = $sized.Width }}
+    {{ $og_image_h = $sized.Height }}
+    {{ $og_image_ext = "jpeg" }}
+  {{ end }}
+{{ end }}
+
+{{ if not $og_image_url }}
+  {{ $has_image := isset .Params "banner" }}
+  {{ $image := cond $has_image .Params.banner (.Site.Params.default_sharing_image | default "img/sharing-default.png") }}
+  {{ $is_valid_image := print "static/" $image | fileExists }}
+  {{ if $is_valid_image }}
+    {{ $og_image_url = ($image | absURL) }}
+    {{ $og_image_ext = trim (path.Ext $image) "." }}
+    {{ if eq (path.Ext $image) ".svg" }}{{ $og_image_ext = "svg+xml" }}{{ end }}
+    {{ $image_local := printf "/static/%s" $image }}
+    {{ with (imageConfig $image_local) }}
+      {{ $og_image_w = .Width }}
+      {{ $og_image_h = .Height }}
+    {{ end }}
+  {{ end }}
+{{ end }}
 
 {{/* Determine og:type — article for blog, place for lot pages, website otherwise. */}}
 {{ $og_type := "website" }}
 {{ if $is_blog }}{{ $og_type = "article" }}
 {{ else if $is_lot }}{{ $og_type = "place" }}{{ end }}
 
-{{ if $is_valid_image }}
-{{ $image_ext := path.Ext $image }}
+{{ if $og_image_url }}
 <meta property="og:locale" content="{{ replace .Site.LanguageCode "-" "_" }}">
 <meta property="og:site_name" content="{{ .Site.Title }}">
 <meta property="og:title" content="{{ $title_plain }}">
 <meta property="og:type" content="{{ $og_type }}">
 <meta property="og:url" content="{{ .Permalink }}" />
 <meta property="og:description" content="{{ $description_plain }}">
-<meta property="og:image" content="{{ $image | absURL }}">
-<meta property="og:image:type" content="image/{{ if eq $image_ext ".svg" }}svg+xml{{ else }}{{ trim $image_ext "." }}{{ end }}">
+<meta property="og:image" content="{{ $og_image_url }}">
+<meta property="og:image:type" content="image/{{ $og_image_ext }}">
 {{ with .Params.banner_alt }}<meta property="og:image:alt" content="{{ . | markdownify | plainify }}">{{ end }}
-{{ $image_local :=  printf "/static/%s" $image}}
-{{ with (imageConfig $image_local) }}
-  <meta property="og:image:width" content="{{ .Width }}">
-  <meta property="og:image:height" content="{{ .Height }}">
-{{ end }}
+{{ if $og_image_w }}<meta property="og:image:width" content="{{ $og_image_w }}">{{ end }}
+{{ if $og_image_h }}<meta property="og:image:height" content="{{ $og_image_h }}">{{ end }}
 {{ end }}
 {{ with .Lastmod }}<meta property="og:updated_time" content="{{ .Format "2006-01-02T15:04:05Z0700" }}">{{ end }}
 {{ if $is_blog }}
@@ -106,11 +137,12 @@
 {{ end }}
 
 <!-- Twitter Card meta tags -->
-<meta name="twitter:card" content="summary{{ if (and $has_image $is_valid_image) }}_large_image{{ end }}">
+{{/* Use summary_large_image whenever we have a usable og:image at >= 1200w. */}}
+<meta name="twitter:card" content="summary{{ if and $og_image_url (or (eq $og_image_w 0) (ge $og_image_w 1200)) }}_large_image{{ end }}">
 {{ with .Param "twitter_site" }}<meta name="twitter:site" content="@{{ . }}">{{ end }}
 <meta name="twitter:title" content="{{ $title_plain | truncate 70 }}">
-{{ if $is_valid_image }}
-<meta name="twitter:image" content="{{ $image | absURL }}">
+{{ if $og_image_url }}
+<meta name="twitter:image" content="{{ $og_image_url }}">
 {{ end }}
 <meta name="twitter:description" content="{{ $description_plain | truncate 200 }}">
 {{ with .Param "twitter_author" }}<meta name="twitter:creator" content="@{{ . }}">{{ end }}

@@ -25,6 +25,18 @@ jobs:
           extended: true
           hugo-version: '0.160.1'
 
+      # Cache Hugo's image-processing output between runs. The cache key is
+      # rebuilt only when source assets change, so unchanged photos skip the
+      # WebP/JPEG resize step entirely (~30s saved).
+      - uses: actions/cache@v4
+        with:
+          path: |
+            resources
+            ~/.cache/hugo
+          key: hugo-resources-${{ hashFiles('assets/img/lots/**', 'config.toml') }}
+          restore-keys: |
+            hugo-resources-
+
       - run: hugo --minify
 
       - run: |
