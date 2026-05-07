@@ -9,6 +9,11 @@
 <link rel="preconnect" href="//maxcdn.bootstrapcdn.com" crossorigin>
 <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
 
+{{/* Make the LCP image (homepage carousel CSS background) discoverable. */}}
+{{ if .IsHome }}
+<link rel="preload" as="image" href="{{ "img/photographs/lago-gate-2025-cropped.jpg" | relURL }}" fetchpriority="high">
+{{ end }}
+
 {{ $title_plain := .Title | markdownify | plainify }}
 <title>{{ $title_plain }}{{ if not .IsHome }} | {{ .Site.Title }}{{ end }}</title>
 <meta name="author" content="{{ .Param "author" }}" />

@@ -47,7 +47,7 @@
        decoding="async"
        {{ with $fetchpriority }}fetchpriority="{{ . }}"{{ end }}
        {{ with $class }}class="{{ . }}"{{ end }}
-       {{ with $style }}style="{{ . }}"{{ end }}
+       {{ with $style }}style="{{ . | safeCSS }}"{{ end }}
        {{ with $onerror }}onerror="{{ . | safeHTMLAttr }}"{{ end }}>
 </picture>
 {{ end }}
