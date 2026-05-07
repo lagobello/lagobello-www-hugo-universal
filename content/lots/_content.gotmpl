@@ -24,13 +24,27 @@
     
     {{ $sku := replace .Name " " "-" }}
     {{ $slug := lower $sku }}
-    
-    {{ $desc := printf "Residential lot %s in Lago Bello, Brownsville TX — %s" .Name $sizeStr }}
-    {{ if or (eq $status "Listed") (eq $status "Available") }}
-        {{ $desc = printf "%s, listed for sale" $desc }}
-    {{ else if eq $status "Sold" }}
-        {{ $desc = printf "%s, sold" $desc }}
+
+    {{ $closeTo := index . "Close-to" }}
+    {{ $proximity := "" }}
+    {{ if eq $closeTo "Lake" }}{{ $proximity = " — lakefront" }}
+    {{ else if eq $closeTo "School" }}{{ $proximity = " — near IDEA Frontier" }}
     {{ end }}
+
+    {{ $priceStr := "" }}
+    {{ if $price }}{{ $priceStr = printf " Listed at $%s." (lang.FormatNumber 0 (float $price)) }}{{ end }}
+
+    {{ $desc := printf "%s%s in Lago Bello, Brownsville TX — %s." .Name $proximity $sizeStr }}
+    {{ if or (eq $status "Listed") (eq $status "Available") }}
+        {{ $desc = printf "%s%s Available residential lot in a gated waterfront community." $desc $priceStr }}
+    {{ else if eq $status "Sold" }}
+        {{ $desc = printf "%s Sold residential lot in the Lago Bello waterfront community." $desc }}
+    {{ else }}
+        {{ $desc = printf "%s Residential lot in the Lago Bello waterfront community." $desc }}
+    {{ end }}
+
+    {{ $localImg := printf "img/lots/%s.jpg" $slug }}
+    {{ $hasLocalImg := fileExists (printf "static/%s" $localImg) }}
 
     {{ $offers := dict }}
     {{ if and (or (eq $status "Listed") (eq $status "Available")) $price }}
@@ -62,13 +76,14 @@
         "geo" $geo
         "additionalProperty" (slice
             (dict "@type" "PropertyValue" "name" "Size" "value" $sizeStr)
-            (dict "@type" "PropertyValue" "name" "Close To" "value" (index . "Close-to"))
+            (dict "@type" "PropertyValue" "name" "Close To" "value" $closeTo)
         )
         "subdivision" (index . "Subdivision")
-        "close_to" (index . "Close-to")
+        "close_to" $closeTo
         "size_sqft" $size
     }}
 
+    {{ if $hasLocalImg }}{{ $params = merge $params (dict "banner" $localImg) }}{{ end }}
     {{ if $offers }}{{ $params = merge $params (dict "offers" $offers) }}{{ end }}
 
     {{ warnf "Adding page: %s" $slug }}

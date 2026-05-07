@@ -20,8 +20,8 @@
                 <div class="item">
                     <div class="row">
                         <div class="col-sm-5 right">
-                            <h1><a href="/sale/" style="text-decoration: none; color: inherit;">Waterfront
-                                    Sale</a></h1>
+                            <h2><a href="/sale/" style="text-decoration: none; color: inherit;">Waterfront
+                                    Sale</a></h2>
                             <div class="content">
                                 <p class="lead" style="margin-bottom: 20px;">
                                     Secure your dream home at Lago Bello today!
@@ -51,7 +51,7 @@
                     {{ $url := printf "/lots/%s/" (.Name | urlize) }}
                     <div class="row">
                         <div class="col-sm-5 right">
-                            <h1><a href="{{ $url }}" style="text-decoration: none; color: inherit;">{{ .Name }}</a></h1>
+                            <h2><a href="{{ $url }}" style="text-decoration: none; color: inherit;">{{ .Name }}</a></h2>
                             <div class="content">
                                 {{ $size := index . "Size [sqft]" }}
                                 <p class="lead" style="margin-bottom: 20px;">

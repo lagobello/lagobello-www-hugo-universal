@@ -1,0 +1,45 @@
+{{/*
+  Emit BreadcrumbList JSON-LD on inner pages.
+  Skips: home, top-level section index. Builds: Home > [Section] > [Page]
+  using each ancestor's title and permalink.
+*/}}
+{{ if not .IsHome }}
+  {{ $items := slice }}
+  {{ $position := 1 }}
+  {{ $items = $items | append (dict
+    "@type" "ListItem"
+    "position" $position
+    "name" "Home"
+    "item" .Site.Home.Permalink
+  ) }}
+
+  {{ $section := .CurrentSection }}
+  {{ if and $section (ne $section.RelPermalink .RelPermalink) }}
+    {{ $position = add $position 1 }}
+    {{ $items = $items | append (dict
+      "@type" "ListItem"
+      "position" $position
+      "name" ($section.Title | markdownify | plainify)
+      "item" $section.Permalink
+    ) }}
+  {{ end }}
+
+  {{ if not .IsSection }}
+    {{ $position = add $position 1 }}
+    {{ $items = $items | append (dict
+      "@type" "ListItem"
+      "position" $position
+      "name" (.Title | markdownify | plainify)
+      "item" .Permalink
+    ) }}
+  {{ end }}
+
+  {{ $jsonLd := dict
+    "@context" "https://schema.org"
+    "@type" "BreadcrumbList"
+    "itemListElement" $items
+  }}
+  <script type="application/ld+json">
+  {{ $jsonLd | jsonify | safeJS }}
+  </script>
+{{ end }}
