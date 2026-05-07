@@ -1,0 +1,37 @@
+# Cloudflare Pages Cache-Control. Hugo copies /static/_headers verbatim into
+# /public/_headers, which Pages reads at deploy time.
+#
+# Specific rules win over generic ones; the trailing /* catch-all applies to
+# everything (mostly HTML).
+
+# Hugo image-pipeline output is content-hashed (filenames include `_hu_<hash>`).
+# Safe to cache forever.
+/img/lots/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Other static images, CSS, JS — paths are NOT content-hashed, so cap the TTL
+# at 30 days. A redeploy can be combined with a Cloudflare cache purge if a
+# ground-truth image needs to flip sooner.
+/img/*
+  Cache-Control: public, max-age=2592000
+/css/*
+  Cache-Control: public, max-age=2592000
+/js/*
+  Cache-Control: public, max-age=2592000
+
+# Map and lots data — keep moderate TTL so price/status updates show within
+# a day even without a redeploy.
+/files/*
+  Cache-Control: public, max-age=86400
+/data/*
+  Cache-Control: public, max-age=86400
+
+# Webfonts: long-lived.
+/webfonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML (catch-all): short cache so content edits propagate quickly.
+/*
+  Cache-Control: public, max-age=600, must-revalidate
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
