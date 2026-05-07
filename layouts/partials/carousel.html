@@ -130,15 +130,17 @@
                                     </div>
 
                                     {{ $slug := .Name | urlize }}
-                                    {{ $localImg := printf "img/lots/%s.jpg" $slug }}
-                                    {{ $hasLocalImg := fileExists (printf "static/%s" $localImg) }}
+                                    {{ $hasLocalImg := fileExists (printf "assets/img/lots/%s.jpg" $slug) }}
 
                                     <a href="{{ $url }}" title="{{ .Name }}">
                                         {{ if $hasLocalImg }}
-                                        <img class="img-responsive"
-                                            style="box-shadow: 5px 5px 15px rgba(0,0,0,0.3); max-height: 450px; width: 100%; object-fit: cover; border: 10px solid white;"
-                                            src="/{{ $localImg }}" alt="Photo of {{ .Name }} for sale at Lago Bello"
-                                            width="800" height="450" loading="lazy" decoding="async">
+                                        {{ partial "lot-image.html" (dict
+                                            "slug" $slug
+                                            "alt" (printf "Photo of %s for sale at Lago Bello" .Name)
+                                            "class" "img-responsive"
+                                            "style" "box-shadow: 5px 5px 15px rgba(0,0,0,0.3); max-height: 450px; width: 100%; object-fit: cover; border: 10px solid white;"
+                                            "sizes" "(max-width: 768px) 100vw, 800px"
+                                        ) }}
                                         {{ else }}
                                         <img class="img-responsive"
                                             style="box-shadow: 5px 5px 15px rgba(0,0,0,0.3); max-height: 450px; width: 100%; object-fit: cover; border: 10px solid white;"

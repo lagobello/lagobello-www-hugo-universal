@@ -71,13 +71,16 @@
                                             <div class="ribbon {{ $statusColor }}">{{ $status }}</div>
                                             <a href="{{ .Permalink }}">
                                                 {{ $slug := .Title | urlize }}
-                                                {{ $localImg := printf "img/lots/%s.jpg" $slug }}
-                                                {{ $hasLocalImg := fileExists (printf "static/%s" $localImg) }}
+                                                {{ $hasLocalImg := fileExists (printf "assets/img/lots/%s.jpg" $slug) }}
 
                                                 {{ if $hasLocalImg }}
-                                                <img src="/{{ $localImg }}" class="img-responsive" alt="Photo of {{ .Title }}"
-                                                    width="600" height="400" loading="lazy"
-                                                    style="width: 100%; height: 100%; object-fit: cover;">
+                                                {{ partial "lot-image.html" (dict
+                                                    "slug" $slug
+                                                    "alt" (printf "Photo of %s" .Title)
+                                                    "class" "img-responsive"
+                                                    "style" "width: 100%; height: 100%; object-fit: cover;"
+                                                    "sizes" "(max-width: 600px) 100vw, 400px"
+                                                ) }}
                                                 {{ else }}
                                                 {{ $streetViewUrl := "" }}
                                                 {{ if and .Params.geo .Site.Params.googleMapsApiKey }}
