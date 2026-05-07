@@ -2,13 +2,13 @@
 title: "The Future is Fast (and Reliable) at Lago Bello!"
 date: 2025-12-10T12:00:00-06:00
 draft: false
-banner: "img/blog/Lago Bello - Omni Fiber.png"
+banner: "img/blog/Lago Bello - Omni Fiber.jpg"
 description: "All 30 lots at Lago Bello now have Omni Fiber high-speed internet. Fiber-ready residential lots in Brownsville, TX."
 ---
 
 We are thrilled to announce that all 30 residential lots at Lago Bello are now fully enabled and ready for service with next-generation fiber internet! 🌐🏡
 
-{{< figure src="/img/blog/Lago Bello - Omni Fiber.png" alt="Lago Bello - Omni Fiber" >}}
+{{< figure src="/img/blog/Lago Bello - Omni Fiber.jpg" alt="Lago Bello - Omni Fiber" >}}
 
 In a world where connection is everything, we knew we had to bring the absolute best to our residents. That’s why we teamed up with Omni Fiber to make this happen.
 

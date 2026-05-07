@@ -50,8 +50,8 @@ Detailed technical data for construction and development at Lago Bello.
 
 <div class="row">
     <div class="col-md-6">
-        <a href="/img/photographs/works.png" data-toggle="lightbox" data-gallery="builders-gallery" data-title="Aerial View of Works">
-            <img src="/img/photographs/works.png" alt="Aerial View of Works" class="img-responsive img-thumbnail">
+        <a href="/img/photographs/works.jpg" data-toggle="lightbox" data-gallery="builders-gallery" data-title="Aerial View of Works">
+            <img src="/img/photographs/works.jpg" alt="Aerial View of Works" class="img-responsive img-thumbnail">
         </a>
     </div>
     <div class="col-md-6">
