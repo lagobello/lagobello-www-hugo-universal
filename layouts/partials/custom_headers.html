@@ -4,6 +4,7 @@
 {{ partial "new_year_fireworks.html" . }}{{ end }}
 {{ partial "sale_config.html" . }}
 {{ partial "json-ld-organization.html" . }}
+{{ partial "json-ld-breadcrumb.html" . }}
 {{ if and (eq .Section "lots") .IsPage }}
 {{ partial "json-ld-listing.html" . }}
 {{ end }}

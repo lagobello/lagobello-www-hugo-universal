@@ -37,6 +37,15 @@ $geo.latitude $geo.longitude $.Site.Params.googleMapsApiKey }}
 "about" $place
 }}
 
+{{/* Promote geo to root and add floorSize for richer SERP cards. */}}
+{{ if and $geo.latitude $geo.longitude }}
+{{ $jsonLd = merge $jsonLd (dict "geo" (dict "@type" "GeoCoordinates" "latitude" $geo.latitude "longitude" $geo.longitude)) }}
+{{ end }}
+
+{{ if .Params.size_sqft }}
+{{ $jsonLd = merge $jsonLd (dict "floorSize" (dict "@type" "QuantitativeValue" "value" (float .Params.size_sqft) "unitCode" "FTK")) }}
+{{ end }}
+
 {{ if .Params.offers }}
 {{ $offers := .Params.offers }}
 {{ if $offers.seller }}

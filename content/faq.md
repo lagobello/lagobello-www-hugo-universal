@@ -1,6 +1,6 @@
 +++
-description = "Frequently asked questions"
-keywords = ["FAQ", "How do I", "questions", "what if"]
+description = "Answers to common questions about Lago Bello — project status, infrastructure, lot availability, HOA fees, and the buying process for this gated waterfront community in Brownsville, TX."
+keywords = ["FAQ", "How do I", "questions", "what if", "Lago Bello", "Brownsville TX", "residential lots", "HOA", "infrastructure"]
 title = "FAQ"
 type = "page"
 
