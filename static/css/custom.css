@@ -29,6 +29,14 @@
 
 .home-carousel {
     background-image: url('../img/photographs/lago-gate-2025-cropped.jpg') !important;
+
+    /* Reserve final carousel height before owl.carousel JS runs. Without this,
+       the multiple slides stack vertically on first paint, then collapse to a
+       single slide once owl JS initializes — pushing the next section up by
+       hundreds of pixels and producing a massive CLS hit. overflow:hidden
+       crops the pre-init stacked state to just the first visible slide. */
+    min-height: 620px;
+    overflow: hidden;
 }
 
 #heading-breadcrumbs {
