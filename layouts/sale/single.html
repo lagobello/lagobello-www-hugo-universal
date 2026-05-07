@@ -89,7 +89,7 @@
     {{ partial "scripts.html" . }}
     <script src="/js/lots-table.js"></script>
     <script>
-        $(document).ready(function () {
+        document.addEventListener('DOMContentLoaded', function () {
             if (typeof makeListingsTable === 'function') {
                 makeListingsTable('/data/lots.json');
             }

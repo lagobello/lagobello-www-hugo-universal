@@ -1,10 +1,12 @@
 {{ template "_internal/google_analytics.html" . }}
 
-{{/* jQuery + Bootstrap stay blocking — inline scripts elsewhere on the page
-     still call $(...). Future cleanup: drop jQuery sitewide. */}}
-<script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+{{/* jQuery and Bootstrap are deferred. All script consumers (the inline
+     scripts on sale/lots pages, the deferred plugins below) wrap their
+     init in DOMContentLoaded, which fires after deferred scripts have
+     executed in document order. */}}
+<script defer src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
     crossorigin="anonymous"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+<script defer src="//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
     integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
     crossorigin="anonymous"></script>
 
