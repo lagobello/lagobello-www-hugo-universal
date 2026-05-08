@@ -1,8 +1,8 @@
 +++
 title = "Waterfront Living"
 url = "/waterfront/"
-description = "Exclusive waterfront living at Lago Bello."
-keywords = ["waterfront", "lake", "luxury", "exclusivity", "premium"]
+description = "Lakefront residential lots at Lago Bello — a 16-acre privately-owned freshwater lake in Brownsville, TX, with private dock rights and combustion-free watercraft."
+keywords = ["waterfront", "lakefront", "lake", "private dock", "Lago Bello", "Brownsville TX", "Caminata", "combustion-free watercraft"]
 +++
 
 # Waterfront Exclusivity
@@ -30,9 +30,27 @@ Nestled at the heart of the community is a 16-acre fresh water lake, the only on
 
 Complementing the waterfront lifestyle is *The Caminata*, a scenic trail system that offers residents a perfect setting for walking, jogging, and enjoying the natural beauty of Lago Bello.
 
+## Building a Dock
+
+Lakefront homeowners have the right to build a private dock at no
+additional fee. The dock sits in HOA-owned lake property, so plans go
+through the Architectural Control Committee like any other major
+exterior structure. Typical guidelines:
+
+* Dock dimensions and location are reviewed for visual consistency
+  with neighboring docks.
+* Construction must be combustion-free-compatible (no fuel storage,
+  no gas-powered lifts).
+* Materials and lighting follow the broader subdivision guidelines.
+
+The full ACC document is available from the HOA at
+[lagohoa.org](https://lagohoa.org). For a comparison of waterfront and
+interior lots — price, view, build minimums — see [Lakefront vs.
+Interior](/blog/2026/04/08/lakefront-vs-interior/).
+
 ## Exclusive Gated Community
 
-Lago Bello is an exclusive gated community featuring 24/7 security, ensuring privacy and safety for all residents.
+Lago Bello is a private gated subdivision — single entry, fenced perimeter, and HOA-owned streets that keep through-traffic out. For a deeper look at how the gate and access work today (and where they're headed), see [What Gated Subdivision Means at Lago Bello](/blog/2026/04/29/what-is-a-gated-subdivision/).
 
 <div class="row">
     <div class="col-md-12">
