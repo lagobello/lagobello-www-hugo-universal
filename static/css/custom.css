@@ -105,3 +105,75 @@
     margin-bottom: 15px;
     font-weight: 600;
 }
+
+/* Content tables (markdown-rendered) */
+
+#content table {
+    width: 100%;
+    margin: 1.75em 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+#post-content table thead,
+#content table thead {
+    background: #f5f1ea;
+}
+
+#post-content table th,
+#content table th {
+    text-align: left;
+    padding: 12px 18px;
+    font-weight: 600;
+    color: #2a2a2a;
+    border-bottom: 2px solid #d9c9a3;
+    letter-spacing: 0.02em;
+}
+
+#post-content table td,
+#content table td {
+    padding: 11px 18px;
+    border-top: 1px solid #ececec;
+    color: #444;
+    vertical-align: top;
+}
+
+#post-content table tbody tr:first-child td,
+#content table tbody tr:first-child td {
+    border-top: none;
+}
+
+#post-content table tbody tr:nth-child(even) td,
+#content table tbody tr:nth-child(even) td {
+    background: #fafafa;
+}
+
+#post-content table tbody tr:hover td,
+#content table tbody tr:hover td {
+    background: #f5f1ea;
+}
+
+/* Right-align the second column when it's a short value (drive-time tables) */
+#post-content table td + td,
+#content table td + td {
+    white-space: nowrap;
+    color: #6a6a6a;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Responsive: allow horizontal scroll on narrow screens */
+@media (max-width: 600px) {
+    
+    #content table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
