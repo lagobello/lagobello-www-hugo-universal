@@ -106,8 +106,10 @@
     font-weight: 600;
 }
 
-/* Content tables (markdown-rendered) */
-
+/* Content tables (markdown-rendered) — drive-time and comparison tables on
+   blog posts and pages. Scoped to #content (which wraps both the blog post
+   layout and the standard page layout) so it won't touch the lots listing
+   table in other contexts. */
 #content table {
     width: 100%;
     margin: 1.75em 0;
@@ -122,12 +124,10 @@
     line-height: 1.5;
 }
 
-#post-content table thead,
 #content table thead {
     background: #f5f1ea;
 }
 
-#post-content table th,
 #content table th {
     text-align: left;
     padding: 12px 18px;
@@ -137,7 +137,6 @@
     letter-spacing: 0.02em;
 }
 
-#post-content table td,
 #content table td {
     padding: 11px 18px;
     border-top: 1px solid #ececec;
@@ -145,32 +144,27 @@
     vertical-align: top;
 }
 
-#post-content table tbody tr:first-child td,
 #content table tbody tr:first-child td {
     border-top: none;
 }
 
-#post-content table tbody tr:nth-child(even) td,
 #content table tbody tr:nth-child(even) td {
     background: #fafafa;
 }
 
-#post-content table tbody tr:hover td,
 #content table tbody tr:hover td {
     background: #f5f1ea;
 }
 
-/* Right-align the second column when it's a short value (drive-time tables) */
-#post-content table td + td,
+/* Right-align value columns (drive times, comparison values). */
 #content table td + td {
     white-space: nowrap;
     color: #6a6a6a;
     font-variant-numeric: tabular-nums;
 }
 
-/* Responsive: allow horizontal scroll on narrow screens */
+/* Allow horizontal scroll on narrow screens instead of squishing. */
 @media (max-width: 600px) {
-    
     #content table {
         display: block;
         overflow-x: auto;
