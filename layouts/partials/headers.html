@@ -62,7 +62,8 @@
 {{ end }}
 <link rel="stylesheet" href="{{ "css/owl.carousel.css" | relURL }}">
 <link rel="stylesheet" href="{{ "css/owl.theme.css" | relURL }}">
-<link rel="stylesheet" href="{{ "css/custom.css" | relURL }}">
+{{ $customCssHash := readFile "static/css/custom.css" | sha256 }}
+<link rel="stylesheet" href="{{ "css/custom.css" | relURL }}?v={{ substr $customCssHash 0 8 }}">
 
 <!-- Deferred (non-critical) — animate.css is transforms-only, no layout effect -->
 <link rel="stylesheet" media="print" onload="this.media='all'" href="{{ "css/animate.css" | relURL }}">
