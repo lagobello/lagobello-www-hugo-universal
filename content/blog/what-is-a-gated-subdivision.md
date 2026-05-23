@@ -4,7 +4,11 @@ date: 2026-04-29T10:00:00-06:00
 draft: false
 description: "How the entrance, deliveries, and access work at Lago Bello — a single-entry private subdivision with HOA-owned streets in Brownsville, TX."
 keywords: ["gated community", "gated subdivision", "Lago Bello", "Brownsville TX", "private streets", "private access"]
+banner: "img/blog/seo/lago-bello-gated-subdivision-entrance.jpg"
+banner_alt: "Open wrought-iron gates and stucco pillars at the Lago Bello gated subdivision entrance in Brownsville, Texas."
 ---
+
+{{< figure-rel src="img/blog/seo/lago-bello-gated-subdivision-entrance.jpg" alt="Open wrought-iron gates and stucco pillars at the Lago Bello gated subdivision entrance in Brownsville, Texas." caption="The Lago Bello entrance on Vittorio Alfieri Avenue: one way in, private internal streets, and a quieter residential setting." loading="eager" fetchpriority="high" >}}
 
 "Gated community" gets used pretty loosely in real-estate marketing.
 At one extreme it means a literal staffed gatehouse with vetted

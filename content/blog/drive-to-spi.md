@@ -4,7 +4,11 @@ date: 2026-03-25T10:00:00-06:00
 draft: false
 description: "Driving from Lago Bello to South Padre Island — about 30 minutes door-to-bay-side, mostly via SH-100. A practical guide for new residents."
 keywords: ["South Padre Island", "SPI", "Lago Bello", "Brownsville", "drive time", "Olmito"]
+banner: "img/blog/seo/lago-bello-to-south-padre-island-drive-map.jpg"
+banner_alt: "Navigation map showing the drive from Lago Bello to South Padre Island, about 33 miles and 35 to 45 minutes."
 ---
+
+{{< figure-rel src="img/blog/seo/lago-bello-to-south-padre-island-drive-map.jpg" alt="Navigation map showing the driving route from Lago Bello to South Padre Island with 33 miles and about 35 to 45 minutes driving time." caption="The drive from Lago Bello to South Padre Island is roughly 33 miles; timing varies with weekend and beach traffic." loading="eager" fetchpriority="high" >}}
 
 A good chunk of why people move to Lago Bello is geography. We're far
 enough from the noise of central Brownsville to feel residential, but
