@@ -4,7 +4,11 @@ date: 2026-02-12T10:00:00-06:00
 draft: false
 description: "How the Lago Bello Home Owners Association is structured — what's privately owned, what fees pay for, and where the rules live."
 keywords: ["HOA", "Lago Bello", "home owners association", "lagohoa.org", "Brownsville TX"]
+banner: "img/blog/seo/lago-bello-hoa-fountain-green.jpg"
+banner_alt: "Green Lago Bello entrance fountain and landscaping maintained by the homeowners association."
 ---
+
+{{< figure-rel src="img/blog/seo/lago-bello-hoa-fountain-green.jpg" alt="Green Lago Bello entrance fountain and landscaping maintained by the homeowners association." caption="The Lago Bello HOA maintains shared assets such as the entrance fountain, common landscaping, private streets, trail system, and lake infrastructure." loading="eager" fetchpriority="high" >}}
 
 One of the things that surprises people about Lago Bello is how much of
 it is actually owned by the people who live here. The streets, the

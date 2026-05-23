@@ -14,9 +14,16 @@
     {{- $h = .Height -}}
   {{- end -}}
 {{- end -}}
-<figure class="blog-figure">
-  <img src="{{ $src | relURL }}" class="{{ $class }}" alt="{{ $alt }}"{{ if $title }} title="{{ $title }}"{{ end }}{{ if $w }} width="{{ $w }}"{{ end }}{{ if $h }} height="{{ $h }}"{{ end }} loading="{{ $loading }}"{{ if ne $fetchpriority "auto" }} fetchpriority="{{ $fetchpriority }}"{{ end }}>
-  {{- with $caption }}
-  <figcaption>{{ . | markdownify }}</figcaption>
-  {{- end }}
-</figure>
+{{- $titleAttr := "" -}}
+{{- with $title -}}{{- $titleAttr = printf " title=%q" . -}}{{- end -}}
+{{- $widthAttr := "" -}}
+{{- if $w -}}{{- $widthAttr = printf " width=%q" (printf "%d" $w) -}}{{- end -}}
+{{- $heightAttr := "" -}}
+{{- if $h -}}{{- $heightAttr = printf " height=%q" (printf "%d" $h) -}}{{- end -}}
+{{- $fetchAttr := "" -}}
+{{- if ne $fetchpriority "auto" -}}{{- $fetchAttr = printf " fetchpriority=%q" $fetchpriority -}}{{- end -}}
+{{- $captionHTML := "" -}}
+{{- with $caption -}}
+  {{- $captionHTML = printf "\n  <figcaption>%s</figcaption>" (. | markdownify) -}}
+{{- end -}}
+{{- printf "<figure class=\"blog-figure\">\n  <img src=%q class=%q alt=%q%s%s%s loading=%q%s>%s\n</figure>" ($src | relURL) $class $alt $titleAttr $widthAttr $heightAttr $loading $fetchAttr $captionHTML | safeHTML -}}
