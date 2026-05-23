@@ -67,8 +67,8 @@ out-of-date.
 The HOA does not:
 
 * Build or modify your home (that's the Architectural Control Committee).
-* Provide utilities (Brownsville PUB handles power and water; Omni Fiber
-  handles internet).
+* Provide utilities (Brownsville PUB handles power; ERHWSC handles water
+  and wastewater; Omni Fiber handles internet).
 
 ### The Architectural Control Committee
 
