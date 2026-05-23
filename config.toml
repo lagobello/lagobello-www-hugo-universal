@@ -158,8 +158,8 @@ pagerSize = 10
     location_filter = "Lake"
 
 [Permalinks]
-    blog = "/blog/:year/:month/:day/:contentbasename/"
-    tools = "/tools/:contentbasename/"
+    blog = "/blog/:year/:month/:day/:filename/"
+    tools = "/tools/:filename/"
 
 # Enable or disable top bar with social icons
 [params.topbar]
