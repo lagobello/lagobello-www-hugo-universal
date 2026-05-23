@@ -4,7 +4,11 @@ date: 2026-04-08T10:00:00-06:00
 draft: false
 description: "A practical comparison of lakefront and interior lots at Lago Bello — price, view, build constraints, dock rights, and HOA implications."
 keywords: ["lakefront", "interior lot", "Lago Bello", "buying a lot", "waterfront", "dock", "Brownsville TX"]
+banner: "img/blog/seo/lago-bello-lakefront-vs-school-side-lot-map.jpg"
+banner_alt: "Lago Bello Section 2 lot map with one school-side interior lot and one lakeside lot highlighted."
 ---
+
+{{< figure-rel src="img/blog/seo/lago-bello-lakefront-vs-school-side-lot-map.jpg" alt="Lago Bello Section 2 lot map with one school-side interior lot highlighted in gold and one lakeside lot highlighted in green." caption="A side-by-side visual example: gold marks a school-side interior lot; green marks a lot backing toward the community lake." loading="eager" fetchpriority="high" >}}
 
 The first question most prospects ask after pricing is some form of
 "do I need to be on the lake?" The honest answer is: it depends what

@@ -1,0 +1,22 @@
+{{- $src := .Get "src" -}}
+{{- $alt := .Get "alt" | default "" -}}
+{{- $title := .Get "title" | default "" -}}
+{{- $caption := .Get "caption" | default "" -}}
+{{- $class := .Get "class" | default "img-responsive" -}}
+{{- $loading := .Get "loading" | default "lazy" -}}
+{{- $fetchpriority := .Get "fetchpriority" | default "auto" -}}
+{{- $local := printf "static/%s" $src -}}
+{{- $w := 0 -}}
+{{- $h := 0 -}}
+{{- if fileExists $local -}}
+  {{- with (imageConfig $local) -}}
+    {{- $w = .Width -}}
+    {{- $h = .Height -}}
+  {{- end -}}
+{{- end -}}
+<figure class="blog-figure">
+  <img src="{{ $src | relURL }}" class="{{ $class }}" alt="{{ $alt }}"{{ if $title }} title="{{ $title }}"{{ end }}{{ if $w }} width="{{ $w }}"{{ end }}{{ if $h }} height="{{ $h }}"{{ end }} loading="{{ $loading }}"{{ if ne $fetchpriority "auto" }} fetchpriority="{{ $fetchpriority }}"{{ end }}>
+  {{- with $caption }}
+  <figcaption>{{ . | markdownify }}</figcaption>
+  {{- end }}
+</figure>

@@ -34,6 +34,7 @@
 .fa-align-justify { --fa: "\f039"; }
 .fa-apple { --fa: "\f179"; }
 .fa-arrows-alt { --fa: "\f0b2"; }
+.fa-bolt { --fa: "\f0e7"; }
 .fa-calendar { --fa: "\f133"; }
 .fa-cube { --fa: "\f1b2"; }
 .fa-envelope { --fa: "\f0e0"; }
@@ -57,11 +58,15 @@
 .fa-phone { --fa: "\f095"; }
 .fa-phone-alt { --fa: "\f879"; }
 .fa-quote-left { --fa: "\f10d"; }
+.fa-route { --fa: "\f4d7"; }
+.fa-school { --fa: "\f549"; }
 .fa-search { --fa: "\f002"; }
+.fa-shield-halved { --fa: "\f3ed"; }
 .fa-tag { --fa: "\f02b"; }
 .fa-tags { --fa: "\f02c"; }
 .fa-user { --fa: "\f007"; }
 .fa-users { --fa: "\f0c0"; }
+.fa-water { --fa: "\f773"; }
 .fa-waze { --fa: "\f83f"; }
 .fa-whatsapp { --fa: "\f232"; }
 .fa-x-twitter { --fa: "\e61b"; }
