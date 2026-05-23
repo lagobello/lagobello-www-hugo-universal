@@ -18,8 +18,8 @@ you're optimizing for. Here's the straight comparison.
 
 | | Lakefront | Interior |
 | --- | --- | --- |
-| Typical range | Mid-to-high end of $75k–$175k | Lower end |
-| Typical size | Larger (often closer to 13–16k sq ft) | 7–11k sq ft |
+| Current Section 2 available/listed price range | $140k–$160k | $73k–$80k |
+| Current Section 2 available/listed size range | 12,747–16,142 sq ft | 7,941–8,147 sq ft |
 | Dock rights | ✓ included, no extra fee | — |
 | Lake access | Direct from your back yard | Via the Caminata trail, ~3–10 min walk |
 
@@ -51,8 +51,7 @@ identical.
 
 Same HOA, same dues, same governance. Lakefront homeowners get the
 right to build a private dock at no additional charge. Combustion-free
-watercraft only — kayaks, paddleboards, electric boats, sailboats. If
-you imagined yourself with a wakeboarding boat, this isn't the lake.
+watercraft only — kayaks, paddleboards, electric boats, sailboats.
 
 ### Resale
 
