@@ -16,6 +16,7 @@
 
         {{ partial "nav.html" . }}
 
+        <main id="main-content" role="main">
         <h1 class="sr-only">{{ .Site.Title }} — Residential lots for sale in Brownsville, TX</h1>
 
         {{ partial "carousel.html" . }}
@@ -29,6 +30,7 @@
         {{ partial "recent_posts.html" . }}
 
         {{ partial "clients.html" . }}
+        </main>
 
         {{ partial "footer.html" . }}
 
