@@ -3,12 +3,12 @@ title: "Why Every Wire at Lago Bello Is Underground"
 date: 2026-03-04T10:00:00-06:00
 draft: false
 description: "Buried electrical, fiber, water, and sewer at Lago Bello — what underground utilities mean for storm reliability, aesthetics, and resale."
-keywords: ["buried utilities", "underground", "BPUB", "Omni Fiber", "Lago Bello", "Brownsville TX"]
-banner: "img/blog/seo/lago-bello-buried-utilities-fiber-to-home.png"
-banner_alt: "Infographic of buried electrical, water, sewer, and fiber to the home internet lines at Lago Bello with no gas line shown."
+keywords: ["buried utilities", "underground utilities", "fiber to the home", "BPUB", "Omni Fiber", "Lago Bello", "Brownsville TX"]
+banner: "img/blog/seo/lago-bello-underground-utilities-fiber-electric-water-sewer.jpg"
+banner_alt: "Illustration of underground fiber internet, electrical, water, and sewer utility lines serving a home, representing Lago Bello buried utilities in Brownsville, Texas."
 ---
 
-{{< figure-rel src="img/blog/seo/lago-bello-buried-utilities-fiber-to-home.png" alt="Infographic showing buried electrical, water, sewer, and Fiber to the Home Internet lines at Lago Bello, with no gas line." caption="Lago Bello lots are served by underground electrical, water, sewer, and fiber-to-the-home internet infrastructure." loading="eager" fetchpriority="high" >}}
+{{< figure-rel src="img/blog/seo/lago-bello-underground-utilities-fiber-electric-water-sewer.jpg" alt="Underground utility line illustration showing fiber internet, electrical, water, and sewer service for Lago Bello residential lots in Brownsville, Texas." caption="Lago Bello lots are served by buried electrical, water, sewer, and fiber-to-the-home internet infrastructure." loading="eager" fetchpriority="high" >}}
 
 Most subdivisions in the Rio Grande Valley have a tangle of overhead
 electrical lines on wooden poles. Lago Bello doesn't — by design.
