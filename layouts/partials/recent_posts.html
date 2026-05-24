@@ -23,9 +23,11 @@
                             <div class="image" style="overflow:hidden">
                                 {{ if isset .Params "banner" }}
                                 {{ $alt := .Params.banner_alt | default (printf "Banner for %s" .Title) }}
-                                <img src="{{ .Params.banner | relURL }}" class="img-responsive" alt="{{ $alt }}" loading="lazy" />
+                                {{ $bannerPath := strings.TrimPrefix "/" .Params.banner }}
+                                {{ $bannerConfig := imageConfig (printf "static/%s" $bannerPath) }}
+                                <img src="{{ .Params.banner | relURL }}" class="img-responsive" alt="{{ $alt }}" loading="lazy" width="{{ $bannerConfig.Width }}" height="{{ $bannerConfig.Height }}" />
                                 {{ else }}
-                                <img src="{{ "img/placeholder.png" | relURL }}" class="img-responsive" alt="" loading="lazy" />
+                                <img src="{{ "img/placeholder.png" | relURL }}" class="img-responsive" alt="" loading="lazy" width="600" height="400" />
                                 {{ end }}
                             </div>
                             <div class="bg"></div>

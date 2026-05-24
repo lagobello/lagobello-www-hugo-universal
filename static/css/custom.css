@@ -63,6 +63,7 @@
     inset: 0;
     z-index: 1;
     pointer-events: none;
+    background: rgba(50, 50, 50, 0.8);
 }
 
 #heading-breadcrumbs {

@@ -70,7 +70,7 @@
     <!-- /#all -->
 
     {{ partial "scripts.html" . }}
-    <script src="/js/lots-table.js"></script>
+    <script defer src="/js/lots-table.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             if (typeof makeListingsTable === 'function') {
