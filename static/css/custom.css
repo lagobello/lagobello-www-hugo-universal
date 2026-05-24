@@ -25,6 +25,7 @@
 /* Image overrides */
 .bar.background-image-fixed-2 {
     background-image: url('../img/photographs/works-compressed.jpg') !important;
+    background-image: image-set(url('../img/photographs/works-compressed-900.webp') type('image/webp'), url('../img/photographs/works-compressed.jpg') type('image/jpeg')) !important;
 }
 
 .home-carousel {
