@@ -3,6 +3,7 @@ title = "Waterfront Living"
 url = "/waterfront/"
 description = "Lakefront residential lots at Lago Bello — a 16-acre privately-owned freshwater lake in Brownsville, TX, with private dock rights and combustion-free watercraft."
 keywords = ["waterfront", "lakefront", "lake", "private dock", "Lago Bello", "Brownsville TX", "Caminata", "combustion-free watercraft"]
+lightbox = true
 +++
 
 # Waterfront Exclusivity

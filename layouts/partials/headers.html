@@ -6,9 +6,13 @@
 <!-- Preconnect to third-party origins we still depend on. -->
 <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
 
-{{/* Make the LCP image (homepage carousel CSS background) discoverable. */}}
+{{/* Make the LCP image discoverable and responsive. */}}
 {{ if .IsHome }}
-<link rel="preload" as="image" href="{{ "img/photographs/lago-gate-2025-cropped.jpg" | relURL }}" fetchpriority="high">
+<link rel="preload" as="image"
+    href="{{ "img/photographs/lago-gate-2025-cropped-1200.webp" | relURL }}"
+    imagesrcset="{{ "img/photographs/lago-gate-2025-cropped-640.webp" | relURL }} 640w, {{ "img/photographs/lago-gate-2025-cropped-1200.webp" | relURL }} 1199w"
+    imagesizes="100vw"
+    fetchpriority="high">
 {{ end }}
 
 {{ $title_plain := .Title | markdownify | plainify }}

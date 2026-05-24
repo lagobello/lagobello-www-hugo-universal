@@ -3,6 +3,7 @@ title = "For Builders"
 url = "/builders/"
 description = "Technical specifications and data for builders at Lago Bello."
 keywords = ["builders", "specs", "zoning", "infrastructure", "utilities"]
+lightbox = true
 layout = "builders"
 +++
 
