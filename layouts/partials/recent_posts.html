@@ -25,7 +25,17 @@
                                 {{ $alt := .Params.banner_alt | default (printf "Banner for %s" .Title) }}
                                 {{ $bannerPath := strings.TrimPrefix "/" .Params.banner }}
                                 {{ $bannerConfig := imageConfig (printf "static/%s" $bannerPath) }}
+                                {{ $bannerStem := strings.TrimSuffix (path.Ext $bannerPath) $bannerPath }}
+                                {{ $bannerWebp := printf "%s-480.webp" $bannerStem }}
+                                {{ if fileExists (printf "static/%s" $bannerWebp) }}
+                                {{ $bannerWebpConfig := imageConfig (printf "static/%s" $bannerWebp) }}
+                                <picture>
+                                  <source type="image/webp" srcset="{{ $bannerWebp | relURL }}">
+                                  <img src="{{ .Params.banner | relURL }}" class="img-responsive" alt="{{ $alt }}" loading="lazy" width="{{ $bannerWebpConfig.Width }}" height="{{ $bannerWebpConfig.Height }}" />
+                                </picture>
+                                {{ else }}
                                 <img src="{{ .Params.banner | relURL }}" class="img-responsive" alt="{{ $alt }}" loading="lazy" width="{{ $bannerConfig.Width }}" height="{{ $bannerConfig.Height }}" />
+                                {{ end }}
                                 {{ else }}
                                 <img src="{{ "img/placeholder.png" | relURL }}" class="img-responsive" alt="" loading="lazy" width="600" height="400" />
                                 {{ end }}

@@ -28,11 +28,22 @@
                     <div class="image same-height-always">
                         <a href="{{ .Permalink }}">
                             {{ if isset .Params "banner" }}
+                            {{ $bannerPath := strings.TrimPrefix "/" .Params.banner }}
+                            {{ $bannerStem := strings.TrimSuffix (path.Ext $bannerPath) $bannerPath }}
+                            {{ $bannerWebp := printf "%s-480.webp" $bannerStem }}
+                            {{ if fileExists (printf "static/%s" $bannerWebp) }}
+                            <picture>
+                                <source type="image/webp" srcset="{{ $bannerWebp | relURL }}">
+                                <img src="{{ .Params.banner | relURL }}" class="img-responsive"
+                                    alt="Banner for {{ .Title }}" width="200" height="105" loading="lazy" />
+                            </picture>
+                            {{ else }}
                             <img src="{{ .Params.banner | relURL }}" class="img-responsive"
                                 alt="Banner for {{ .Title }}" width="200" height="120" loading="lazy" />
+                            {{ end }}
                             {{ else }}
                             <img src="{{ "img/placeholder.png" | relURL }}" class="img-responsive"
-                                alt="" width="200" height="120" loading="lazy" />
+                                alt="Placeholder image" width="200" height="120" loading="lazy" />
                             {{ end }}
                         </a>
                     </div>

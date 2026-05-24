@@ -22,13 +22,21 @@
                     {{ range .Site.Data.clients }}
                     {{ $imagePath := strings.TrimPrefix "/" .image }}
                     {{ $imageConfig := imageConfig (printf "static/%s" $imagePath) }}
+                    {{ $imageStem := strings.TrimSuffix (path.Ext $imagePath) (path.Base $imagePath) }}
+                    {{ $optimizedImage := printf "/img/clients/optimized/%s-200.webp" $imageStem }}
                     <div class="item" title="{{ .name }}">
                         {{ if .url }}
                           <a href="{{ .url }}" target="_blank" rel="noopener" aria-label="{{ .name }}">
-                            <img src="{{ .image }}" alt="{{ .name }}" class="img-responsive" loading="lazy" width="{{ $imageConfig.Width }}" height="{{ $imageConfig.Height }}" />
+                            <picture>
+                              <source type="image/webp" srcset="{{ $optimizedImage }}">
+                              <img src="{{ .image }}" alt="{{ .name }}" class="img-responsive" loading="lazy" width="{{ $imageConfig.Width }}" height="{{ $imageConfig.Height }}" />
+                            </picture>
                           </a>
                         {{ else }}
-                          <img src="{{ .image }}" alt="{{ .name }}" class="img-responsive" loading="lazy" width="{{ $imageConfig.Width }}" height="{{ $imageConfig.Height }}" />
+                          <picture>
+                            <source type="image/webp" srcset="{{ $optimizedImage }}">
+                            <img src="{{ .image }}" alt="{{ .name }}" class="img-responsive" loading="lazy" width="{{ $imageConfig.Width }}" height="{{ $imageConfig.Height }}" />
+                          </picture>
                         {{ end }}
                     </div>
                     {{ end }}
