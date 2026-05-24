@@ -27,6 +27,7 @@
 
 <script defer src="{{ "js/front.js" | relURL }}"></script>
 
+{{ if .Params.lightbox }}
 <!-- ekko lightbox -->
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.min.js"></script>
 <script>
@@ -39,3 +40,4 @@
         }
     });
 </script>
+{{ end }}
