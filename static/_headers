@@ -25,6 +25,17 @@
 /img/tools/*
   Cache-Control: public, max-age=2592000
 
+# Root-level /img assets are not covered by Cloudflare Pages' path rules
+# above. Keep these explicit so they don't overlap image subdirectories.
+/img/apple-touch-icon.png
+  Cache-Control: public, max-age=2592000
+/img/favicon.ico
+  Cache-Control: public, max-age=2592000
+/img/lago-logo-500-500.png
+  Cache-Control: public, max-age=2592000
+/img/placeholder-home.png
+  Cache-Control: public, max-age=2592000
+
 # Static assets without content hashes — long-ish TTL; redeploy + Cloudflare
 # purge to flip sooner if needed.
 /css/*
