@@ -23,7 +23,7 @@
                     {{ $imagePath := strings.TrimPrefix "/" .image }}
                     {{ $imageConfig := imageConfig (printf "static/%s" $imagePath) }}
                     {{ $imageStem := strings.TrimSuffix (path.Ext $imagePath) (path.Base $imagePath) }}
-                    {{ $optimizedImage := printf "/img/clients/optimized/%s-200.webp" $imageStem }}
+                    {{ $optimizedImage := printf "/img/clients/optimized/%s-200-alpha.webp" $imageStem }}
                     <div class="item" title="{{ .name }}">
                         {{ if .url }}
                           <a href="{{ .url }}" target="_blank" rel="noopener" aria-label="{{ .name }}">
