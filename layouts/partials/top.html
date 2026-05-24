@@ -1,0 +1,20 @@
+{{ if .Site.Params.topbar.enable }}
+<header>
+  <div id="top">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-5">
+          {{ .Site.Params.topbar.text | safeHTML }}
+        </div>
+        <div class="col-xs-7">
+          <div class="social" aria-label="Social and contact links">
+            {{ range .Site.Menus.topbar.ByWeight }}
+            <a href="{{ .URL | safeURL }}" target="_blank" rel="noopener" style="opacity: 1;" aria-label="{{ .Name }}" title="{{ .Name }}">{{ .Pre }}</a>
+            {{ end }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+{{ end }}

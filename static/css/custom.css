@@ -53,10 +53,16 @@
     object-position: center center;
 }
 
-.home-carousel .dark-mask,
 .home-carousel .container {
     position: relative;
+    z-index: 2;
+}
+
+.home-carousel .dark-mask {
+    position: absolute;
+    inset: 0;
     z-index: 1;
+    pointer-events: none;
 }
 
 #heading-breadcrumbs {
@@ -84,6 +90,81 @@
 #navigation .navbar-nav>li.active>a:not(.black-friday-nav-link) {
     text-decoration: none !important;
     border-bottom: none !important;
+}
+
+/* Accessibility: keep small topbar/contact links readable against the theme's
+   dark top bar, and keep the sale nav contrast above WCAG AA. */
+#top a,
+#top .social a {
+    color: #fff !important;
+}
+
+#top a:hover,
+#top a:focus {
+    color: #f5f5f5 !important;
+    text-decoration: underline;
+}
+
+.sale-nav-link,
+.sale-nav-link:hover,
+.sale-nav-link:focus {
+    background-color: #b53430 !important;
+    color: #fff !important;
+}
+
+.home-carousel .content p,
+.home-carousel .author-category,
+.home-carousel .lead {
+    color: #fff;
+}
+
+/* Accessibility contrast pass for theme text/link colors that were too light
+   (#999 body snippets and #38a7bb links/buttons on white). */
+#navigation .navbar-nav > li.active > a,
+#navigation .navbar-nav > li.active > a:hover,
+#navigation .navbar-nav > li.active > a:focus {
+    background-color: #14788a !important;
+    color: #fff !important;
+}
+
+.box-simple p,
+.box-image-text.blog .content p,
+.box-image-text.blog .content .author-category,
+.box-image-text.blog .content .intro {
+    color: #555 !important;
+}
+
+.box-image-text.blog .content h3 a,
+.box-image-text.blog .content h4 a,
+.btn-template-main {
+    color: #14788a !important;
+}
+
+.btn-template-main:hover,
+.btn-template-main:focus {
+    color: #0f5f6d !important;
+}
+
+#footer,
+#footer p,
+#footer address {
+    color: #e6e6e6 !important;
+}
+
+#footer .btn-template-main {
+    color: #14788a !important;
+}
+
+#footer .blog-entries .name h4 a {
+    color: #fff !important;
+}
+
+#footer h3 {
+    color: #fff;
+    font-size: 18px;
+    margin-top: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 }
 
 /* Features Section - Modernization */
