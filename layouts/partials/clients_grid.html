@@ -1,7 +1,7 @@
 {{ if isset .Site.Params "clients" }}
 {{ if .Site.Params.clients.enable }}
-{{ if isset hugo.Data "clients" }}
-{{ if gt (len hugo.Data.clients) 0 }}
+{{ if isset .Site.Data "clients" }}
+{{ if gt (len .Site.Data.clients) 0 }}
 <section class="bar background-gray no-mb">
     <div class="row">
         <div class="col-md-12" style="padding: 40px 20px;">
@@ -12,7 +12,7 @@
                 {{ .Site.Params.clients.subtitle | markdownify }}
             </p>
             <div class="row text-center">
-                {{ range hugo.Data.clients }}
+                {{ range .Site.Data.clients }}
                 <div class="col-xs-6 col-sm-4 col-md-3"
                     style="margin-bottom: 20px; display: flex; align-items: center; justify-content: center; height: 150px;">
                     <div class="item" title="{{ .name }}" style="width: 100%;">
