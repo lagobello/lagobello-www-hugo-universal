@@ -7,7 +7,7 @@
           {{ if default false .Site.Params.disabled_logo }}
           <h4>{{ .Site.Params.logo_text }}</h4>
           {{ else }}
-          <img src="{{ .Site.Params.logo | relURL }}" alt="{{ .Title }} logo" />
+          <img src="{{ .Site.Params.logo | relURL }}" alt="{{ .Title }} logo" width="500" height="500" />
           {{ end }}
           <span class="sr-only">{{ .Title }} - {{ i18n "navHome" }}</span>
         </a>
@@ -59,7 +59,7 @@
                   <div class="row">
                     {{ if ne .URL "" }}
                     <div class="col-sm-6">
-                      <img src="{{ .URL }}" class="img-responsive hidden-xs" />
+                      <img src="{{ .URL }}" class="img-responsive hidden-xs" alt="" loading="lazy" />
                     </div>
                     {{ end }}
                     <div class="col-sm-3">
