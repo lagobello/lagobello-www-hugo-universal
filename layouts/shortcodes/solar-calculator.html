@@ -2,11 +2,11 @@
 
 <section class="solar-tool" data-solar-calculator>
   <div class="solar-tool__header">
-    <p class="eyebrow">Static vanilla JavaScript solar model</p>
+    <p class="eyebrow">Solar planning calculator</p>
     <h2>Solar irradiation and panel-output calculator</h2>
     <p>
-      Compare a didactic solar-geometry model with NASA POWER daily irradiation data,
-      then estimate daily, monthly, or yearly energy and electricity value for a Lago Bello solar array.
+      Compare a solar-geometry estimate with NASA POWER daily irradiation data,
+      then estimate daily, monthly, or yearly energy and electricity value for a solar array.
     </p>
   </div>
 
@@ -19,10 +19,6 @@
     </label>
     <label>NASA year
       <input data-field="year" type="number" min="1984" max="2100" step="1">
-    </label>
-    <label>Solar panels
-      <input data-field="panelCount" type="range" min="1" max="80" step="1" value="8">
-      <output data-output="panelCount">8</output>
     </label>
     <label>Panel area, m²
       <input data-field="panelArea" type="number" min="0.1" step="0.1" value="1.2">
@@ -40,31 +36,31 @@
 
   <div class="solar-actions">
     <button type="button" class="btn btn-template-main" data-action="fetch-nasa">Load NASA POWER daily data</button>
-    <span data-status class="solar-status">Using model only until NASA data is loaded.</span>
+    <span data-status class="solar-status">Using the solar-geometry estimate until NASA data is loaded.</span>
   </div>
 
   <article class="solar-card solar-model-explainer">
     <div>
       <h3>Why latitude and seasons change solar production</h3>
       <p>
-        The Earth is tilted by about <strong>23.44°</strong>. During South Texas summer the Northern Hemisphere leans toward the Sun, so the Sun climbs higher and daylight lasts longer. During winter the Sun is lower and the same beam is spread over more ground.
+        The Earth is tilted by about <strong>23.44°</strong>. In Northern Hemisphere summer, the Sun is higher in the sky and daylight lasts longer. In winter, sunlight arrives at a lower angle and the same beam is spread over more ground.
       </p>
-      <p class="solar-equation">
-        \( \delta_N = 23.44^\circ \sin\left(\frac{2\pi(N-80)}{365}\right) \)<br>
-        \( \cos \theta_z = \sin\phi\sin\delta + \cos\phi\cos\delta\cos\omega \)<br>
-        \( E_d = H_d \times A_\text{panels} \times \eta \times PR \)
-      </p>
+      <div class="solar-equation" aria-label="Solar model equations">
+        <div><var>δ</var><sub>N</sub> = 23.44° × sin(2π(<var>N</var> − 80) / 365)</div>
+        <div>cos <var>θ</var><sub>z</sub> = sin <var>φ</var> sin <var>δ</var> + cos <var>φ</var> cos <var>δ</var> cos <var>ω</var></div>
+        <div><var>E</var><sub>d</sub> = <var>H</var><sub>d</sub> × <var>A</var><sub>panels</sub> × <var>η</var> × <var>PR</var></div>
+      </div>
       <p>
-        Here \(N\) is day of year, \(\phi\) is latitude, \(\delta\) is solar declination, \(H_d\) is daily irradiation in kWh/m²/day, \(\eta\) is panel efficiency, and \(PR\) is a practical performance ratio for wiring, inverter, heat, dust, and orientation losses.
+        <var>N</var> is day of year, <var>φ</var> is latitude, <var>δ</var> is solar declination, <var>H</var><sub>d</sub> is daily irradiation in kWh/m²/day, <var>η</var> is panel efficiency, and <var>PR</var> is a practical performance ratio for wiring, inverter, heat, dust, and orientation losses.
       </p>
     </div>
-    <div data-earth-diagram class="earth-diagram" aria-label="3D-style Earth and Sun season diagram"></div>
+    <div data-earth-diagram class="earth-diagram" aria-label="Earth and Sun season diagram"></div>
   </article>
 
   <div class="solar-grid solar-grid--cards">
     <div class="solar-card">
       <h3>Daily irradiation: model vs. NASA POWER</h3>
-      <canvas data-chart="irradiation" width="900" height="320" aria-label="Daily solar irradiation chart"></canvas>
+      <canvas data-chart="irradiation" width="900" height="320" aria-label="Daily solar irradiation bar chart"></canvas>
       <div class="chart-legend"><span class="legend-model"></span> Model <span class="legend-nasa"></span> NASA POWER</div>
     </div>
     <div class="solar-card">
@@ -99,15 +95,21 @@
       <h3>System summary</h3>
       <dl data-summary></dl>
     </div>
-    <div class="solar-card">
-      <h3>Simple ground-array designer</h3>
-      <p>Add or remove panels with the slider. This is a simple layout sketch, not an engineering plan.</p>
-      <svg data-panel-array viewBox="0 0 900 360" role="img" aria-label="Ground array panel layout"></svg>
+    <div class="solar-card solar-array-card">
+      <div class="solar-array-card__controls">
+        <h3>Ground-mount layout</h3>
+        <label>Solar panels
+          <input data-field="panelCount" type="range" min="1" max="80" step="1" value="8">
+          <output data-output="panelCount">8</output>
+        </label>
+        <p>Use the panel slider to update the ground-mount sketch.</p>
+      </div>
+      <svg data-panel-array viewBox="0 0 900 360" role="img" aria-label="Ground-mount panel layout with wooden posts"></svg>
     </div>
   </div>
 
   <p class="solar-note">
-    NASA POWER source: ALLSKY_SFC_SW_DWN daily global horizontal irradiation. This static page calls NASA directly from the browser; no worker or server-side proxy is used.
+    NASA POWER source: ALLSKY_SFC_SW_DWN daily global horizontal irradiation. This static page calls NASA directly from the browser; no worker or server-side proxy is used. Estimates are for planning only; please consult an engineer or solar designer before selecting equipment, foundations, mounts, wiring, batteries, or interconnection details.
   </p>
 </section>
 
