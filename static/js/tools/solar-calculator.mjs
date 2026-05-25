@@ -103,47 +103,83 @@ function renderSummary(el, summary, activeSeries, options, state) {
 function drawEarthDiagram(el, options) {
   const day = Math.max(1, Math.min(365, Math.floor((Date.now() / 86400000) % 365) + 1));
   const declination = 23.44 * Math.sin((2 * Math.PI * (day - 80)) / 365);
+  const latitudeY = Math.max(-74, Math.min(74, -options.latitude * 1.05));
   el.innerHTML = `
-    <svg viewBox="0 0 520 360" role="img">
+    <svg viewBox="0 0 560 380" role="img">
       <defs>
-        <radialGradient id="earthShade" cx="35%" cy="30%">
-          <stop offset="0" stop-color="#87cefa"/>
-          <stop offset="0.55" stop-color="#2878b8"/>
-          <stop offset="1" stop-color="#0b2e59"/>
+        <radialGradient id="earthOcean" cx="36%" cy="30%">
+          <stop offset="0" stop-color="#b7e4ff"/>
+          <stop offset="0.52" stop-color="#2b83c6"/>
+          <stop offset="1" stop-color="#102a56"/>
         </radialGradient>
-        <linearGradient id="sunRay" x1="0" x2="1">
-          <stop offset="0" stop-color="#ffd166" stop-opacity="0.95"/>
-          <stop offset="1" stop-color="#ffd166" stop-opacity="0.08"/>
+        <radialGradient id="sunGlow" cx="50%" cy="50%">
+          <stop offset="0" stop-color="#fff4b8"/>
+          <stop offset="0.55" stop-color="#f6b73c"/>
+          <stop offset="1" stop-color="#f97316"/>
+        </radialGradient>
+        <linearGradient id="ray" x1="0" x2="1">
+          <stop offset="0" stop-color="#ffe082" stop-opacity="0.95"/>
+          <stop offset="1" stop-color="#ffe082" stop-opacity="0.12"/>
         </linearGradient>
+        <clipPath id="earthClip"><circle cx="0" cy="0" r="105"/></clipPath>
       </defs>
-      <rect width="520" height="360" rx="18" fill="#071523"/>
-      <circle cx="72" cy="92" r="38" fill="#ffb703"/>
-      <g stroke="url(#sunRay)" stroke-width="10" stroke-linecap="round">
-        <line x1="112" y1="82" x2="292" y2="120"/>
-        <line x1="112" y1="116" x2="300" y2="170"/>
-        <line x1="112" y1="150" x2="292" y2="220"/>
+      <rect width="560" height="380" rx="18" fill="#071523"/>
+      <circle cx="78" cy="96" r="42" fill="url(#sunGlow)"/>
+      <g stroke="url(#ray)" stroke-width="9" stroke-linecap="round">
+        <line x1="125" y1="74" x2="303" y2="112"/>
+        <line x1="125" y1="112" x2="314" y2="165"/>
+        <line x1="125" y1="150" x2="304" y2="222"/>
       </g>
-      <g transform="translate(350 185) rotate(-23.44)">
-        <line x1="0" y1="-132" x2="0" y2="132" stroke="#f8fafc" stroke-width="3" stroke-dasharray="8 6"/>
-        <circle cx="0" cy="0" r="92" fill="url(#earthShade)"/>
-        <ellipse cx="0" cy="0" rx="92" ry="23" fill="none" stroke="#dbeafe" stroke-width="2" opacity="0.8"/>
-        <path d="M -50 -40 C -20 -70, 25 -55, 45 -20 C 12 -10, -8 8, -60 0 Z" fill="#54b56a" opacity="0.85"/>
-        <path d="M 10 30 C 35 12, 58 22, 62 50 C 30 70, -15 65, -25 42 Z" fill="#54b56a" opacity="0.78"/>
-        <circle cx="${Math.max(-80, Math.min(80, options.longitude / 2))}" cy="${-options.latitude * 1.2}" r="5" fill="#ff4d4f" stroke="#fff" stroke-width="2"/>
+      <g transform="translate(382 193) rotate(-23.44)">
+        <line x1="0" y1="-148" x2="0" y2="148" stroke="#f8fafc" stroke-width="3" stroke-dasharray="8 6"/>
+        <circle cx="0" cy="0" r="105" fill="url(#earthOcean)"/>
+        <g clip-path="url(#earthClip)">
+          <ellipse cx="0" cy="0" rx="105" ry="25" fill="none" stroke="#dbeafe" stroke-width="2" opacity="0.8"/>
+          <ellipse cx="0" cy="${latitudeY}" rx="${Math.max(18, 102 * Math.cos(Math.abs(options.latitude) * Math.PI / 180))}" ry="7" fill="none" stroke="#ffebe6" stroke-width="2" opacity="0.85"/>
+          <path d="M -78 -60 C -52 -88,-18 -80,-8 -55 C 5 -34,-18 -28,-12 -8 C -5 15,-32 28,-48 8 C -66 -14,-98 -20,-86 -42 Z" fill="#56b870"/>
+          <path d="M -42 30 C -18 18,8 26,16 50 C 2 76,-32 70,-46 52 C -58 38,-55 32,-42 30 Z" fill="#56b870"/>
+          <path d="M 12 -70 C 38 -80,72 -60,78 -32 C 55 -22,48 -3,70 13 C 42 22,38 55,5 62 C -3 37,20 22,0 2 C -18 -15,-8 -48,12 -70 Z" fill="#62c076"/>
+          <path d="M 67 -6 C 95 1,104 28,84 48 C 70 37,58 23,67 -6 Z" fill="#62c076"/>
+        </g>
+        <circle cx="0" cy="0" r="105" fill="none" stroke="#c7d2fe" stroke-width="2"/>
+        <circle cx="0" cy="${latitudeY}" r="5.5" fill="#ff4d4f" stroke="#fff" stroke-width="2"/>
       </g>
-      <path d="M 260 58 C 325 20, 410 28, 468 82" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 7"/>
-      <text x="22" y="175" fill="#ffec99" font-size="15">Sun rays</text>
-      <text x="300" y="326" fill="#e2e8f0" font-size="14">Earth axis tilted 23.44°</text>
-      <text x="260" y="35" fill="#e2e8f0" font-size="14">Seasonal declination today: ${declination.toFixed(1)}°</text>
-      <text x="290" y="282" fill="#e2e8f0" font-size="14">Red dot: selected latitude</text>
+      <text x="22" y="184" fill="#ffec99" font-size="15">Sun rays</text>
+      <text x="300" y="342" fill="#e2e8f0" font-size="14">Earth axis tilted 23.44°</text>
+      <text x="260" y="38" fill="#e2e8f0" font-size="14">Seasonal declination today: ${declination.toFixed(1)}°</text>
+      <text x="294" y="286" fill="#e2e8f0" font-size="14">Selected latitude: ${options.latitude.toFixed(2)}°</text>
     </svg>`;
 }
-
 function drawIrradiationChart(canvas, model, nasa) {
-  drawLineChart(canvas, [
-    { label: 'Model', color: '#1f77b4', values: model.map((d) => ({ x: d.dayOfYear, y: d.irradiation })) },
-    { label: 'NASA', color: '#f28e2b', values: nasa.map((d) => ({ x: d.dayOfYear, y: d.irradiation })) },
-  ], { yLabel: 'kWh/m²/day' });
+  drawDailyOverlayBarChart(canvas, {
+    model: model.map((d) => ({ x: d.dayOfYear, y: d.irradiation })),
+    nasa: nasa.map((d) => ({ x: d.dayOfYear, y: d.irradiation })),
+    yLabel: 'kWh/m²/day',
+  });
+}
+
+function drawDailyOverlayBarChart(canvas, data) {
+  const { ctx, width, height, pad } = setupCanvas(canvas);
+  clearChart(ctx, width, height, pad, data.yLabel);
+  const maxY = Math.max(1, ...data.model.map((v) => v.y), ...data.nasa.map((v) => v.y)) * 1.12;
+  const plotW = width - pad.left - pad.right;
+  const plotH = height - pad.top - pad.bottom;
+  const barW = Math.max(1, plotW / 365);
+  const yScale = (y) => height - pad.bottom - (y / maxY) * plotH;
+
+  ctx.fillStyle = 'rgba(31, 119, 180, 0.58)';
+  data.model.forEach((point) => {
+    const x = pad.left + (point.x - 1) / 365 * plotW;
+    const y = yScale(point.y);
+    ctx.fillRect(x, y, Math.max(1, barW * 0.92), height - pad.bottom - y);
+  });
+
+  ctx.fillStyle = 'rgba(242, 142, 43, 0.72)';
+  data.nasa.forEach((point) => {
+    const x = pad.left + (point.x - 1) / 365 * plotW + Math.max(0, barW * 0.18);
+    const y = yScale(point.y);
+    ctx.fillRect(x, y, Math.max(1, barW * 0.56), height - pad.bottom - y);
+  });
 }
 
 function drawEnergyChart(canvas, series, outputMode) {
@@ -216,14 +252,35 @@ function clearChart(ctx, width, height, pad, yLabel) {
 }
 
 function drawPanelArray(svg, options) {
-  const panels = buildPanelArray({ panelCount: options.panelCount, columns: 8, panelWidth: 1.1, panelHeight: 1.8, gap: 0.25 });
-  const scale = 58;
+  const panels = buildPanelArray({ panelCount: options.panelCount, columns: 8, panelWidth: 1.1, panelHeight: 1.8, gap: 0.28 });
+  const scale = 50;
   const maxX = Math.max(8, ...panels.map((p) => p.x + p.width));
   const maxY = Math.max(4, ...panels.map((p) => p.y + p.height));
-  svg.setAttribute('viewBox', `0 0 ${Math.max(900, maxX * scale + 80)} ${Math.max(360, maxY * scale + 100)}`);
+  const width = Math.max(780, maxX * scale + 110);
+  const height = Math.max(320, maxY * scale + 140);
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+  const posts = panels
+    .filter((_, index) => index % 2 === 0)
+    .map((p) => {
+      const x = p.x * scale + p.width * scale / 2;
+      const y = p.y * scale + p.height * scale + 12;
+      return `<g>
+        <rect x="${x - 5}" y="${y - 18}" width="10" height="58" rx="3" fill="#8b5a2b"/>
+        <rect x="${x - 11}" y="${y + 36}" width="22" height="8" rx="3" fill="#6f4518"/>
+      </g>`;
+    }).join('');
+
   svg.innerHTML = `<rect x="0" y="0" width="100%" height="100%" fill="#ecfdf3"/>
-    <text x="32" y="38" fill="#14532d" font-size="22" font-weight="700">Ground array sketch: ${options.panelCount} panels</text>
-    <g transform="translate(34 70) skewX(-10)">
-      ${panels.map((p) => `<g><rect x="${p.x * scale}" y="${p.y * scale}" width="${p.width * scale}" height="${p.height * scale}" rx="5" fill="#1d4ed8" stroke="#dbeafe" stroke-width="3"/><line x1="${p.x * scale + p.width * scale / 2}" y1="${p.y * scale}" x2="${p.x * scale + p.width * scale / 2}" y2="${p.y * scale + p.height * scale}" stroke="#93c5fd"/><line x1="${p.x * scale}" y1="${p.y * scale + p.height * scale / 2}" x2="${p.x * scale + p.width * scale}" y2="${p.y * scale + p.height * scale / 2}" stroke="#93c5fd"/></g>`).join('')}
+    <path d="M0 ${height - 55} C ${width * .25} ${height - 80}, ${width * .55} ${height - 30}, ${width} ${height - 65} L ${width} ${height} L 0 ${height} Z" fill="#c7e7c8"/>
+    <text x="28" y="36" fill="#14532d" font-size="22" font-weight="700">Ground-mount layout: ${options.panelCount} panels</text>
+    <g transform="translate(34 76) skewX(-10)">
+      ${posts}
+      <line x1="-8" y1="${maxY * scale + 12}" x2="${maxX * scale + 14}" y2="${maxY * scale + 12}" stroke="#6f4518" stroke-width="8" stroke-linecap="round"/>
+      ${panels.map((p) => `<g>
+        <rect x="${p.x * scale}" y="${p.y * scale}" width="${p.width * scale}" height="${p.height * scale}" rx="4" fill="#1d4ed8" stroke="#dbeafe" stroke-width="3"/>
+        <line x1="${p.x * scale + p.width * scale / 2}" y1="${p.y * scale}" x2="${p.x * scale + p.width * scale / 2}" y2="${p.y * scale + p.height * scale}" stroke="#93c5fd"/>
+        <line x1="${p.x * scale}" y1="${p.y * scale + p.height * scale / 2}" x2="${p.x * scale + p.width * scale}" y2="${p.y * scale + p.height * scale / 2}" stroke="#93c5fd"/>
+      </g>`).join('')}
     </g>`;
 }

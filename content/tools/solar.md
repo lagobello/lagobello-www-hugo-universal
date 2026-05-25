@@ -1,7 +1,7 @@
 +++
-description = "Estimate solar panel output, electricity-cost offsets, and PV system size for Texas homes and Lago Bello lots in Brownsville."
-keywords = ["solar calculator Texas","Texas solar estimates","Brownsville solar calculator","solar generation calculator","electricity cost calculator","PV system sizing","solar panels","Lago Bello","Brownsville TX"]
-title = "Texas Solar Calculator for Lago Bello Homes"
+description = "Estimate solar panel output, electricity-cost offsets, and PV system size for homes, lots, and ground-mounted arrays."
+keywords = ["solar calculator","solar estimates","Brownsville solar calculator","solar generation calculator","electricity cost calculator","PV system sizing","solar panels","Lago Bello","Brownsville TX"]
+title = "Solar Calculator for Homes and Lots"
 date = "2019-12-07T00:17:08+01:00"
 draft = "false"
 banner = "img/tools/1-solarpanel.jpg"
@@ -16,12 +16,12 @@ question = "Why plan solar before building a home?"
 answer = "Planning early helps a buyer and builder reserve suitable roof area, choose orientation, understand likely electrical demand, and compare lot and home designs before construction decisions become expensive to change."
 +++
 
-Use this Texas solar calculator to estimate how much energy a rooftop photovoltaic system could produce for a future Lago Bello home in Brownsville, and how that production may translate into electricity-cost offsets.
+Use this solar calculator to estimate how much energy a rooftop or ground-mounted photovoltaic system could produce, and how that production may translate into electricity-cost offsets.
 <!--more-->
 
 Lago Bello lots are served by [buried electrical infrastructure](/blog/2026/03/04/buried-utilities/) and planned around custom homes, which makes solar a useful conversation to start before finalizing a floor plan. If you are comparing lots, rooflines, garage placement, or home orientation, this tool can help you think through solar panel area, system size, estimated annual generation, and electricity cost assumptions while your builder is still designing.
 
-## Solar estimates for Brownsville and Texas homes
+## Solar estimates for homes and lots
 
 South Texas receives strong year-round sun, but every solar estimate still depends on the exact site and home design. Use the calculator below to adjust the location, panel count, panel area, panel efficiency, and electricity price. For a Lago Bello lot, try modeling the home location near Brownsville, then vary system size and cost-per-kWh assumptions to see how the estimate changes.
 
