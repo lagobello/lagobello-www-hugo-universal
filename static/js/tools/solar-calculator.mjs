@@ -155,9 +155,11 @@ function drawSolarSystem(el, options) {
 
   viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
   viewer.camera.setView({
-    destination: Cesium.Cartesian3.fromDegrees(-80, 18, 16500000),
+    destination: Cesium.Cartesian3.fromDegrees(-70, 8, 24000000),
     orientation: { heading: 0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0 },
   });
+
+  addSolarBodyMarkers(viewer);
 
   const latitudeLine = viewer.entities.add({
     name: 'Selected latitude line',
@@ -197,6 +199,46 @@ function updateSolarSystemLatitude(el, options) {
   el._solarLatitudeLine.polyline.positions = latitudeCirclePositions(latitude);
   el._solarLatitudePoint.position = Cesium.Cartesian3.fromDegrees(longitude, latitude, 250000);
   el._solarViewer.scene.requestRender();
+}
+
+function addSolarBodyMarkers(viewer) {
+  const Cesium = window.Cesium;
+  const labelStyle = {
+    font: '16px system-ui, sans-serif',
+    fillColor: Cesium.Color.WHITE,
+    outlineColor: Cesium.Color.BLACK,
+    outlineWidth: 4,
+    style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+    pixelOffset: new Cesium.Cartesian2(0, -18),
+    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+  };
+
+  viewer.entities.add({
+    name: 'Visible Sun reference marker',
+    position: Cesium.Cartesian3.fromDegrees(-150, 28, 6200000),
+    point: {
+      pixelSize: 34,
+      color: Cesium.Color.fromCssColorString('#ffd166'),
+      outlineColor: Cesium.Color.fromCssColorString('#fff4b8'),
+      outlineWidth: 5,
+      disableDepthTestDistance: Number.POSITIVE_INFINITY,
+    },
+    label: { ...labelStyle, text: 'Sun' },
+  });
+
+  viewer.entities.add({
+    name: 'Visible Moon reference marker',
+    position: Cesium.Cartesian3.fromDegrees(24, -23, 4300000),
+    point: {
+      pixelSize: 24,
+      color: Cesium.Color.fromCssColorString('#d8dee9'),
+      outlineColor: Cesium.Color.WHITE,
+      outlineWidth: 3,
+      disableDepthTestDistance: Number.POSITIVE_INFINITY,
+    },
+    label: { ...labelStyle, text: 'Moon' },
+  });
 }
 
 function latitudeCirclePositions(latitude) {

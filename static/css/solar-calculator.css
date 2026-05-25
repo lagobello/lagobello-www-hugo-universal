@@ -56,13 +56,14 @@
 
 .solar-card { padding: 1.25rem; overflow: hidden; }
 .solar-card h3 { margin-top: 0; }
-.solar-model-explainer { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr); gap: 1rem; align-items: center; }
+.solar-model-explainer { display: block; }
 .solar-equation { background: #0b1826; color: #f8fbff; padding: 1rem; border-radius: 10px; overflow-x: auto; line-height: 1.8; }
-.solar-system-wrap { min-width: 0; }
+.solar-system-wrap { width: 100%; margin-top: 1.25rem; }
 .solar-system-viewer {
   position: relative;
-  height: 360px;
-  min-height: 360px;
+  width: 100%;
+  height: clamp(420px, 52vw, 720px);
+  min-height: 420px;
   border-radius: 14px;
   overflow: hidden;
   background: #071523;
