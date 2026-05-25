@@ -34,7 +34,7 @@ The result is best used as an early planning range, not as a contractor quote. A
 * Model a few electricity-cost scenarios before choosing HVAC, pool, EV-charging, or battery-backup options.
 * Pair the estimate with Lago Bello's [builder specifications](/builders/) and buried utility plan so electrical service, conduit, and equipment locations are coordinated early.
 
-{{< observablenotebook url="../../js/tools/solar-observable.js" displayedCells="desc_intro,desc_location,viewof lonlat,viewof worldMap1,olMap,desc_irradiation,desc_summary_irradiation,desc_nasa_disclaimer,desc_panels,viewof panel_count,viewof panel_area,viewof panel_efficiency,desc_panel_area,desc_energy,desc_summary_energy_production,desc_energy_us_average,desc_cost,viewof energy_price,desc_summary_energy_production_dollars">}}
+{{< solar-calculator >}}
 
 ## Solar calculator FAQ
 
