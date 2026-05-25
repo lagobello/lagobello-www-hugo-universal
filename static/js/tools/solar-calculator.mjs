@@ -260,6 +260,9 @@ function addSolarBodyMarkers(viewer) {
 
 function addSolarGeometryEntities(viewer, options) {
   const Cesium = window.Cesium;
+  const metrics = modelMetrics(options);
+  const longitude = Number(metrics.longitude) || -97.553;
+  const latitude = Number(metrics.latitude) || 0;
   const labelStyle = {
     font: '14px system-ui, sans-serif',
     fillColor: Cesium.Color.WHITE,
@@ -299,30 +302,30 @@ function addSolarGeometryEntities(viewer, options) {
     }),
     declination: viewer.entities.add({
       name: 'Solar declination line',
-      position: Cesium.Cartesian3.fromDegrees(130, 0, 900000),
+      position: Cesium.Cartesian3.fromDegrees(130, metrics.declinationDegrees, 900000),
       polyline: {
-        positions: latitudeCirclePositions(modelMetrics(options).declinationDegrees, 230000),
+        positions: latitudeCirclePositions(metrics.declinationDegrees, 230000),
         width: 3,
         material: Cesium.Color.fromCssColorString('#ffd166').withAlpha(0.95),
         clampToGround: false,
       },
       label: {
         ...labelStyle,
-        text: '',
+        text: `δ solar declination ${formatSignedDegrees(metrics.declinationDegrees)}`,
       },
     }),
     noonRay: viewer.entities.add({
       name: 'Noon sun ray to selected site',
-      position: Cesium.Cartesian3.fromDegrees(Number(options.longitude) || -97.553, Number(options.latitude) || 0, 1700000),
+      position: Cesium.Cartesian3.fromDegrees(longitude, latitude, 1700000),
       polyline: {
-        positions: [],
+        positions: noonRayPositions(metrics),
         width: 3,
         material: Cesium.Color.fromCssColorString('#ffb703').withAlpha(0.92),
         clampToGround: false,
       },
       label: {
         ...labelStyle,
-        text: '',
+        text: `θz noon zenith ${metrics.noonZenithDegrees.toFixed(1)}°`,
       },
     }),
   };
@@ -337,12 +340,19 @@ function updateSolarGeometryEntities(el, metrics) {
   entities.declination.polyline.positions = latitudeCirclePositions(metrics.declinationDegrees, 230000);
   entities.declination.label.text = `δ solar declination ${formatSignedDegrees(metrics.declinationDegrees)}`;
   entities.declination.position = Cesium.Cartesian3.fromDegrees(130, metrics.declinationDegrees, 900000);
-  entities.noonRay.polyline.positions = [
+  entities.noonRay.polyline.positions = noonRayPositions(metrics);
+  entities.noonRay.label.text = `θz noon zenith ${metrics.noonZenithDegrees.toFixed(1)}°`;
+  entities.noonRay.position = Cesium.Cartesian3.fromDegrees(longitude, latitude, 1800000);
+}
+
+function noonRayPositions(metrics) {
+  const Cesium = window.Cesium;
+  const longitude = Number(metrics.longitude) || -97.553;
+  const latitude = Number(metrics.latitude) || 0;
+  return [
     Cesium.Cartesian3.fromDegrees(longitude, latitude, 5100000),
     Cesium.Cartesian3.fromDegrees(longitude, latitude, 260000),
   ];
-  entities.noonRay.label.text = `θz noon zenith ${metrics.noonZenithDegrees.toFixed(1)}°`;
-  entities.noonRay.position = Cesium.Cartesian3.fromDegrees(longitude, latitude, 1800000);
 }
 
 function renderSolarSystemOverlay(el, metrics, options) {
