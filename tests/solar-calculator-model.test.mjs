@@ -92,7 +92,9 @@ test('buildPanelArray creates simple ground-array panel rectangles in rows', () 
   assert.equal(panels[4].y, 2.05);
 });
 
-test('Cesium geometry annotations do not initialize polylines with empty positions', () => {
+test('Cesium geometry annotations avoid geodesic arc generation for model polylines', () => {
   const script = readFileSync(new URL('../static/js/tools/solar-calculator.mjs', import.meta.url), 'utf8');
   assert.equal(script.includes('positions: []'), false, 'Cesium polylines with empty positions crash during render');
+  assert.match(script, /noonRay:[\s\S]*?arcType: Cesium\.ArcType\.NONE/, 'vertical noon ray must not use Cesium geodesic arc generation');
+  assert.ok((script.match(/arcType: Cesium\.ArcType\.NONE/g) ?? []).length >= 5, 'all explanatory model polylines should use straight Cartesian segments');
 });
