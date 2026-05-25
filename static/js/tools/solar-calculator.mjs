@@ -178,6 +178,7 @@ function drawSolarSystem(el, options) {
       positions: latitudeCirclePositions(options.latitude),
       width: 2,
       material: Cesium.Color.fromCssColorString('#ffebe6').withAlpha(0.85),
+      arcType: Cesium.ArcType.NONE,
       clampToGround: false,
     },
   });
@@ -279,6 +280,7 @@ function addSolarGeometryEntities(viewer, options) {
         positions: tiltedAxisPositions(),
         width: 4,
         material: Cesium.Color.fromCssColorString('#8ecae6'),
+        arcType: Cesium.ArcType.NONE,
         clampToGround: false,
       },
       label: {
@@ -293,6 +295,7 @@ function addSolarGeometryEntities(viewer, options) {
         positions: latitudeCirclePositions(0, 130000),
         width: 2,
         material: Cesium.Color.fromCssColorString('#9ca3af').withAlpha(0.78),
+        arcType: Cesium.ArcType.NONE,
         clampToGround: false,
       },
       label: {
@@ -307,6 +310,7 @@ function addSolarGeometryEntities(viewer, options) {
         positions: latitudeCirclePositions(metrics.declinationDegrees, 230000),
         width: 3,
         material: Cesium.Color.fromCssColorString('#ffd166').withAlpha(0.95),
+        arcType: Cesium.ArcType.NONE,
         clampToGround: false,
       },
       label: {
@@ -321,6 +325,7 @@ function addSolarGeometryEntities(viewer, options) {
         positions: noonRayPositions(metrics),
         width: 3,
         material: Cesium.Color.fromCssColorString('#ffb703').withAlpha(0.92),
+        arcType: Cesium.ArcType.NONE,
         clampToGround: false,
       },
       label: {
