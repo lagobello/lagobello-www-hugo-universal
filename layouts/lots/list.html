@@ -69,7 +69,7 @@
                                     <div class="image" style="overflow: hidden; height: 200px;">
                                         <div class="ribbon-holder">
                                             <div class="ribbon {{ $statusColor }}">{{ $status }}</div>
-                                            <a href="{{ .Permalink }}">
+                                            <a href="{{ .RelPermalink }}">
                                                 {{ $slug := .Title | urlize }}
                                                 {{ $hasLocalImg := fileExists (printf "assets/img/lots/%s.jpg" $slug) }}
 
@@ -113,14 +113,14 @@
                                         <div class="bg"></div>
                                         <div class="text">
                                             <p class="buttons">
-                                                <a href="{{ .Permalink }}"
+                                                <a href="{{ .RelPermalink }}"
                                                     class="btn btn-template-transparent-primary"><i
                                                         class="fas fa-link"></i> Read more</a>
                                             </p>
                                         </div>
                                     </div>
                                     <div class="content">
-                                        <h4><a href="{{ .Permalink }}">{{ .Title }}</a></h4>
+                                        <h4><a href="{{ .RelPermalink }}">{{ .Title }}</a></h4>
                                         <p class="author-category">
                                             {{ if .Params.offers.price }}
                                             {{ $listPrice := float (default 0 .Params.offers.price) }}
@@ -161,7 +161,7 @@
                                             printf "%.0f" (float (default 0 $size)) }} Sq. Ft.
                                         </p>
                                         <p class="read-more">
-                                            <a href="{{ .Permalink }}" class="btn btn-template-main">View Details</a>
+                                            <a href="{{ .RelPermalink }}" class="btn btn-template-main">View Details</a>
                                         </p>
                                     </div>
                                 </div>
