@@ -62,8 +62,8 @@
 .solar-system-viewer {
   position: relative;
   width: 100%;
-  height: clamp(420px, 52vw, 720px);
-  min-height: 420px;
+  height: clamp(360px, 42vw, 560px);
+  min-height: 360px;
   border-radius: 14px;
   overflow: hidden;
   background: #071523;
@@ -73,6 +73,28 @@
 .solar-system-viewer .cesium-viewer-cesiumWidgetContainer,
 .solar-system-viewer .cesium-widget,
 .solar-system-viewer canvas { width: 100%; height: 100%; }
+.solar-system-viewer .cesium-widget-credits { display: none !important; }
+.solar-system-overlay {
+  position: absolute;
+  right: .75rem;
+  top: .75rem;
+  z-index: 2;
+  max-width: min(320px, calc(100% - 1.5rem));
+  max-height: calc(100% - 1.5rem);
+  overflow: auto;
+  padding: .75rem .85rem;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 12px;
+  background: rgba(7, 21, 35, .78);
+  color: #eef6ff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .28);
+  backdrop-filter: blur(6px);
+  font-size: .82rem;
+}
+.solar-system-overlay strong { display: block; margin-bottom: .4rem; color: #fff7d6; }
+.solar-system-overlay dl { display: grid; grid-template-columns: max-content 1fr; gap: .18rem .45rem; margin: 0; }
+.solar-system-overlay dt { font-weight: 800; color: #ffd166; }
+.solar-system-overlay dd { margin: 0; }
 .solar-system-caption,
 .solar-system-fallback { margin: .55rem 0 0; color: var(--solar-muted); font-size: .9rem; }
 .solar-system-fallback { padding: 1rem; color: #e2e8f0; }

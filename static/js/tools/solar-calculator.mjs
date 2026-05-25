@@ -2,9 +2,17 @@ import {
   aggregateSeries,
   buildPanelArray,
   dailySolarModel,
+  extraterrestrialDailyIrradiation,
   fetchNasaDailySeries,
+  inverseEarthSunDistance,
+  solarDeclination,
   summarizeEnergy,
+  sunsetHourAngle,
 } from './solar-calculator-model.mjs';
+
+const DEG_TO_RAD = Math.PI / 180;
+const RAD_TO_DEG = 180 / Math.PI;
+const EARTH_TILT_DEGREES = 23.44;
 
 const roots = document.querySelectorAll('[data-solar-calculator]');
 roots.forEach((root) => initSolarCalculator(root));
@@ -152,14 +160,17 @@ function drawSolarSystem(el, options) {
   scene.globe.enableLighting = true;
   scene.globe.showGroundAtmosphere = true;
   scene.backgroundColor = Cesium.Color.fromCssColorString('#071523');
+  scene.screenSpaceCameraController.minimumZoomDistance = 8000000;
+  scene.screenSpaceCameraController.maximumZoomDistance = 36000000;
 
   viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
   viewer.camera.setView({
-    destination: Cesium.Cartesian3.fromDegrees(-70, 8, 24000000),
+    destination: Cesium.Cartesian3.fromDegrees(-64, 12, 21000000),
     orientation: { heading: 0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0 },
   });
 
   addSolarBodyMarkers(viewer);
+  const geometryEntities = addSolarGeometryEntities(viewer, options);
 
   const latitudeLine = viewer.entities.add({
     name: 'Selected latitude line',
@@ -188,6 +199,7 @@ function drawSolarSystem(el, options) {
   el._solarViewer = viewer;
   el._solarLatitudeLine = latitudeLine;
   el._solarLatitudePoint = latitudePoint;
+  el._solarGeometryEntities = geometryEntities;
   updateSolarSystemLatitude(el, options);
 }
 
@@ -196,8 +208,12 @@ function updateSolarSystemLatitude(el, options) {
   const Cesium = window.Cesium;
   const latitude = Number(options.latitude) || 0;
   const longitude = Number(options.longitude) || -97.553;
+  const metrics = modelMetrics(options);
   el._solarLatitudeLine.polyline.positions = latitudeCirclePositions(latitude);
   el._solarLatitudePoint.position = Cesium.Cartesian3.fromDegrees(longitude, latitude, 250000);
+  el._solarLatitudePoint.label.text = `φ latitude ${formatSignedDegrees(latitude)}`;
+  updateSolarGeometryEntities(el, metrics);
+  renderSolarSystemOverlay(el, metrics, options);
   el._solarViewer.scene.requestRender();
 }
 
@@ -241,13 +257,194 @@ function addSolarBodyMarkers(viewer) {
   });
 }
 
-function latitudeCirclePositions(latitude) {
+
+function addSolarGeometryEntities(viewer, options) {
+  const Cesium = window.Cesium;
+  const labelStyle = {
+    font: '14px system-ui, sans-serif',
+    fillColor: Cesium.Color.WHITE,
+    outlineColor: Cesium.Color.BLACK,
+    outlineWidth: 4,
+    style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+  };
+  return {
+    axis: viewer.entities.add({
+      name: "Earth's tilted axis",
+      position: Cesium.Cartesian3.fromDegrees(90, 67, 5400000),
+      polyline: {
+        positions: tiltedAxisPositions(),
+        width: 4,
+        material: Cesium.Color.fromCssColorString('#8ecae6'),
+        clampToGround: false,
+      },
+      label: {
+        ...labelStyle,
+        text: `Earth axis tilt ε = ${EARTH_TILT_DEGREES.toFixed(2)}°`,
+      },
+    }),
+    equator: viewer.entities.add({
+      name: 'Equator reference line',
+      position: Cesium.Cartesian3.fromDegrees(-35, 0, 600000),
+      polyline: {
+        positions: latitudeCirclePositions(0, 130000),
+        width: 2,
+        material: Cesium.Color.fromCssColorString('#9ca3af').withAlpha(0.78),
+        clampToGround: false,
+      },
+      label: {
+        ...labelStyle,
+        text: 'Equator 0°',
+      },
+    }),
+    declination: viewer.entities.add({
+      name: 'Solar declination line',
+      position: Cesium.Cartesian3.fromDegrees(130, 0, 900000),
+      polyline: {
+        positions: latitudeCirclePositions(modelMetrics(options).declinationDegrees, 230000),
+        width: 3,
+        material: Cesium.Color.fromCssColorString('#ffd166').withAlpha(0.95),
+        clampToGround: false,
+      },
+      label: {
+        ...labelStyle,
+        text: '',
+      },
+    }),
+    noonRay: viewer.entities.add({
+      name: 'Noon sun ray to selected site',
+      position: Cesium.Cartesian3.fromDegrees(Number(options.longitude) || -97.553, Number(options.latitude) || 0, 1700000),
+      polyline: {
+        positions: [],
+        width: 3,
+        material: Cesium.Color.fromCssColorString('#ffb703').withAlpha(0.92),
+        clampToGround: false,
+      },
+      label: {
+        ...labelStyle,
+        text: '',
+      },
+    }),
+  };
+}
+
+function updateSolarGeometryEntities(el, metrics) {
+  const Cesium = window.Cesium;
+  const entities = el._solarGeometryEntities;
+  if (!entities) return;
+  const longitude = Number(metrics.longitude) || -97.553;
+  const latitude = Number(metrics.latitude) || 0;
+  entities.declination.polyline.positions = latitudeCirclePositions(metrics.declinationDegrees, 230000);
+  entities.declination.label.text = `δ solar declination ${formatSignedDegrees(metrics.declinationDegrees)}`;
+  entities.declination.position = Cesium.Cartesian3.fromDegrees(130, metrics.declinationDegrees, 900000);
+  entities.noonRay.polyline.positions = [
+    Cesium.Cartesian3.fromDegrees(longitude, latitude, 5100000),
+    Cesium.Cartesian3.fromDegrees(longitude, latitude, 260000),
+  ];
+  entities.noonRay.label.text = `θz noon zenith ${metrics.noonZenithDegrees.toFixed(1)}°`;
+  entities.noonRay.position = Cesium.Cartesian3.fromDegrees(longitude, latitude, 1800000);
+}
+
+function renderSolarSystemOverlay(el, metrics, options) {
+  let overlay = el.querySelector('[data-solar-system-overlay]');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.className = 'solar-system-overlay';
+    overlay.dataset.solarSystemOverlay = '1';
+    el.appendChild(overlay);
+  }
+  overlay.innerHTML = `
+    <strong>Model values shown</strong>
+    <dl>
+      <dt>N</dt><dd>${metrics.dayOfYear} (${metrics.dateLabel})</dd>
+      <dt>φ</dt><dd>${formatSignedDegrees(metrics.latitude)}</dd>
+      <dt>ε</dt><dd>${EARTH_TILT_DEGREES.toFixed(2)}° Earth tilt</dd>
+      <dt>δ</dt><dd>${formatSignedDegrees(metrics.declinationDegrees)} solar declination</dd>
+      <dt>ω</dt><dd>0° at solar noon</dd>
+      <dt>θz</dt><dd>${metrics.noonZenithDegrees.toFixed(1)}° noon zenith</dd>
+      <dt>dᵣ</dt><dd>${metrics.inverseDistance.toFixed(3)}</dd>
+      <dt>ωs</dt><dd>${metrics.sunsetAngleDegrees.toFixed(1)}° sunset hour angle</dd>
+      <dt>H₀</dt><dd>${metrics.extraterrestrial.toFixed(2)} kWh/m²/day</dd>
+      <dt>Hᵈ</dt><dd>${metrics.irradiation.toFixed(2)} kWh/m²/day</dd>
+      <dt>A</dt><dd>${metrics.systemArea.toFixed(1)} m² (${options.panelCount} panels)</dd>
+      <dt>η</dt><dd>${(options.panelEfficiency * 100).toFixed(1)}%</dd>
+      <dt>PR</dt><dd>${Number(options.performanceRatio).toFixed(2)}</dd>
+      <dt>Eᵈ</dt><dd>${metrics.dailyEnergy.toFixed(1)} kWh/day</dd>
+    </dl>`;
+}
+
+function modelMetrics(options) {
+  const year = Number(options.year) || new Date().getFullYear();
+  const dayOfYear = representativeDayOfYear(year);
+  const latitude = Number(options.latitude) || 0;
+  const longitude = Number(options.longitude) || 0;
+  const declinationRad = solarDeclination(dayOfYear);
+  const declinationDegrees = declinationRad * RAD_TO_DEG;
+  const phi = latitude * DEG_TO_RAD;
+  const noonZenithDegrees = Math.abs(latitude - declinationDegrees);
+  const inverseDistance = inverseEarthSunDistance(dayOfYear);
+  const sunsetAngleDegrees = sunsetHourAngle(phi, declinationRad) * RAD_TO_DEG;
+  const extraterrestrial = extraterrestrialDailyIrradiation({ latitude, dayOfYear });
+  const count = isLeapYearLocal(year) ? 366 : 365;
+  const seasonalCloudFactor = 1 + 0.08 * Math.sin((2 * Math.PI * (dayOfYear - 110)) / count);
+  const clearnessIndex = 0.56;
+  const irradiation = Math.max(0, extraterrestrial * clearnessIndex * seasonalCloudFactor);
+  const systemArea = Number(options.panelCount) * Number(options.panelArea);
+  const dailyEnergy = irradiation * systemArea * Number(options.panelEfficiency) * Number(options.performanceRatio);
+  return {
+    year,
+    dayOfYear,
+    dateLabel: dayOfYearToShortLabel(year, dayOfYear),
+    latitude,
+    longitude,
+    declinationDegrees,
+    noonZenithDegrees,
+    inverseDistance,
+    sunsetAngleDegrees,
+    extraterrestrial,
+    irradiation,
+    systemArea,
+    dailyEnergy,
+  };
+}
+
+function representativeDayOfYear(year) {
+  const now = new Date();
+  const date = new Date(Date.UTC(year, now.getUTCMonth(), now.getUTCDate()));
+  const start = new Date(Date.UTC(year, 0, 1));
+  return Math.floor((date - start) / 86400000) + 1;
+}
+
+function dayOfYearToShortLabel(year, dayOfYear) {
+  const date = new Date(Date.UTC(year, 0, dayOfYear));
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+}
+
+function tiltedAxisPositions() {
+  const Cesium = window.Cesium;
+  const northLat = 90 - EARTH_TILT_DEGREES;
+  return [
+    Cesium.Cartesian3.fromDegrees(270, -northLat, 5200000),
+    Cesium.Cartesian3.fromDegrees(90, northLat, 5200000),
+  ];
+}
+
+function latitudeCirclePositions(latitude, height = 180000) {
   const Cesium = window.Cesium;
   const lat = Math.max(-89, Math.min(89, Number(latitude) || 0));
   return Array.from({ length: 181 }, (_, index) => {
     const longitude = -180 + index * 2;
-    return Cesium.Cartesian3.fromDegrees(longitude, lat, 180000);
+    return Cesium.Cartesian3.fromDegrees(longitude, lat, height);
   });
+}
+
+function formatSignedDegrees(value) {
+  const number = Number(value) || 0;
+  return `${number >= 0 ? '+' : '−'}${Math.abs(number).toFixed(2)}°`;
+}
+
+function isLeapYearLocal(year) {
+  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
 }
 
 function hasWebGL() {
