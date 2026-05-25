@@ -61,7 +61,7 @@ function render(root, fields, state) {
   const activeSeries = options.seriesSource === 'model' || state.nasaSeries.length === 0 ? state.modelSeries : state.nasaSeries;
   const summary = summarizeEnergy(activeSeries, options);
 
-  drawEarthDiagram(root.querySelector('[data-earth-diagram]'), options);
+  drawSolarSystem(root.querySelector('[data-solar-system]'), options);
   drawIrradiationChart(root.querySelector('[data-chart="irradiation"]'), state.modelSeries, state.nasaSeries);
   drawEnergyChart(root.querySelector('[data-chart="energy"]'), aggregateSeries(summary.daily, options.period), options.outputMode);
   drawPanelArray(root.querySelector('[data-panel-array]'), options);
@@ -72,12 +72,12 @@ async function loadNasa(root, fields, state) {
   const status = root.querySelector('[data-status]');
   const options = readOptions(fields);
   status.className = 'solar-status';
-  status.textContent = `Loading NASA POWER daily irradiation for ${options.year}…`;
+  status.textContent = 'Loading NASA POWER daily irradiation…';
   try {
     state.nasaSeries = await fetchNasaDailySeries(options);
     state.nasaLoadedYear = options.year;
     status.className = 'solar-status is-ok';
-    status.textContent = `Loaded ${state.nasaSeries.length} NASA POWER daily values for ${options.year}.`;
+    status.textContent = `Loaded ${state.nasaSeries.length} NASA POWER daily values.`;
   } catch (error) {
     state.nasaSeries = [];
     status.className = 'solar-status is-error';
@@ -87,7 +87,7 @@ async function loadNasa(root, fields, state) {
 
 function renderSummary(el, summary, activeSeries, options, state) {
   const annualIrradiation = activeSeries.reduce((sum, d) => sum + d.irradiation, 0);
-  const source = activeSeries === state.nasaSeries ? `NASA POWER ${state.nasaLoadedYear}` : 'solar geometry model';
+  const source = activeSeries === state.nasaSeries ? 'NASA POWER daily data' : 'solar geometry model';
   const rows = [
     ['Irradiation source', source],
     ['Panel count', options.panelCount.toLocaleString()],
@@ -100,56 +100,123 @@ function renderSummary(el, summary, activeSeries, options, state) {
   el.innerHTML = rows.map(([dt, dd]) => `<dt>${dt}</dt><dd>${dd}</dd>`).join('');
 }
 
-function drawEarthDiagram(el, options) {
-  const day = Math.max(1, Math.min(365, Math.floor((Date.now() / 86400000) % 365) + 1));
-  const declination = 23.44 * Math.sin((2 * Math.PI * (day - 80)) / 365);
-  const latitudeY = Math.max(-74, Math.min(74, -options.latitude * 1.05));
-  el.innerHTML = `
-    <svg viewBox="0 0 560 380" role="img">
-      <defs>
-        <radialGradient id="earthOcean" cx="36%" cy="30%">
-          <stop offset="0" stop-color="#b7e4ff"/>
-          <stop offset="0.52" stop-color="#2b83c6"/>
-          <stop offset="1" stop-color="#102a56"/>
-        </radialGradient>
-        <radialGradient id="sunGlow" cx="50%" cy="50%">
-          <stop offset="0" stop-color="#fff4b8"/>
-          <stop offset="0.55" stop-color="#f6b73c"/>
-          <stop offset="1" stop-color="#f97316"/>
-        </radialGradient>
-        <linearGradient id="ray" x1="0" x2="1">
-          <stop offset="0" stop-color="#ffe082" stop-opacity="0.95"/>
-          <stop offset="1" stop-color="#ffe082" stop-opacity="0.12"/>
-        </linearGradient>
-        <clipPath id="earthClip"><circle cx="0" cy="0" r="105"/></clipPath>
-      </defs>
-      <rect width="560" height="380" rx="18" fill="#071523"/>
-      <circle cx="78" cy="96" r="42" fill="url(#sunGlow)"/>
-      <g stroke="url(#ray)" stroke-width="9" stroke-linecap="round">
-        <line x1="125" y1="74" x2="303" y2="112"/>
-        <line x1="125" y1="112" x2="314" y2="165"/>
-        <line x1="125" y1="150" x2="304" y2="222"/>
-      </g>
-      <g transform="translate(382 193) rotate(-23.44)">
-        <line x1="0" y1="-148" x2="0" y2="148" stroke="#f8fafc" stroke-width="3" stroke-dasharray="8 6"/>
-        <circle cx="0" cy="0" r="105" fill="url(#earthOcean)"/>
-        <g clip-path="url(#earthClip)">
-          <ellipse cx="0" cy="0" rx="105" ry="25" fill="none" stroke="#dbeafe" stroke-width="2" opacity="0.8"/>
-          <ellipse cx="0" cy="${latitudeY}" rx="${Math.max(18, 102 * Math.cos(Math.abs(options.latitude) * Math.PI / 180))}" ry="7" fill="none" stroke="#ffebe6" stroke-width="2" opacity="0.85"/>
-          <path d="M -78 -60 C -52 -88,-18 -80,-8 -55 C 5 -34,-18 -28,-12 -8 C -5 15,-32 28,-48 8 C -66 -14,-98 -20,-86 -42 Z" fill="#56b870"/>
-          <path d="M -42 30 C -18 18,8 26,16 50 C 2 76,-32 70,-46 52 C -58 38,-55 32,-42 30 Z" fill="#56b870"/>
-          <path d="M 12 -70 C 38 -80,72 -60,78 -32 C 55 -22,48 -3,70 13 C 42 22,38 55,5 62 C -3 37,20 22,0 2 C -18 -15,-8 -48,12 -70 Z" fill="#62c076"/>
-          <path d="M 67 -6 C 95 1,104 28,84 48 C 70 37,58 23,67 -6 Z" fill="#62c076"/>
-        </g>
-        <circle cx="0" cy="0" r="105" fill="none" stroke="#c7d2fe" stroke-width="2"/>
-        <circle cx="0" cy="${latitudeY}" r="5.5" fill="#ff4d4f" stroke="#fff" stroke-width="2"/>
-      </g>
-      <text x="22" y="184" fill="#ffec99" font-size="15">Sun rays</text>
-      <text x="300" y="342" fill="#e2e8f0" font-size="14">Earth axis tilted 23.44°</text>
-      <text x="260" y="38" fill="#e2e8f0" font-size="14">Seasonal declination today: ${declination.toFixed(1)}°</text>
-      <text x="294" y="286" fill="#e2e8f0" font-size="14">Selected latitude: ${options.latitude.toFixed(2)}°</text>
-    </svg>`;
+function drawSolarSystem(el, options) {
+  if (!el || el.dataset.cesiumReady === '1') {
+    updateSolarSystemLatitude(el, options);
+    return;
+  }
+  if (!window.Cesium) {
+    el.innerHTML = '<div class="solar-system-fallback">Loading CesiumJS solar-system model…</div>';
+    window.setTimeout(() => drawSolarSystem(el, options), 120);
+    return;
+  }
+  if (!hasWebGL()) {
+    el.innerHTML = '<div class="solar-system-fallback">CesiumJS solar-system model requires WebGL. Open this page in a WebGL-enabled browser to see the interactive Earth, Moon, and Sun scene.</div>';
+    return;
+  }
+
+  const Cesium = window.Cesium;
+  el.dataset.cesiumReady = '1';
+  let viewer;
+  let baseLayer;
+  try {
+    baseLayer = Cesium.ImageryLayer.fromProviderAsync(
+      Cesium.TileMapServiceImageryProvider.fromUrl(Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII'))
+    );
+    viewer = new Cesium.Viewer(el, {
+      animation: false,
+      timeline: false,
+      baseLayer,
+      baseLayerPicker: false,
+      geocoder: false,
+      homeButton: false,
+      sceneModePicker: false,
+      navigationHelpButton: false,
+      fullscreenButton: false,
+      infoBox: false,
+      selectionIndicator: false,
+      shouldAnimate: true,
+      requestRenderMode: true,
+    });
+  } catch (error) {
+    el.dataset.cesiumReady = '';
+    el.innerHTML = '<div class="solar-system-fallback">CesiumJS solar-system model could not start in this browser. Open this page in a WebGL-enabled browser to see the interactive Earth, Moon, and Sun scene.</div>';
+    return;
+  }
+
+  const scene = viewer.scene;
+  scene.skyBox.show = false;
+  scene.skyAtmosphere.show = true;
+  scene.sun.show = true;
+  scene.moon.show = true;
+  scene.globe.enableLighting = true;
+  scene.globe.showGroundAtmosphere = true;
+  scene.backgroundColor = Cesium.Color.fromCssColorString('#071523');
+
+  viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+  viewer.camera.setView({
+    destination: Cesium.Cartesian3.fromDegrees(-80, 18, 16500000),
+    orientation: { heading: 0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0 },
+  });
+
+  const latitudeLine = viewer.entities.add({
+    name: 'Selected latitude line',
+    polyline: {
+      positions: latitudeCirclePositions(options.latitude),
+      width: 2,
+      material: Cesium.Color.fromCssColorString('#ffebe6').withAlpha(0.85),
+      clampToGround: false,
+    },
+  });
+  const latitudePoint = viewer.entities.add({
+    name: 'Selected latitude marker',
+    position: Cesium.Cartesian3.fromDegrees(Number(options.longitude) || -97.553, Number(options.latitude) || 0, 250000),
+    point: { pixelSize: 10, color: Cesium.Color.RED, outlineColor: Cesium.Color.WHITE, outlineWidth: 2 },
+    label: {
+      text: 'Selected latitude',
+      font: '14px system-ui, sans-serif',
+      fillColor: Cesium.Color.WHITE,
+      outlineColor: Cesium.Color.BLACK,
+      outlineWidth: 3,
+      style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+      pixelOffset: new Cesium.Cartesian2(0, -22),
+    },
+  });
+
+  el._solarViewer = viewer;
+  el._solarLatitudeLine = latitudeLine;
+  el._solarLatitudePoint = latitudePoint;
+  updateSolarSystemLatitude(el, options);
 }
+
+function updateSolarSystemLatitude(el, options) {
+  if (!el || !el._solarViewer) return;
+  const Cesium = window.Cesium;
+  const latitude = Number(options.latitude) || 0;
+  const longitude = Number(options.longitude) || -97.553;
+  el._solarLatitudeLine.polyline.positions = latitudeCirclePositions(latitude);
+  el._solarLatitudePoint.position = Cesium.Cartesian3.fromDegrees(longitude, latitude, 250000);
+  el._solarViewer.scene.requestRender();
+}
+
+function latitudeCirclePositions(latitude) {
+  const Cesium = window.Cesium;
+  const lat = Math.max(-89, Math.min(89, Number(latitude) || 0));
+  return Array.from({ length: 181 }, (_, index) => {
+    const longitude = -180 + index * 2;
+    return Cesium.Cartesian3.fromDegrees(longitude, lat, 180000);
+  });
+}
+
+function hasWebGL() {
+  const canvas = document.createElement('canvas');
+  try {
+    return Boolean(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+  } catch (error) {
+    return false;
+  }
+}
+
 function drawIrradiationChart(canvas, model, nasa) {
   drawDailyOverlayBarChart(canvas, {
     model: model.map((d) => ({ x: d.dayOfYear, y: d.irradiation })),

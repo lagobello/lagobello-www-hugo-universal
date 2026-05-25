@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cesium@1.121.1/Build/Cesium/Widgets/widgets.css">
 <link rel="stylesheet" href="../../css/solar-calculator.css">
 
 <section class="solar-tool" data-solar-calculator>
@@ -17,9 +18,7 @@
     <label>Longitude
       <input data-field="longitude" type="number" step="0.001" value="-97.553">
     </label>
-    <label>NASA year
-      <input data-field="year" type="number" min="1984" max="2100" step="1">
-    </label>
+    <input data-field="year" type="hidden">
     <label>Panel area, m²
       <input data-field="panelArea" type="number" min="0.1" step="0.1" value="1.2">
     </label>
@@ -54,7 +53,10 @@
         <var>N</var> is day of year, <var>φ</var> is latitude, <var>δ</var> is solar declination, <var>H</var><sub>d</sub> is daily irradiation in kWh/m²/day, <var>η</var> is panel efficiency, and <var>PR</var> is a practical performance ratio for wiring, inverter, heat, dust, and orientation losses.
       </p>
     </div>
-    <div data-earth-diagram class="earth-diagram" aria-label="Earth and Sun season diagram"></div>
+    <div class="solar-system-wrap">
+      <div data-solar-system class="solar-system-viewer" role="img" aria-label="CesiumJS Earth, Moon, and Sun solar-system model"></div>
+      <p class="solar-system-caption">CesiumJS model: Earth, Moon, sunlight, and selected latitude marker.</p>
+    </div>
   </article>
 
   <div class="solar-grid solar-grid--cards">
@@ -113,4 +115,6 @@
   </p>
 </section>
 
+<script>window.CESIUM_BASE_URL = 'https://cdn.jsdelivr.net/npm/cesium@1.121.1/Build/Cesium/';</script>
+<script src="https://cdn.jsdelivr.net/npm/cesium@1.121.1/Build/Cesium/Cesium.js" defer></script>
 <script type="module" src="../../js/tools/solar-calculator.mjs"></script>
