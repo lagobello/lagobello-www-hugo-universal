@@ -1,0 +1,114 @@
+<link rel="stylesheet" href="../../css/solar-calculator.css">
+
+<section class="solar-tool" data-solar-calculator>
+  <div class="solar-tool__header">
+    <p class="eyebrow">Static vanilla JavaScript solar model</p>
+    <h2>Solar irradiation and panel-output calculator</h2>
+    <p>
+      Compare a didactic solar-geometry model with NASA POWER daily irradiation data,
+      then estimate daily, monthly, or yearly energy and electricity value for a Lago Bello solar array.
+    </p>
+  </div>
+
+  <div class="solar-grid solar-grid--controls">
+    <label>Latitude
+      <input data-field="latitude" type="number" step="0.001" value="26.053">
+    </label>
+    <label>Longitude
+      <input data-field="longitude" type="number" step="0.001" value="-97.553">
+    </label>
+    <label>NASA year
+      <input data-field="year" type="number" min="1984" max="2100" step="1">
+    </label>
+    <label>Solar panels
+      <input data-field="panelCount" type="range" min="1" max="80" step="1" value="8">
+      <output data-output="panelCount">8</output>
+    </label>
+    <label>Panel area, m²
+      <input data-field="panelArea" type="number" min="0.1" step="0.1" value="1.2">
+    </label>
+    <label>Panel efficiency
+      <input data-field="panelEfficiency" type="number" min="0.01" max="0.5" step="0.01" value="0.15">
+    </label>
+    <label>Performance ratio
+      <input data-field="performanceRatio" type="number" min="0.1" max="1" step="0.01" value="0.85">
+    </label>
+    <label>Electricity price, $/kWh
+      <input data-field="electricityPrice" type="number" min="0" step="0.01" value="0.12">
+    </label>
+  </div>
+
+  <div class="solar-actions">
+    <button type="button" class="btn btn-template-main" data-action="fetch-nasa">Load NASA POWER daily data</button>
+    <span data-status class="solar-status">Using model only until NASA data is loaded.</span>
+  </div>
+
+  <article class="solar-card solar-model-explainer">
+    <div>
+      <h3>Why latitude and seasons change solar production</h3>
+      <p>
+        The Earth is tilted by about <strong>23.44°</strong>. During South Texas summer the Northern Hemisphere leans toward the Sun, so the Sun climbs higher and daylight lasts longer. During winter the Sun is lower and the same beam is spread over more ground.
+      </p>
+      <p class="solar-equation">
+        \( \delta_N = 23.44^\circ \sin\left(\frac{2\pi(N-80)}{365}\right) \)<br>
+        \( \cos \theta_z = \sin\phi\sin\delta + \cos\phi\cos\delta\cos\omega \)<br>
+        \( E_d = H_d \times A_\text{panels} \times \eta \times PR \)
+      </p>
+      <p>
+        Here \(N\) is day of year, \(\phi\) is latitude, \(\delta\) is solar declination, \(H_d\) is daily irradiation in kWh/m²/day, \(\eta\) is panel efficiency, and \(PR\) is a practical performance ratio for wiring, inverter, heat, dust, and orientation losses.
+      </p>
+    </div>
+    <div data-earth-diagram class="earth-diagram" aria-label="3D-style Earth and Sun season diagram"></div>
+  </article>
+
+  <div class="solar-grid solar-grid--cards">
+    <div class="solar-card">
+      <h3>Daily irradiation: model vs. NASA POWER</h3>
+      <canvas data-chart="irradiation" width="900" height="320" aria-label="Daily solar irradiation chart"></canvas>
+      <div class="chart-legend"><span class="legend-model"></span> Model <span class="legend-nasa"></span> NASA POWER</div>
+    </div>
+    <div class="solar-card">
+      <h3>Generated energy / value</h3>
+      <div class="solar-inline-controls">
+        <label>Period
+          <select data-field="period">
+            <option value="daily">Daily</option>
+            <option value="monthly" selected>Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </label>
+        <label>Output
+          <select data-field="outputMode">
+            <option value="kwh" selected>kWh generated</option>
+            <option value="value">Dollar value</option>
+          </select>
+        </label>
+        <label>Use irradiation
+          <select data-field="seriesSource">
+            <option value="nasa">NASA if loaded, otherwise model</option>
+            <option value="model">Model</option>
+          </select>
+        </label>
+      </div>
+      <canvas data-chart="energy" width="900" height="320" aria-label="Solar generated energy or value chart"></canvas>
+    </div>
+  </div>
+
+  <div class="solar-grid solar-grid--summary">
+    <div class="solar-card">
+      <h3>System summary</h3>
+      <dl data-summary></dl>
+    </div>
+    <div class="solar-card">
+      <h3>Simple ground-array designer</h3>
+      <p>Add or remove panels with the slider. This is a simple layout sketch, not an engineering plan.</p>
+      <svg data-panel-array viewBox="0 0 900 360" role="img" aria-label="Ground array panel layout"></svg>
+    </div>
+  </div>
+
+  <p class="solar-note">
+    NASA POWER source: ALLSKY_SFC_SW_DWN daily global horizontal irradiation. This static page calls NASA directly from the browser; no worker or server-side proxy is used.
+  </p>
+</section>
+
+<script type="module" src="../../js/tools/solar-calculator.mjs"></script>
