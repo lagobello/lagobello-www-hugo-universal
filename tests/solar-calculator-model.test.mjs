@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 import {
@@ -89,4 +90,9 @@ test('buildPanelArray creates simple ground-array panel rectangles in rows', () 
   assert.equal(panels.length, 7);
   assert.deepEqual(panels[0], { x: 0, y: 0, width: 1.1, height: 1.8, index: 1 });
   assert.equal(panels[4].y, 2.05);
+});
+
+test('Cesium geometry annotations do not initialize polylines with empty positions', () => {
+  const script = readFileSync(new URL('../static/js/tools/solar-calculator.mjs', import.meta.url), 'utf8');
+  assert.equal(script.includes('positions: []'), false, 'Cesium polylines with empty positions crash during render');
 });
