@@ -2,7 +2,6 @@
 description = "Estimate solar panel output, electricity-cost offsets, and PV system size for homes, lots, and ground-mounted arrays."
 keywords = ["solar calculator","solar estimates","Brownsville solar calculator","solar generation calculator","electricity cost calculator","PV system sizing","solar panels","Lago Bello","Brownsville TX"]
 title = "Solar Calculator for Homes and Lots"
-date = "2019-12-07T00:17:08+01:00"
 draft = "false"
 banner = "img/tools/1-solarpanel.jpg"
 [[faq]]
