@@ -1,7 +1,7 @@
 +++
 title = "Contact"
 id = "contact"
-description = "Contact Lago Bello about residential lots for sale in Brownsville, TX. Call (956) 305-5246 or use our contact form."
+description = "Contact Lago Bello directly about residential lots for sale in Brownsville, TX. Call (956) 305-5246, message us on WhatsApp, or use our contact form."
 +++
 
 <div class="text-center" style="margin-bottom: 40px;">

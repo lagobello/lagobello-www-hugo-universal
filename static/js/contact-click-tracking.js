@@ -66,6 +66,13 @@
     return payload;
   }
 
+  function metaEventName(eventName) {
+    if (eventName === 'phone_click' || eventName === 'whatsapp_click' || eventName === 'email_click') return 'Contact';
+    if (eventName === 'contact_submit') return 'Lead';
+    if (eventName === 'view_lot') return 'ViewContent';
+    return '';
+  }
+
   document.addEventListener('click', function (event) {
     var link = closestLink(event.target);
     if (!link) return;
@@ -79,7 +86,12 @@
     window.dataLayer.push(payload);
 
     if (typeof window.fbq === 'function') {
-      window.fbq('trackCustom', eventName, payload);
+      var standardEvent = metaEventName(eventName);
+      if (standardEvent) {
+        window.fbq('track', standardEvent, payload);
+      } else {
+        window.fbq('trackCustom', eventName, payload);
+      }
     }
   });
 })();

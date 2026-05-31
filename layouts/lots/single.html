@@ -158,7 +158,28 @@
                                     
                                     {{ if $lotData }}
                                     <hr style="margin: 10px 0 20px;">
-                                    <h4 style="margin-top: 0; margin-bottom: 15px; font-weight: 600; font-size: 18px; color: #555;">Agent / Listing</h4>
+                                    <h4 style="margin-top: 0; margin-bottom: 15px; font-weight: 600; font-size: 18px; color: #555;">Contact Lago Bello</h4>
+
+                                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px;">
+                                        <a href="tel:{{ $lagoPhoneE164 }}" class="btn btn-success" style="border-radius: 5px; font-weight: 600; padding: 10px 18px; box-shadow: 0 4px 6px rgba(92,184,92,0.3);"
+                                            data-track-event="phone_click"
+                                            data-phone-number="{{ $lagoPhoneE164 }}"
+                                            data-phone-destination-type="lago_bello"
+                                            data-cta-location="listing_contact_card_primary"
+                                            data-lot-address="{{ $.Title }}">
+                                            <i class="fa fa-phone"></i> Call Lago Bello
+                                        </a>
+                                        <a href="{{ $whatsappHref }}" class="btn btn-success" style="border-radius: 5px; font-weight: 600; padding: 10px 18px; background-color: #25D366; border-color: #25D366;"
+                                            data-track-event="whatsapp_click"
+                                            data-phone-number="{{ $whatsappE164 }}"
+                                            data-phone-destination-type="lago_bello"
+                                            data-cta-location="listing_contact_card_primary"
+                                            data-lot-address="{{ $.Title }}">
+                                            <i class="fab fa-whatsapp"></i> WhatsApp
+                                        </a>
+                                    </div>
+
+                                    <h4 style="margin-top: 0; margin-bottom: 15px; font-weight: 600; font-size: 16px; color: #777;">Listing Information</h4>
                                     
                                     <div class="row">
                                         <div class="col-sm-12" style="margin-bottom: 15px;">
@@ -202,15 +223,15 @@
                                                     {{ $phoneE164 := printf "+1%s" $phoneStr }}
                                                     {{ $phoneDestinationType := cond (eq (printf "1%s" $phoneStr) $lagoPhoneDigits) "lago_bello" "realtor" }}
                                                     
-                                                    <a href="tel:{{ $phoneE164 }}" class="btn btn-success" style="border-radius: 5px; font-weight: 600; padding: 10px 20px; box-shadow: 0 4px 6px rgba(92,184,92,0.3); transition: all 0.3s ease;"
+                                                    <a href="tel:{{ $phoneE164 }}" class="btn btn-default btn-sm" style="border-radius: 5px; font-weight: 600; padding: 8px 12px; transition: all 0.3s ease;"
                                                         data-track-event="phone_click"
                                                         data-phone-number="{{ $phoneE164 }}"
                                                         data-phone-destination-type="{{ $phoneDestinationType }}"
-                                                        data-cta-location="listing_contact_card"
+                                                        data-cta-location="listing_contact_card_secondary"
                                                         data-lot-address="{{ $.Title }}"
                                                         data-listing-agent="{{ index $lotData "Listing Agent" }}"
                                                         data-listing-firm="{{ index $lotData "Listing Firm" }}">
-                                                        <i class="fa fa-phone"></i> {{ $phoneFormatted }}
+                                                        <i class="fa fa-phone"></i> Agent: {{ $phoneFormatted }}
                                                     </a>
                                                     {{ end }}
                                                 </div>
@@ -280,31 +301,6 @@
                                             data-lot-address="{{ .Title }}">
                                             <i class="fab fa-whatsapp"></i> WhatsApp Lago Bello
                                         </a>
-                                        {{ $phoneRaw := index $lotData "Listing Agent Phone Number" }}
-                                        {{ if $phoneRaw }}
-                                        {{ $phoneStr := printf "%.0f" $phoneRaw }}
-                                        {{ if and (eq (len $phoneStr) 11) (hasPrefix $phoneStr "1") }}
-                                        {{ $phoneStr = substr $phoneStr 1 }}
-                                        {{ end }}
-                                        {{ $phoneDigits := printf "1%s" $phoneStr }}
-                                        {{ if ne $phoneDigits $lagoPhoneDigits }}
-                                        {{ $phoneFormatted := $phoneStr }}
-                                        {{ if eq (len $phoneStr) 10 }}
-                                        {{ $phoneFormatted = printf "(%s) %s-%s" (substr $phoneStr 0 3) (substr $phoneStr 3 3) (substr $phoneStr 6) }}
-                                        {{ end }}
-                                        {{ $phoneE164 := printf "+1%s" $phoneStr }}
-                                        <a href="tel:{{ $phoneE164 }}" class="btn btn-default btn-lg" style="border-radius: 30px; font-weight: 600; padding: 12px 30px;"
-                                            data-track-event="phone_click"
-                                            data-phone-number="{{ $phoneE164 }}"
-                                            data-phone-destination-type="realtor"
-                                            data-cta-location="lot_primary_cta"
-                                            data-lot-address="{{ .Title }}"
-                                            data-listing-agent="{{ index $lotData "Listing Agent" }}"
-                                            data-listing-firm="{{ index $lotData "Listing Firm" }}">
-                                            <i class="fa fa-user"></i> Call Listing Agent: {{ $phoneFormatted }}
-                                        </a>
-                                        {{ end }}
-                                        {{ end }}
                                         <a href="/contact/" class="btn btn-default btn-lg" style="border-radius: 30px; font-weight: 600; padding: 12px 30px;"><i class="fa fa-envelope"></i> Send Message</a>
                                     </div>
                                     <hr>
