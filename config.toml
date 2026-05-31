@@ -90,6 +90,12 @@ pagerSize = 10
 
 [[menu.topbar]]
     weight = 7
+    name = "WhatsApp"
+    url = "https://wa.me/19565434745?text=Hi%2C%20I%27m%20interested%20in%20Lago%20Bello%20lots."
+    pre = "<i class='fab fa-2x fa-whatsapp'></i>"
+
+[[menu.topbar]]
+    weight = 8
     name = "Contact"
     url = "/contact/"
     pre = "<i class='fas fa-2x fa-envelope'></i>"
@@ -113,6 +119,13 @@ pagerSize = 10
     facebook_domain_verification = "lw3ll2i6cyd3qid1buvozoqa6o33sd"
     meta_pixel_id = "1175586507649646"
     gtm_id = "GTM-5QTTZD85"
+
+    # Canonical Lago Bello direct-contact channels.
+    lago_bello_phone_digits = "19563055246"
+    lago_bello_phone_e164 = "+19563055246"
+    lago_bello_phone_label = "+1 (956) 305-LAGO"
+    lago_bello_whatsapp_digits = "19565434745"
+    lago_bello_whatsapp_e164 = "+19565434745"
 
     # Style options: default (light-blue), blue, green, marsala, pink, red, turquoise, violet
     style = "default"
@@ -164,8 +177,8 @@ pagerSize = 10
 # Enable or disable top bar with social icons
 [params.topbar]
     enable = true
-    text = """<p class="hidden-sm hidden-xs">Contact us at <a href="tel:+19563055246">+1 (956)305-LAGO</a> // <a href="tel:+19563055246">+1 (956)305-5246</a> or through our <a href="/contact/">Contact Form</a></p>
-      <p class="hidden-md hidden-lg"><a href="#" data-animate-hover="pulse"><i class="fas fa-phone"></i></a>
+    text = """<p class="hidden-sm hidden-xs">Contact us at <a href="tel:+19563055246">+1 (956)305-LAGO</a> // <a href="tel:+19563055246">+1 (956)305-5246</a>, <a href="https://wa.me/19565434745?text=Hi%2C%20I%27m%20interested%20in%20Lago%20Bello%20lots.">WhatsApp Lago Bello</a>, or through our <a href="/contact/">Contact Form</a></p>
+      <p class="hidden-md hidden-lg"><a href="tel:+19563055246" data-animate-hover="pulse"><i class="fas fa-phone"></i></a>
       </p>
       """
 
