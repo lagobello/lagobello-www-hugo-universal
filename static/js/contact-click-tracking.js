@@ -58,7 +58,14 @@
       payload.phone_destination_type = phoneDestinationType(digits, link.dataset.phoneDestinationType || '');
     }
 
-    ['lotAddress', 'listingAgent', 'listingFirm'].forEach(function (key) {
+    [
+      'lotAddress',
+      'lotSlug',
+      'lotBlock',
+      'lotNumber',
+      'listingAgent',
+      'listingFirm'
+    ].forEach(function (key) {
       var dataKey = key.replace(/[A-Z]/g, function (m) { return '-' + m.toLowerCase(); });
       if (link.dataset[key]) payload[dataKey.replace(/-/g, '_')] = link.dataset[key];
     });

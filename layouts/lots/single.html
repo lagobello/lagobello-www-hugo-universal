@@ -69,6 +69,13 @@
                         {{ $whatsappE164 := .Site.Params.lago_bello_whatsapp_e164 | default "+19565434745" }}
                         {{ $whatsappText := printf "Hi, I'm interested in %s at Lago Bello." .Title }}
                         {{ $whatsappHref := printf "https://wa.me/%s?text=%s" $whatsappDigits ($whatsappText | urlquery) }}
+                        {{ $lotSlug := .Title | urlize }}
+                        {{ $lotBlock := "" }}
+                        {{ $lotNumber := "" }}
+                        {{ if $lotData }}
+                        {{ with index $lotData "Block Number" }}{{ $lotBlock = printf "%v" . }}{{ end }}
+                        {{ with index $lotData "Lot Number" }}{{ $lotNumber = printf "%v" . }}{{ end }}
+                        {{ end }}
 
                         <div class="row">
                             <div class="col-md-6">
@@ -166,7 +173,10 @@
                                             data-phone-number="{{ $lagoPhoneE164 }}"
                                             data-phone-destination-type="lago_bello"
                                             data-cta-location="listing_contact_card_primary"
-                                            data-lot-address="{{ $.Title }}">
+                                            data-lot-address="{{ $.Title }}"
+                                            data-lot-slug="{{ $lotSlug }}"
+                                            data-lot-block="{{ $lotBlock }}"
+                                            data-lot-number="{{ $lotNumber }}">
                                             <i class="fa fa-phone"></i> Call Lago Bello
                                         </a>
                                         <a href="{{ $whatsappHref }}" class="btn btn-success" style="border-radius: 5px; font-weight: 600; padding: 10px 18px; background-color: #25D366; border-color: #25D366;"
@@ -174,7 +184,10 @@
                                             data-phone-number="{{ $whatsappE164 }}"
                                             data-phone-destination-type="lago_bello"
                                             data-cta-location="listing_contact_card_primary"
-                                            data-lot-address="{{ $.Title }}">
+                                            data-lot-address="{{ $.Title }}"
+                                            data-lot-slug="{{ $lotSlug }}"
+                                            data-lot-block="{{ $lotBlock }}"
+                                            data-lot-number="{{ $lotNumber }}">
                                             <i class="fab fa-whatsapp"></i> WhatsApp
                                         </a>
                                     </div>
@@ -229,6 +242,9 @@
                                                         data-phone-destination-type="{{ $phoneDestinationType }}"
                                                         data-cta-location="listing_contact_card_secondary"
                                                         data-lot-address="{{ $.Title }}"
+                                                        data-lot-slug="{{ $lotSlug }}"
+                                                        data-lot-block="{{ $lotBlock }}"
+                                                        data-lot-number="{{ $lotNumber }}"
                                                         data-listing-agent="{{ index $lotData "Listing Agent" }}"
                                                         data-listing-firm="{{ index $lotData "Listing Firm" }}">
                                                         <i class="fa fa-phone"></i> Agent: {{ $phoneFormatted }}
@@ -246,6 +262,9 @@
                                             data-track-event="outbound_listing_click"
                                             data-cta-location="listing_contact_card"
                                             data-lot-address="{{ $.Title }}"
+                                            data-lot-slug="{{ $lotSlug }}"
+                                            data-lot-block="{{ $lotBlock }}"
+                                            data-lot-number="{{ $lotNumber }}"
                                             data-listing-agent="{{ index $lotData "Listing Agent" }}"
                                             data-listing-firm="{{ index $lotData "Listing Firm" }}"><i class="fa fa-external-link"></i> View Official Listing</a>
                                     </div>
@@ -290,7 +309,10 @@
                                             data-phone-number="{{ $lagoPhoneE164 }}"
                                             data-phone-destination-type="lago_bello"
                                             data-cta-location="lot_primary_cta"
-                                            data-lot-address="{{ .Title }}">
+                                            data-lot-address="{{ .Title }}"
+                                            data-lot-slug="{{ $lotSlug }}"
+                                            data-lot-block="{{ $lotBlock }}"
+                                            data-lot-number="{{ $lotNumber }}">
                                             <i class="fa fa-phone"></i> Call Lago Bello: {{ $lagoPhoneLabel }}
                                         </a>
                                         <a href="{{ $whatsappHref }}" class="btn btn-success btn-lg" style="border-radius: 30px; font-weight: 600; padding: 12px 30px; background-color: #25D366; border-color: #25D366;"
@@ -298,7 +320,10 @@
                                             data-phone-number="{{ $whatsappE164 }}"
                                             data-phone-destination-type="lago_bello"
                                             data-cta-location="lot_primary_cta"
-                                            data-lot-address="{{ .Title }}">
+                                            data-lot-address="{{ .Title }}"
+                                            data-lot-slug="{{ $lotSlug }}"
+                                            data-lot-block="{{ $lotBlock }}"
+                                            data-lot-number="{{ $lotNumber }}">
                                             <i class="fab fa-whatsapp"></i> WhatsApp Lago Bello
                                         </a>
                                         <a href="/contact/" class="btn btn-default btn-lg" style="border-radius: 30px; font-weight: 600; padding: 12px 30px;"><i class="fa fa-envelope"></i> Send Message</a>
@@ -408,13 +433,19 @@
                                     data-phone-number="{{ $lagoPhoneE164 }}"
                                     data-phone-destination-type="lago_bello"
                                     data-cta-location="lot_sidebar"
-                                    data-lot-address="{{ .Title }}"><i class="fa fa-phone"></i> Call Lago Bello</a>
+                                    data-lot-address="{{ .Title }}"
+                                    data-lot-slug="{{ $lotSlug }}"
+                                    data-lot-block="{{ $lotBlock }}"
+                                    data-lot-number="{{ $lotNumber }}"><i class="fa fa-phone"></i> Call Lago Bello</a>
                                 <a href="{{ $whatsappHref }}" class="btn btn-success btn-block" style="border-radius: 5px; font-weight: 600; padding: 12px; margin-bottom: 10px; background-color: #25D366; border-color: #25D366;"
                                     data-track-event="whatsapp_click"
                                     data-phone-number="{{ $whatsappE164 }}"
                                     data-phone-destination-type="lago_bello"
                                     data-cta-location="lot_sidebar"
-                                    data-lot-address="{{ .Title }}"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                                    data-lot-address="{{ .Title }}"
+                                    data-lot-slug="{{ $lotSlug }}"
+                                    data-lot-block="{{ $lotBlock }}"
+                                    data-lot-number="{{ $lotNumber }}"><i class="fab fa-whatsapp"></i> WhatsApp</a>
                                 <a href="/contact/" class="btn btn-primary btn-block" style="border-radius: 5px; font-weight: 600; padding: 12px;"><i class="fa fa-envelope"></i> Contact Us</a>
                             </div>
                         </div>
