@@ -13,7 +13,7 @@ description = "Contact Lago Bello directly about residential lots for sale in Br
         <p style="font-size: 1.2em;"><strong><i class="fas fa-phone"></i> Or contact Lago Bello directly:</strong></p>
         <p>
             <a href="tel:+19563055246" class="btn btn-template-main btn-lg" style="margin: 5px;" data-track-event="phone_click" data-phone-number="+19563055246" data-phone-destination-type="lago_bello" data-cta-location="contact_page"><i class="fas fa-phone-alt"></i> +1 (956) 305-LAGO</a>
-            <a href="https://wa.me/19565434745?text=Hi%2C%20I%27m%20interested%20in%20Lago%20Bello%20lots." class="btn btn-success btn-lg" style="margin: 5px; background-color: #25D366; border-color: #25D366;" data-track-event="whatsapp_click" data-phone-number="+19565434745" data-phone-destination-type="lago_bello" data-cta-location="contact_page"><i class="fab fa-whatsapp"></i> WhatsApp Lago Bello</a>
+            <a href="https://wa.me/19563055246?text=Hi%2C%20I%27m%20interested%20in%20Lago%20Bello%20lots." class="btn btn-success btn-lg" style="margin: 5px; background-color: #25D366; border-color: #25D366;" data-track-event="whatsapp_click" data-phone-number="+19563055246" data-phone-destination-type="lago_bello" data-cta-location="contact_page"><i class="fab fa-whatsapp"></i> WhatsApp Lago Bello</a>
         </p>
     </div>
 </div>

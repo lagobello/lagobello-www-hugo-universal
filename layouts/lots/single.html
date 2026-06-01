@@ -65,8 +65,8 @@
                         {{ $lagoPhoneDigits := .Site.Params.lago_bello_phone_digits | default "19563055246" }}
                         {{ $lagoPhoneE164 := .Site.Params.lago_bello_phone_e164 | default "+19563055246" }}
                         {{ $lagoPhoneLabel := .Site.Params.lago_bello_phone_label | default "+1 (956) 305-LAGO" }}
-                        {{ $whatsappDigits := .Site.Params.lago_bello_whatsapp_digits | default "19565434745" }}
-                        {{ $whatsappE164 := .Site.Params.lago_bello_whatsapp_e164 | default "+19565434745" }}
+                        {{ $whatsappDigits := .Site.Params.lago_bello_whatsapp_digits | default "19563055246" }}
+                        {{ $whatsappE164 := .Site.Params.lago_bello_whatsapp_e164 | default "+19563055246" }}
                         {{ $whatsappText := printf "Hi, I'm interested in %s at Lago Bello." .Title }}
                         {{ $whatsappHref := printf "https://wa.me/%s?text=%s" $whatsappDigits ($whatsappText | urlquery) }}
                         {{ $lotSlug := .Title | urlize }}
