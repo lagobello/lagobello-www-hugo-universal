@@ -80,6 +80,50 @@
     return '';
   }
 
+  function gaClientId() {
+    var match = document.cookie.match(/(?:^|; )_ga=GA\d+\.\d+\.([^;]+)/);
+    return match ? match[1] : '';
+  }
+
+  function sendGa4ContactEvent(eventName, payload) {
+    if (eventName !== 'phone_click' && eventName !== 'whatsapp_click') return;
+    var params = {
+      v: '2',
+      tid: 'G-4QJX5C6RZR',
+      cid: gaClientId(),
+      en: eventName,
+      dl: window.location.href,
+      dt: document.title,
+      dp: window.location.pathname
+    };
+    if (!params.cid) return;
+
+    [
+      'phone_number',
+      'phone_destination_type',
+      'page_path',
+      'cta_location',
+      'lot_address',
+      'lot_slug',
+      'lot_block',
+      'lot_number',
+      'listing_agent',
+      'listing_firm'
+    ].forEach(function (key) {
+      if (payload[key]) params['ep.' + key] = payload[key];
+    });
+
+    var body = Object.keys(params).map(function (key) {
+      return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+    }).join('&');
+    var url = 'https://www.google-analytics.com/g/collect?' + body;
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(url, '');
+    } else if (window.fetch) {
+      window.fetch(url, { method: 'POST', keepalive: true, mode: 'no-cors' });
+    }
+  }
+
   document.addEventListener('click', function (event) {
     var link = closestLink(event.target);
     if (!link) return;
@@ -91,6 +135,7 @@
     var payload = payloadFor(link, eventName, href);
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push(payload);
+    sendGa4ContactEvent(eventName, payload);
 
     if (typeof window.fbq === 'function') {
       var standardEvent = metaEventName(eventName);
