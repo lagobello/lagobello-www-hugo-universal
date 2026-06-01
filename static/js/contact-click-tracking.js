@@ -2,7 +2,7 @@
   'use strict';
 
   var LAGO_BELLO_PHONE = '19563055246';
-  var LAGO_BELLO_WHATSAPP = '19565434745';
+  var LAGO_BELLO_WHATSAPP = '19563055246';
 
   function closestLink(target) {
     if (!target) return null;
