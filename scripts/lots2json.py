@@ -19,6 +19,7 @@ import json
 import math
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -70,18 +71,22 @@ COLUMN_ALIASES = {
     "Lot Status": ["lot status", "status", "availability", "sale status"],
     "List Price": ["list price", "listing price", "price", "asking price"],
     "Size [sqft]": ["size [sqft]", "size sqft", "size sq ft", "sqft", "sq ft", "square feet", "lot size"],
-    "Listing Agent": ["listing agent", "agent", "realtor", "broker", "salesperson"],
+    "Listing Agent": ["listing agent", "listing agent text", "listingAgentText", "agent", "realtor", "broker", "salesperson"],
     "Listing Agent Phone Number": [
         "listing agent phone number",
+        "listing agent phone number text",
+        "listingAgentPhoneNumberText",
         "listing agent phone",
+        "listing agent phone text",
+        "listingAgentPhoneText",
         "agent phone",
         "phone",
         "phone number",
         "listing phone",
     ],
-    "Listing Firm": ["listing firm", "firm", "brokerage", "company", "agency"],
-    "Listing Link": ["listing link", "link", "url", "listing url", "property url"],
-    "Location": ["location", "coordinates", "lat long", "lat/lng", "latitude longitude"],
+    "Listing Firm": ["listing firm", "listing firm text", "listingFirmText", "firm", "brokerage", "company", "agency"],
+    "Listing Link": ["listing link", "listing link text", "listingLinkText", "link", "url", "listing url", "property url"],
+    "Location": ["location", "location text", "locationText", "coordinates", "lat long", "lat/lng", "latitude longitude"],
 }
 
 LAT_ALIASES = {"latitude", "lat"}
@@ -111,10 +116,21 @@ def read_inventory(path: Path) -> tuple[list[str], list[dict[str, Any]]]:
     suffix = path.suffix.lower()
     if suffix == ".csv":
         with path.open(newline="", encoding="utf-8-sig") as fp:
-            reader = csv.DictReader(fp)
+            sample = fp.read(4096)
+            fp.seek(0)
+            try:
+                dialect = csv.Sniffer().sniff(sample, delimiters=",;\t|") if sample else csv.excel
+            except csv.Error:
+                dialect = csv.excel
+            reader = csv.DictReader(fp, dialect=dialect, restkey="__extra_columns__")
             if not reader.fieldnames:
                 raise ValueError(f"CSV has no header row: {path}")
-            return list(reader.fieldnames), list(reader)
+            fieldnames = [str(field).strip() for field in reader.fieldnames if field is not None]
+            rows: list[dict[str, Any]] = []
+            for row in reader:
+                cleaned = {str(key).strip(): value for key, value in row.items() if key is not None}
+                rows.append(cleaned)
+            return fieldnames, rows
 
     if suffix in {".xlsx", ".xls"}:
         try:
@@ -217,6 +233,47 @@ def convert(input_path: Path) -> list[dict[str, Any]]:
     return records
 
 
+def validation_report(records: list[dict[str, Any]]) -> tuple[list[str], list[str]]:
+    """Return (warnings, errors) for the public lot JSON projection."""
+    warnings: list[str] = []
+    errors: list[str] = []
+
+    if not records:
+        errors.append("No lot records were produced. Check that the export has a Name/address column.")
+        return warnings, errors
+
+    status_counts = Counter(str(record.get("Lot Status") or "Missing").strip() or "Missing" for record in records)
+    warnings.append(
+        "Status counts: " + ", ".join(f"{status}={count}" for status, count in sorted(status_counts.items()))
+    )
+
+    seen_names: Counter[str] = Counter(str(record.get("Name") or "").strip() for record in records)
+    duplicate_names = sorted(name for name, count in seen_names.items() if name and count > 1)
+    if duplicate_names:
+        warnings.append("Duplicate lot names/addresses: " + ", ".join(duplicate_names[:12]))
+
+    active_statuses = {"available", "listed"}
+    active_records = [
+        record for record in records if str(record.get("Lot Status") or "").strip().lower() in active_statuses
+    ]
+    active_required = ["List Price", "Size [sqft]", "Location"]
+    for field in active_required:
+        missing = [str(record.get("Name")) for record in active_records if is_missing(record.get(field))]
+        if missing:
+            warnings.append(f"Active lots missing {field}: " + ", ".join(missing[:12]))
+
+    for record in records:
+        url = record.get("Listing Link")
+        if url and not re.match(r"^https?://", str(url), re.IGNORECASE):
+            warnings.append(f"Listing Link is not http(s) for {record.get('Name')}: {url}")
+
+        phone = record.get("Listing Agent Phone Number")
+        if phone and len(str(phone)) not in {10, 11}:
+            warnings.append(f"Unexpected listing-agent phone length for {record.get('Name')}: {phone}")
+
+    return warnings, errors
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Convert a lot-inventory CSV/XLSX export to website lots.json",
@@ -230,9 +287,15 @@ def main() -> None:
         default=Path("static/data/lots.json"),
         help="Output JSON path (default: static/data/lots.json)",
     )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Exit non-zero if validation finds warnings as well as hard errors.",
+    )
     args = parser.parse_args()
 
     records = convert(args.input)
+    warnings, errors = validation_report(records)
 
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -242,6 +305,13 @@ def main() -> None:
     else:
         json.dump(records, sys.stdout, indent=2)
         print()
+
+    for warning in warnings:
+        print(f"WARNING: {warning}", file=sys.stderr)
+    for error in errors:
+        print(f"ERROR: {error}", file=sys.stderr)
+    if errors or (args.strict and warnings):
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":
