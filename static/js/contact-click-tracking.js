@@ -85,8 +85,16 @@
     return match ? match[1] : '';
   }
 
-  function sendGa4ContactEvent(eventName, payload) {
-    if (eventName !== 'phone_click' && eventName !== 'whatsapp_click') return;
+  function ga4KeyEventAlias(eventName, payload) {
+    if (eventName === 'email_click') return 'email_info_lagobello';
+    if (eventName === 'phone_click') {
+      return payload.phone_destination_type === 'realtor' ? 'call_realtor' : 'call_main_phone';
+    }
+    if (eventName === 'whatsapp_click') return 'call_main_phone';
+    return '';
+  }
+
+  function sendGa4Event(eventName, payload) {
     var params = {
       v: '2',
       tid: 'G-4QJX5C6RZR',
@@ -121,6 +129,16 @@
       navigator.sendBeacon(url, '');
     } else if (window.fetch) {
       window.fetch(url, { method: 'POST', keepalive: true, mode: 'no-cors' });
+    }
+  }
+
+  function sendGa4ContactEvent(eventName, payload) {
+    if (eventName !== 'phone_click' && eventName !== 'whatsapp_click' && eventName !== 'email_click') return;
+    sendGa4Event(eventName, payload);
+
+    var keyEventAlias = ga4KeyEventAlias(eventName, payload);
+    if (keyEventAlias && keyEventAlias !== eventName) {
+      sendGa4Event(keyEventAlias, payload);
     }
   }
 
