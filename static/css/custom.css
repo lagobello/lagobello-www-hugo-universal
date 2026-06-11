@@ -280,3 +280,233 @@
         -webkit-overflow-scrolling: touch;
     }
 }
+/* Lots landing page rewrite */
+.lots-page {
+    background: #f7f5f0;
+}
+
+.lots-hero {
+    background: linear-gradient(135deg, #ffffff 0%, #f5f1ea 100%);
+    border: 1px solid #e5dfd2;
+    border-radius: 16px;
+    padding: 42px;
+    margin: 0 0 32px;
+    box-shadow: 0 18px 45px rgba(28, 45, 48, 0.08);
+}
+
+.lots-page .eyebrow {
+    color: #14788a;
+    font-size: 0.82em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.lots-hero h2 {
+    color: #24383b;
+    font-size: 42px;
+    line-height: 1.12;
+    margin-top: 0;
+    text-transform: none;
+}
+
+.lots-hero .lead {
+    color: #46595c;
+    font-size: 20px;
+    line-height: 1.55;
+}
+
+.lots-intro-copy p {
+    color: #526064;
+    font-size: 16px;
+    line-height: 1.65;
+}
+
+.lots-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.lots-snapshot {
+    background: #24383b;
+    border-radius: 14px;
+    color: #fff;
+    padding: 28px;
+    box-shadow: 0 12px 28px rgba(36, 56, 59, 0.18);
+}
+
+.lots-snapshot h2 {
+    color: #fff;
+    font-size: 20px;
+    margin-top: 0;
+    text-transform: none;
+}
+
+.lots-snapshot .snapshot-number {
+    color: #fff;
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.lots-snapshot ul {
+    list-style: none;
+    margin: 20px 0;
+    padding: 0;
+}
+
+.lots-snapshot li {
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    padding: 10px 0;
+}
+
+.lots-decision-row {
+    margin-bottom: 34px;
+}
+
+.decision-card {
+    background: #fff;
+    border: 1px solid #e8e2d6;
+    border-radius: 12px;
+    height: 100%;
+    min-height: 220px;
+    padding: 26px;
+    box-shadow: 0 10px 24px rgba(28, 45, 48, 0.06);
+}
+
+.decision-card i {
+    color: #14788a;
+    font-size: 32px;
+    margin-bottom: 14px;
+}
+
+.decision-card h2 {
+    color: #24383b;
+    font-size: 21px;
+    margin-top: 0;
+    text-transform: none;
+}
+
+.decision-card p {
+    color: #526064;
+    line-height: 1.6;
+}
+
+.lots-list-header {
+    align-items: flex-end;
+    background: #fff;
+    border: 1px solid #e8e2d6;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 22px;
+}
+
+.lots-list-header h2 {
+    color: #24383b;
+    margin: 0 0 8px;
+    text-transform: none;
+}
+
+.lots-list-header p:last-child {
+    margin-bottom: 0;
+}
+
+.lots-filter-group {
+    white-space: nowrap;
+}
+
+.lot-card {
+    border: 1px solid #e8e2d6;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(28, 45, 48, 0.06);
+    overflow: hidden;
+}
+
+.lot-card-image {
+    height: 210px !important;
+    overflow: hidden;
+}
+
+.lot-card-content h3 {
+    font-size: 20px;
+    margin-top: 0;
+    text-transform: none;
+}
+
+.lot-meta-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.lot-meta-line span {
+    background: #eef6f7;
+    border-radius: 999px;
+    color: #14788a;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 9px;
+    text-transform: uppercase;
+}
+
+.lot-price span:first-child {
+    font-size: 1.25em;
+    font-weight: 800;
+}
+
+.lot-price .old-price {
+    margin-left: 8px;
+    text-decoration: line-through;
+}
+
+.lots-sidebar ol {
+    padding-left: 18px;
+}
+
+.lots-sidebar li {
+    margin-bottom: 8px;
+}
+
+@media (max-width: 991px) {
+    .lots-hero {
+        padding: 28px;
+    }
+
+    .lots-snapshot {
+        margin-top: 24px;
+    }
+
+    .lots-list-header {
+        align-items: stretch;
+        display: block;
+    }
+
+    .lots-filter-group {
+        margin-top: 15px;
+        white-space: normal;
+    }
+}
+
+@media (max-width: 600px) {
+    .lots-hero {
+        border-radius: 0;
+        margin-left: -15px;
+        margin-right: -15px;
+        padding: 24px 18px;
+    }
+
+    .lots-hero h2 {
+        font-size: 32px;
+    }
+
+    .lots-hero-actions .btn {
+        display: block;
+        width: 100%;
+    }
+}
