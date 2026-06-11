@@ -15,27 +15,116 @@
 
         {{ partial "breadcrumbs.html" . }}
 
-        <div id="content">
+        {{ $lots := transform.Unmarshal (os.ReadFile "static/data/lots.json") }}
+        {{ $forSaleCount := 0 }}
+        {{ $lakeCount := 0 }}
+        {{ $schoolCount := 0 }}
+        {{ $minPrice := 999999999.0 }}
+        {{ $maxPrice := 0.0 }}
+        {{ $minSize := 999999999.0 }}
+        {{ $maxSize := 0.0 }}
+        {{ range $lots }}
+            {{ $status := index . "Lot Status" }}
+            {{ if or (eq $status "Available") (eq $status "Listed") }}
+                {{ $forSaleCount = add $forSaleCount 1 }}
+                {{ if eq (index . "Close-to") "Lake" }}{{ $lakeCount = add $lakeCount 1 }}{{ end }}
+                {{ if eq (index . "Close-to") "School" }}{{ $schoolCount = add $schoolCount 1 }}{{ end }}
+                {{ $price := index . "List Price" }}
+                {{ if $price }}
+                    {{ $priceFloat := float $price }}
+                    {{ if lt $priceFloat $minPrice }}{{ $minPrice = $priceFloat }}{{ end }}
+                    {{ if gt $priceFloat $maxPrice }}{{ $maxPrice = $priceFloat }}{{ end }}
+                {{ end }}
+                {{ $size := index . "Size [sqft]" }}
+                {{ if $size }}
+                    {{ $sizeFloat := float $size }}
+                    {{ if lt $sizeFloat $minSize }}{{ $minSize = $sizeFloat }}{{ end }}
+                    {{ if gt $sizeFloat $maxSize }}{{ $maxSize = $sizeFloat }}{{ end }}
+                {{ end }}
+            {{ end }}
+        {{ end }}
+
+        <div id="content" class="lots-page">
             <div class="container">
+                <section class="lots-hero">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <p class="eyebrow">Gated waterfront community in Brownsville / Olmito, Texas</p>
+                            <h2>Residential lots for sale at Lago Bello</h2>
+                            <p class="lead">Compare current Section 2 homesites, then tour the subdivision, lake, private streets, and build area in person.</p>
+                            {{ with .Content }}
+                            <div class="lots-intro-copy">
+                                {{ . }}
+                            </div>
+                            {{ end }}
+                            <div class="lots-hero-actions">
+                                <a href="{{ "/visit/" | relURL }}" class="btn btn-template-main btn-lg">Schedule a tour</a>
+                                <a href="{{ "/interactive-map/" | relURL }}" class="btn btn-default btn-lg">Open interactive map</a>
+                                <a href="https://wa.me/{{ .Site.Params.lago_bello_whatsapp_digits }}?text=Hi%2C%20I%27m%20interested%20in%20Lago%20Bello%20lots." class="btn btn-success btn-lg" data-track-event="whatsapp_click" data-phone-number="{{ .Site.Params.lago_bello_whatsapp_e164 }}" data-phone-destination-type="lago_bello" data-cta-location="lots_hero">WhatsApp Lago Bello</a>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <aside class="lots-snapshot" aria-label="Current Lago Bello lot availability snapshot">
+                                <h2>Current availability</h2>
+                                <div class="snapshot-number">{{ $forSaleCount }}</div>
+                                <p>available or listed Section 2 lots</p>
+                                <ul>
+                                    <li><strong>{{ $lakeCount }}</strong> lakefront homesites</li>
+                                    <li><strong>{{ $schoolCount }}</strong> school-side interior homesite</li>
+                                    {{ if lt $minPrice 999999999.0 }}<li><strong>${{ lang.FormatNumber 0 $minPrice }}–${{ lang.FormatNumber 0 $maxPrice }}</strong> list-price range</li>{{ end }}
+                                    {{ if lt $minSize 999999999.0 }}<li><strong>{{ lang.FormatNumber 0 $minSize }}–{{ lang.FormatNumber 0 $maxSize }} sq ft</strong> lot-size range</li>{{ end }}
+                                </ul>
+                                <p class="small text-muted">Availability changes. Confirm price, status, and terms before making an offer.</p>
+                            </aside>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="lots-decision-row" aria-label="How to choose a Lago Bello lot">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="decision-card">
+                                <i class="fas fa-water" aria-hidden="true"></i>
+                                <h2>Lakefront lots</h2>
+                                <p>Larger homesites with direct lake orientation, private-dock potential, and the strongest scarcity story.</p>
+                                <a href="{{ "/waterfront/" | relURL }}">Waterfront details →</a>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="decision-card">
+                                <i class="fas fa-school" aria-hidden="true"></i>
+                                <h2>School-side value</h2>
+                                <p>Interior lots can lower the land entry point while keeping the same gated community, HOA, and private-street setting.</p>
+                                <a href="{{ "/blog/2026/04/08/lakefront-vs-interior/" | relURL }}">Compare lot types →</a>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="decision-card">
+                                <i class="fas fa-house-chimney" aria-hidden="true"></i>
+                                <h2>Build-ready context</h2>
+                                <p>Review minimum home sizes, ACC approval expectations, utilities, and builder-facing details before you design.</p>
+                                <a href="{{ "/builders/" | relURL }}">Builder specifications →</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <div class="row">
-                    <!-- *** LEFT COLUMN *** -->
-
                     <div class="col-md-9" id="blog-listing-medium">
-
-                        <div class="row" style="margin-bottom: 20px;">
-                            <div class="col-md-12 text-center">
-                                <div class="btn-group" role="group" aria-label="Status Filter">
-                                    <button type="button" class="btn btn-default filter-btn"
-                                        data-filter="all">All</button>
-                                    <button type="button" class="btn btn-primary filter-btn active"
-                                        data-filter="For Sale">For
-                                        Sale</button>
-                                    <button type="button" class="btn btn-default filter-btn"
-                                        data-filter="Sold">Sold</button>
-                                </div>
+                        <div class="lots-list-header">
+                            <div>
+                                <p class="eyebrow">Browse homesites</p>
+                                <h2>Available and sold Lago Bello lots</h2>
+                                <p>Start with the lots currently for sale, or switch filters to see the sold history around the lake and school side.</p>
+                            </div>
+                            <div class="btn-group lots-filter-group" role="group" aria-label="Status Filter">
+                                <button type="button" class="btn btn-default filter-btn" data-filter="all">All</button>
+                                <button type="button" class="btn btn-primary filter-btn active" data-filter="For Sale">For Sale</button>
+                                <button type="button" class="btn btn-default filter-btn" data-filter="Sold">Sold</button>
                             </div>
                         </div>
 
+                        <div class="row lots-grid">
                         {{ range .Pages }}
                         {{ $status := "Unknown" }}
                         {{ $statusColor := "default" }}
@@ -43,7 +132,7 @@
 
                         {{ if .Params.offers }}
                         {{ if eq .Params.offers.availability "https://schema.org/InStock" }}
-                        {{ $status = "Available" }}
+                        {{ $status = "For Sale" }}
                         {{ $statusColor = "success" }}
                         {{ $category = "For Sale" }}
                         {{ else if eq .Params.offers.availability "https://schema.org/Sold" }}
@@ -64,19 +153,19 @@
                         {{ end }}
 
                         <div class="col-md-4 col-sm-6 lot-item" data-category="{{ $category }}">
-                            <div class="box-image-text blog">
+                            <article class="box-image-text blog lot-card">
                                 <div class="top">
-                                    <div class="image" style="overflow: hidden; height: 200px;">
+                                    <div class="image lot-card-image">
                                         <div class="ribbon-holder">
                                             <div class="ribbon {{ $statusColor }}">{{ $status }}</div>
-                                            <a href="{{ .Permalink }}">
+                                            <a href="{{ .RelPermalink }}" aria-label="View details for {{ .Title }}">
                                                 {{ $slug := .Title | urlize }}
                                                 {{ $hasLocalImg := fileExists (printf "assets/img/lots/%s.jpg" $slug) }}
 
                                                 {{ if $hasLocalImg }}
                                                 {{ partial "lot-image.html" (dict
                                                     "slug" $slug
-                                                    "alt" (printf "Photo of %s" .Title)
+                                                    "alt" (printf "Photo of %s at Lago Bello" .Title)
                                                     "class" "img-responsive"
                                                     "style" "width: 100%; height: 100%; object-fit: cover;"
                                                     "sizes" "(max-width: 600px) 100vw, 400px"
@@ -86,42 +175,27 @@
                                                 {{ if and .Params.geo .Site.Params.googleMapsApiKey }}
                                                 {{ $lat := .Params.geo.latitude }}
                                                 {{ $lng := .Params.geo.longitude }}
-                                                {{ $streetViewUrl = printf
-                                                "https://maps.googleapis.com/maps/api/streetview?size=600x400&location=%f,%f&fov=90&pitch=0&return_error_code=true&key=%s"
-                                                $lat $lng .Site.Params.googleMapsApiKey }}
+                                                {{ $streetViewUrl = printf "https://maps.googleapis.com/maps/api/streetview?size=600x400&location=%f,%f&fov=90&pitch=0&return_error_code=true&key=%s" $lat $lng .Site.Params.googleMapsApiKey }}
                                                 {{ end }}
 
                                                 {{ if $streetViewUrl }}
-                                                <img src="{{ $streetViewUrl }}" class="img-responsive"
-                                                    alt="Street view of {{ .Title }}"
-                                                    width="600" height="400" loading="lazy"
-                                                    onerror="this.onerror=null;this.src='/img/placeholder-home.png';"
-                                                    style="width: 100%; height: 100%; object-fit: cover;">
+                                                <img src="{{ $streetViewUrl }}" class="img-responsive" alt="Street view of {{ .Title }}" width="600" height="400" loading="lazy" onerror="this.onerror=null;this.src='/img/placeholder-home.png';" style="width: 100%; height: 100%; object-fit: cover;">
                                                 {{ else if .Params.image }}
-                                                <img src="{{ index .Params.image 0 }}" class="img-responsive"
-                                                    alt="Photo of {{ .Title }}"
-                                                    width="600" height="400" loading="lazy"
-                                                    style="width: 100%; height: 100%; object-fit: cover;">
+                                                <img src="{{ index .Params.image 0 }}" class="img-responsive" alt="Photo of {{ .Title }}" width="600" height="400" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
                                                 {{ else }}
-                                                <img src="{{ "img/placeholder.png" | relURL }}" class="img-responsive"
-                                                    alt="" width="600" height="400" loading="lazy"
-                                                    style="width: 100%; height: 100%; object-fit: cover;">
+                                                <img src="{{ "img/placeholder.png" | relURL }}" class="img-responsive" alt="" width="600" height="400" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
                                                 {{ end }}
                                                 {{ end }}
                                             </a>
                                         </div>
-                                        <div class="bg"></div>
-                                        <div class="text">
-                                            <p class="buttons">
-                                                <a href="{{ .Permalink }}"
-                                                    class="btn btn-template-transparent-primary"><i
-                                                        class="fas fa-link"></i> Read more</a>
-                                            </p>
-                                        </div>
                                     </div>
-                                    <div class="content">
-                                        <h4><a href="{{ .Permalink }}">{{ .Title }}</a></h4>
-                                        <p class="author-category">
+                                    <div class="content lot-card-content">
+                                        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+                                        <div class="lot-meta-line">
+                                            {{ with .Params.close_to }}<span>{{ . }} side</span>{{ end }}
+                                            {{ with .Params.subdivision }}<span>{{ . }}</span>{{ end }}
+                                        </div>
+                                        <p class="author-category lot-price">
                                             {{ if .Params.offers.price }}
                                             {{ $listPrice := float (default 0 .Params.offers.price) }}
                                             {{ if $.Site.Params.sale_config.enable }}
@@ -134,20 +208,14 @@
                                             {{ end }}
 
                                             {{ if $saleActive }}
-                                            {{ $salePrice := mul $listPrice (sub 1 $.Site.Params.sale_config.percentage)
-                                            }}
-                                            <span class="text-danger" style="font-weight: bold; font-size: 1.2em;">${{
-                                                printf "%.0f" $salePrice }}</span>
-                                            <span class="text-muted"
-                                                style="text-decoration: line-through; margin-left: 10px;">${{ $listPrice
-                                                }}</span>
+                                            {{ $salePrice := mul $listPrice (sub 1 $.Site.Params.sale_config.percentage) }}
+                                            <span class="text-danger">${{ lang.FormatNumber 0 $salePrice }}</span>
+                                            <span class="text-muted old-price">${{ lang.FormatNumber 0 $listPrice }}</span>
                                             {{ else }}
-                                            <span class="text-primary" style="font-weight: bold; font-size: 1.2em;">${{
-                                                $listPrice }}</span>
+                                            <span class="text-primary">${{ lang.FormatNumber 0 $listPrice }}</span>
                                             {{ end }}
                                             {{ else }}
-                                            <span class="text-primary" style="font-weight: bold; font-size: 1.2em;">${{
-                                                $listPrice }}</span>
+                                            <span class="text-primary">${{ lang.FormatNumber 0 $listPrice }}</span>
                                             {{ end }}
                                             {{ else }}
                                             <span class="text-muted">Price upon request</span>
@@ -156,58 +224,54 @@
                                         <p class="intro">
                                             {{ $closeTo := .Params.close_to }}
                                             {{ $size := .Params.size_sqft }}
-                                            Build Your {{ if or (eq $closeTo "Lake") (eq $closeTo "Canal") }}Waterfront
-                                            Dream{{ else }}Dreamhouse{{ end }} in {{ .Params.subdivision }} – Over {{
-                                            printf "%.0f" (float (default 0 $size)) }} Sq. Ft.
+                                            {{ if $size }}{{ lang.FormatNumber 0 (float $size) }} sq ft{{ else }}Lot size available on request{{ end }}{{ if $closeTo }} · {{ if or (eq $closeTo "Lake") (eq $closeTo "Canal") }}water-oriented homesite{{ else }}interior homesite{{ end }}{{ end }}
                                         </p>
                                         <p class="read-more">
-                                            <a href="{{ .Permalink }}" class="btn btn-template-main">View Details</a>
+                                            <a href="{{ .RelPermalink }}" class="btn btn-template-main">View lot details</a>
                                         </p>
                                     </div>
                                 </div>
-                            </div>
+                            </article>
                         </div>
                         {{ end }}
-
+                        </div>
                     </div>
-                    <!-- /.col-md-9 -->
-
-                    <!-- *** LEFT COLUMN END *** -->
-
-                    <!-- *** RIGHT COLUMN *** -->
 
                     <div class="col-md-3">
-
-                        <!-- *** MENUS AND WIDGETS *** -->
-
-                        <div class="panel panel-default sidebar-menu">
+                        <aside class="panel panel-default sidebar-menu lots-sidebar">
                             <div class="panel-heading">
-                                <h3 class="panel-title">Contact</h3>
+                                <h3 class="panel-title">Buying a Lago Bello lot</h3>
                             </div>
                             <div class="panel-body">
-                                <p>Interested in a lot?</p>
-                                <a href="/contact/" class="btn btn-template-main">Contact Us</a>
+                                <ol>
+                                    <li>Review available lots and map location.</li>
+                                    <li>Tour Lago Bello in person.</li>
+                                    <li>Confirm price/status with Lago Bello or the listing agent.</li>
+                                    <li>Review HOA and building requirements before offer.</li>
+                                </ol>
+                                <a href="{{ "/visit/" | relURL }}" class="btn btn-template-main btn-block">Schedule a tour</a>
+                                <a href="{{ "/faq/" | relURL }}" class="btn btn-default btn-block">Read FAQ</a>
                             </div>
-                        </div>
+                        </aside>
 
-                        <!-- *** MENUS AND FILTERS END *** -->
-
+                        <aside class="panel panel-default sidebar-menu lots-sidebar">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Questions?</h3>
+                            </div>
+                            <div class="panel-body">
+                                <p>Call, WhatsApp, or send the lot address you are considering.</p>
+                                <a href="tel:{{ .Site.Params.lago_bello_phone_e164 }}" class="btn btn-template-main btn-block" data-track-event="phone_click" data-phone-number="{{ .Site.Params.lago_bello_phone_e164 }}" data-phone-destination-type="lago_bello" data-cta-location="lots_sidebar">Call {{ .Site.Params.lago_bello_phone_label }}</a>
+                                <a href="https://wa.me/{{ .Site.Params.lago_bello_whatsapp_digits }}?text=Hi%2C%20I%27m%20interested%20in%20Lago%20Bello%20lots." class="btn btn-success btn-block" data-track-event="whatsapp_click" data-phone-number="{{ .Site.Params.lago_bello_whatsapp_e164 }}" data-phone-destination-type="lago_bello" data-cta-location="lots_sidebar">WhatsApp Lago Bello</a>
+                            </div>
+                        </aside>
                     </div>
-                    <!-- /.col-md-3 -->
-
-                    <!-- *** RIGHT COLUMN END *** -->
-
                 </div>
-                <!-- /.row -->
             </div>
-            <!-- /.container -->
         </div>
-        <!-- /#content -->
 
         {{ partial "footer.html" . }}
 
     </div>
-    <!-- /#all -->
 
     {{ partial "scripts.html" . }}
     <script defer src="{{ "js/lots-filter.js" | relURL }}"></script>
