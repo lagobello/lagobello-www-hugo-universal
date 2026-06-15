@@ -5,6 +5,7 @@ import {
   buildMetaEvent,
   jsonResponse,
   normalizeIncomingEvent,
+  onRequest,
 } from '../functions/api/track.js';
 
 test('normalizes website contact click events for server-side forwarding', () => {
@@ -68,6 +69,19 @@ test('returns CORS JSON responses for browser beacon callers', async () => {
 
   assert.equal(response.status, 202);
   assert.equal(response.headers.get('content-type'), 'application/json; charset=utf-8');
+  assert.equal(response.headers.get('access-control-allow-origin'), 'https://www.lagobello.com');
+  assert.deepEqual(await response.json(), { ok: true });
+});
+
+test('handles CORS preflight without a 204 response body', async () => {
+  const response = await onRequest({
+    request: new Request('https://www.lagobello.com/api/track', {
+      method: 'OPTIONS',
+      headers: { origin: 'https://www.lagobello.com' },
+    }),
+  });
+
+  assert.equal(response.status, 200);
   assert.equal(response.headers.get('access-control-allow-origin'), 'https://www.lagobello.com');
   assert.deepEqual(await response.json(), { ok: true });
 });
