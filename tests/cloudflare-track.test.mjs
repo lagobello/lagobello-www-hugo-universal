@@ -85,3 +85,43 @@ test('handles CORS preflight without a 204 response body', async () => {
   assert.equal(response.headers.get('access-control-allow-origin'), 'https://www.lagobello.com');
   assert.deepEqual(await response.json(), { ok: true });
 });
+
+test('accepts valid events without exposing internal Meta forwarding diagnostics', async () => {
+  const response = await onRequest({
+    request: new Request('https://www.lagobello.com/api/track', {
+      method: 'POST',
+      headers: {
+        origin: 'https://www.lagobello.com',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        event: 'phone_click',
+        event_id: 'lb_phone_click_public_safe',
+        event_time: 1781548200,
+        event_source_url: 'https://www.lagobello.com/contact/',
+        page_path: '/contact/',
+      }),
+    }),
+    env: {},
+  });
+
+  assert.equal(response.status, 202);
+  assert.deepEqual(await response.json(), { ok: true, forwarded: false });
+});
+
+test('returns generic browser errors for invalid tracking payloads', async () => {
+  const response = await onRequest({
+    request: new Request('https://www.lagobello.com/api/track', {
+      method: 'POST',
+      headers: {
+        origin: 'https://www.lagobello.com',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ event: 'phone_click' }),
+    }),
+    env: {},
+  });
+
+  assert.equal(response.status, 400);
+  assert.deepEqual(await response.json(), { ok: false, error: 'track_failed' });
+});
