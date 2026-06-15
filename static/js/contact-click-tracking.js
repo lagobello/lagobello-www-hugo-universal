@@ -80,9 +80,50 @@
     return '';
   }
 
+  function cookieValue(name) {
+    var escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    var match = document.cookie.match(new RegExp('(?:^|; )' + escaped + '=([^;]+)'));
+    return match ? decodeURIComponent(match[1]) : '';
+  }
+
   function gaClientId() {
     var match = document.cookie.match(/(?:^|; )_ga=GA\d+\.\d+\.([^;]+)/);
     return match ? match[1] : '';
+  }
+
+  function eventId(eventName) {
+    var randomPart = '';
+    if (window.crypto && window.crypto.getRandomValues) {
+      var values = new Uint32Array(2);
+      window.crypto.getRandomValues(values);
+      randomPart = values[0].toString(36) + values[1].toString(36);
+    } else {
+      randomPart = Math.random().toString(36).slice(2, 12);
+    }
+    return 'lb_' + eventName + '_' + Date.now() + '_' + randomPart;
+  }
+
+  function addServerTrackingFields(eventName, payload) {
+    payload.event_id = eventId(eventName);
+    payload.event_time = Math.floor(Date.now() / 1000);
+    payload.event_source_url = window.location.href;
+
+    var fbp = cookieValue('_fbp');
+    var fbc = cookieValue('_fbc');
+    if (fbp) payload.fbp = fbp;
+    if (fbc) payload.fbc = fbc;
+  }
+
+  function sendServerTrackingEvent(payload) {
+    if (!window.fetch) return;
+    window.fetch('/api/track', {
+      method: 'POST',
+      keepalive: true,
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(function () {
+      // Server-side conversion tracking must never block the user's click.
+    });
   }
 
   function ga4KeyEventAlias(eventName, payload) {
@@ -151,16 +192,18 @@
     if (!eventName) return;
 
     var payload = payloadFor(link, eventName, href);
+    addServerTrackingFields(eventName, payload);
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push(payload);
     sendGa4ContactEvent(eventName, payload);
+    sendServerTrackingEvent(payload);
 
     if (typeof window.fbq === 'function') {
       var standardEvent = metaEventName(eventName);
       if (standardEvent) {
-        window.fbq('track', standardEvent, payload);
+        window.fbq('track', standardEvent, payload, { eventID: payload.event_id });
       } else {
-        window.fbq('trackCustom', eventName, payload);
+        window.fbq('trackCustom', eventName, payload, { eventID: payload.event_id });
       }
     }
   });
