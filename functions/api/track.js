@@ -166,7 +166,7 @@ export async function onRequest(context) {
   const origin = request.headers.get('origin') || DEFAULT_ORIGIN;
 
   if (request.method === 'OPTIONS') {
-    return jsonResponse({ ok: true }, 204, origin);
+    return jsonResponse({ ok: true }, 200, origin);
   }
 
   if (request.method !== 'POST') {
@@ -178,8 +178,8 @@ export async function onRequest(context) {
     const event = buildMetaEvent(payload, clientIpFromRequest(request), request.headers.get('user-agent') || '');
     const meta = await forwardToMeta(env, event);
     const accepted = meta.ok || meta.skipped;
-    return jsonResponse({ ok: accepted, forwarded: Boolean(meta.ok), meta }, accepted ? 202 : 502, origin);
+    return jsonResponse({ ok: accepted, forwarded: Boolean(meta.ok) }, accepted ? 202 : 502, origin);
   } catch (error) {
-    return jsonResponse({ ok: false, error: error.message || 'track_failed' }, 400, origin);
+    return jsonResponse({ ok: false, error: 'track_failed' }, 400, origin);
   }
 }
