@@ -1,0 +1,120 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cesium@1.121.1/Build/Cesium/Widgets/widgets.css">
+<link rel="stylesheet" href="../../css/solar-calculator.css">
+
+<section class="solar-tool" data-solar-calculator>
+  <div class="solar-tool__header">
+    <p class="eyebrow">Solar planning calculator</p>
+    <h2>Solar irradiation and panel-output calculator</h2>
+    <p>
+      Compare a solar-geometry estimate with NASA POWER daily irradiation data,
+      then estimate daily, monthly, or yearly energy and electricity value for a solar array.
+    </p>
+  </div>
+
+  <div class="solar-grid solar-grid--controls">
+    <label>Latitude
+      <input data-field="latitude" type="number" step="0.001" value="26.053">
+    </label>
+    <label>Longitude
+      <input data-field="longitude" type="number" step="0.001" value="-97.553">
+    </label>
+    <input data-field="year" type="hidden">
+    <label>Panel area, m²
+      <input data-field="panelArea" type="number" min="0.1" step="0.1" value="1.2">
+    </label>
+    <label>Panel efficiency
+      <input data-field="panelEfficiency" type="number" min="0.01" max="0.5" step="0.01" value="0.15">
+    </label>
+    <label>Performance ratio
+      <input data-field="performanceRatio" type="number" min="0.1" max="1" step="0.01" value="0.85">
+    </label>
+    <label>Electricity price, $/kWh
+      <input data-field="electricityPrice" type="number" min="0" step="0.01" value="0.12">
+    </label>
+  </div>
+
+  <div class="solar-actions">
+    <button type="button" class="btn btn-template-main" data-action="fetch-nasa">Load NASA POWER daily data</button>
+    <span data-status class="solar-status">Using the solar-geometry estimate until NASA data is loaded.</span>
+  </div>
+
+  <article class="solar-card solar-model-explainer">
+    <div>
+      <h3>Why latitude and seasons change solar production</h3>
+      <p>
+        The Earth is tilted by about <strong>23.44°</strong>. In Northern Hemisphere summer, the Sun is higher in the sky and daylight lasts longer. In winter, sunlight arrives at a lower angle and the same beam is spread over more ground.
+      </p>
+      <div class="solar-equation" aria-label="Solar model equations">
+        <div><var>δ</var><sub>N</sub> = 23.44° × sin(2π(<var>N</var> − 80) / 365)</div>
+        <div>cos <var>θ</var><sub>z</sub> = sin <var>φ</var> sin <var>δ</var> + cos <var>φ</var> cos <var>δ</var> cos <var>ω</var></div>
+        <div><var>E</var><sub>d</sub> = <var>H</var><sub>d</sub> × <var>A</var><sub>panels</sub> × <var>η</var> × <var>PR</var></div>
+      </div>
+      <p>
+        <var>N</var> is day of year, <var>φ</var> is latitude, <var>δ</var> is solar declination, and <var>θ</var><sub>z</sub> is the solar zenith angle: the angle between straight overhead at the site and the direction of the Sun. Smaller <var>θ</var><sub>z</sub> means the Sun is higher in the sky and the same sunlight is concentrated on less ground. <var>H</var><sub>d</sub> is daily irradiation in kWh/m²/day, <var>η</var> is panel efficiency, and <var>PR</var> is a practical performance ratio for wiring, inverter, heat, dust, and orientation losses.
+      </p>
+    </div>
+    <div class="solar-system-wrap">
+      <div data-solar-system class="solar-system-viewer" role="img" aria-label="CesiumJS Earth, Moon, and Sun solar-system model"></div>
+      <p class="solar-system-caption">CesiumJS landscape model: Earth with daylight, selected latitude, tilted axis ε, equator, solar declination δ, noon zenith angle θz, and visible Sun/Moon reference markers. Distances and marker sizes are compressed so the bodies and geometry can be seen together.</p>
+    </div>
+  </article>
+
+  <div class="solar-grid solar-grid--cards">
+    <div class="solar-card">
+      <h3>Daily irradiation: model vs. NASA POWER</h3>
+      <canvas data-chart="irradiation" width="900" height="320" aria-label="Daily solar irradiation bar chart"></canvas>
+      <div class="chart-legend"><span class="legend-model"></span> Model <span class="legend-nasa"></span> NASA POWER</div>
+    </div>
+    <div class="solar-card">
+      <h3>Generated energy / value</h3>
+      <div class="solar-inline-controls">
+        <label>Period
+          <select data-field="period">
+            <option value="daily">Daily</option>
+            <option value="monthly" selected>Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </label>
+        <label>Output
+          <select data-field="outputMode">
+            <option value="kwh" selected>kWh generated</option>
+            <option value="value">Dollar value</option>
+          </select>
+        </label>
+        <label>Use irradiation
+          <select data-field="seriesSource">
+            <option value="nasa">NASA if loaded, otherwise model</option>
+            <option value="model">Model</option>
+          </select>
+        </label>
+      </div>
+      <canvas data-chart="energy" width="900" height="320" aria-label="Solar generated energy or value chart"></canvas>
+    </div>
+  </div>
+
+  <div class="solar-grid solar-grid--summary">
+    <div class="solar-card">
+      <h3>System summary</h3>
+      <dl data-summary></dl>
+    </div>
+    <div class="solar-card solar-array-card">
+      <div class="solar-array-card__controls">
+        <h3>Ground-mount layout</h3>
+        <label>Solar panels
+          <input data-field="panelCount" type="range" min="1" max="80" step="1" value="8">
+          <output data-output="panelCount">8</output>
+        </label>
+        <p>Use the panel slider to update the ground-mount sketch.</p>
+      </div>
+      <svg data-panel-array viewBox="0 0 900 360" role="img" aria-label="Ground-mount panel layout with wooden posts"></svg>
+    </div>
+  </div>
+
+  <p class="solar-note">
+    NASA POWER source: ALLSKY_SFC_SW_DWN daily global horizontal irradiation. This static page calls NASA directly from the browser; no worker or server-side proxy is used. Estimates are for planning only; please consult an engineer or solar designer before selecting equipment, foundations, mounts, wiring, batteries, or interconnection details.
+  </p>
+</section>
+
+<script>window.CESIUM_BASE_URL = 'https://cdn.jsdelivr.net/npm/cesium@1.121.1/Build/Cesium/';</script>
+<script src="https://cdn.jsdelivr.net/npm/cesium@1.121.1/Build/Cesium/Cesium.js" defer></script>
+<script type="module" src="../../js/tools/solar-calculator.mjs"></script>
