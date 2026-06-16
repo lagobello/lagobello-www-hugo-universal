@@ -225,14 +225,12 @@
                                                 <div style="text-align: right;">
                                                     {{ $phoneRaw := index $lotData "Listing Agent Phone Number" }}
                                                     {{ if $phoneRaw }}
-                                                    {{ $phoneStr := printf "%.0f" $phoneRaw }}
+                                                    {{ $phoneStr := replaceRE "\\D" "" (printf "%v" $phoneRaw) }}
                                                     {{ if and (eq (len $phoneStr) 11) (hasPrefix $phoneStr "1") }}
                                                     {{ $phoneStr = substr $phoneStr 1 }}
                                                     {{ end }}
-                                                    {{ $phoneFormatted := $phoneStr }}
                                                     {{ if eq (len $phoneStr) 10 }}
-                                                    {{ $phoneFormatted = printf "(%s) %s-%s" (substr $phoneStr 0 3) (substr $phoneStr 3 3) (substr $phoneStr 6) }}
-                                                    {{ end }}
+                                                    {{ $phoneFormatted := printf "(%s) %s-%s" (substr $phoneStr 0 3) (substr $phoneStr 3 3) (substr $phoneStr 6) }}
                                                     {{ $phoneE164 := printf "+1%s" $phoneStr }}
                                                     {{ $phoneDestinationType := cond (eq (printf "1%s" $phoneStr) $lagoPhoneDigits) "lago_bello" "realtor" }}
                                                     
@@ -249,6 +247,7 @@
                                                         data-listing-firm="{{ index $lotData "Listing Firm" }}">
                                                         <i class="fa fa-phone"></i> Agent: {{ $phoneFormatted }}
                                                     </a>
+                                                    {{ end }}
                                                     {{ end }}
                                                 </div>
                                             </div>

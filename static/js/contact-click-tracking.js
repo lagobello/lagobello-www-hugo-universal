@@ -3,6 +3,8 @@
 
   var LAGO_BELLO_PHONE = '19563055246';
   var LAGO_BELLO_WHATSAPP = '19563055246';
+  var RECENT_CLICK_WINDOW_MS = 1500;
+  var recentClicks = {};
 
   function closestLink(target) {
     if (!target) return null;
@@ -175,12 +177,31 @@
 
   function sendGa4ContactEvent(eventName, payload) {
     if (eventName !== 'phone_click' && eventName !== 'whatsapp_click' && eventName !== 'email_click') return;
-    sendGa4Event(eventName, payload);
 
+    // Canonical contact events are pushed to dataLayer above, where GTM can route
+    // them. Direct GA4 dispatch is reserved for legacy key-event aliases so a
+    // single click does not create duplicate browser GA4 hits for the same event.
     var keyEventAlias = ga4KeyEventAlias(eventName, payload);
     if (keyEventAlias && keyEventAlias !== eventName) {
       sendGa4Event(keyEventAlias, payload);
     }
+  }
+
+  function clickDedupKey(link, eventName, href) {
+    return [
+      eventName,
+      href,
+      link.dataset.ctaLocation || '',
+      link.dataset.lotSlug || '',
+      link.dataset.phoneNumber || ''
+    ].join('|');
+  }
+
+  function isRecentDuplicateClick(key) {
+    var now = Date.now();
+    if (recentClicks[key] && now - recentClicks[key] < RECENT_CLICK_WINDOW_MS) return true;
+    recentClicks[key] = now;
+    return false;
   }
 
   document.addEventListener('click', function (event) {
@@ -190,6 +211,8 @@
     var href = link.getAttribute('href') || '';
     var eventName = inferEventName(link, href);
     if (!eventName) return;
+
+    if (isRecentDuplicateClick(clickDedupKey(link, eventName, href))) return;
 
     var payload = payloadFor(link, eventName, href);
     addServerTrackingFields(eventName, payload);
