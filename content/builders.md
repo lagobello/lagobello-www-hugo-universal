@@ -14,6 +14,7 @@ Detailed technical data for construction and development at Lago Bello.
 ## Infrastructure & Utilities
 
 *   **Electrical:** Fully buried electrical design (Brownsville PUB). Builders and buyers can use the [Texas solar calculator](/tools/solar/) during early roof, service, and energy-cost planning.
+*   **Solar-ready lot planning:** Compare [residential lots for sale in Brownsville, TX](/lots-for-sale-brownsville-tx/) before finalizing roof orientation, garage placement, usable roof area, service location, and future solar or battery equipment assumptions.
 *   **Water/Sewer:** Municipal water and waste water infrastructure installed.
 *   **Drainage:** Storm drainage infrastructure and retention wall on Lake boundary complete.
 *   **Streets:** 28-foot wide paved streets.
