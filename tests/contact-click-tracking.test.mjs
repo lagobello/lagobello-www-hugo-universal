@@ -92,3 +92,26 @@ test('contact tracking posts conversion events to the Cloudflare server endpoint
   assert.equal(body.phone_destination_type, 'lago_bello');
   assert.equal(body.event_source_url, 'https://www.lagobello.com/contact/');
 });
+
+test('contact tracking suppresses duplicate clicks from the same CTA window', () => {
+  const harness = runTrackingScript();
+  const link = fakeLink();
+
+  harness.listeners.click({ target: { closest: () => link } });
+  harness.listeners.click({ target: { closest: () => link } });
+
+  assert.equal(harness.dataLayer.length, 1);
+  assert.equal(harness.fetchCalls.filter((call) => call.url === '/api/track').length, 1);
+  assert.equal(harness.fbqCalls.length, 1);
+});
+
+test('direct GA4 dispatch only sends legacy key-event aliases', () => {
+  const harness = runTrackingScript();
+  const link = fakeLink();
+
+  harness.listeners.click({ target: { closest: () => link } });
+
+  assert.equal(harness.beaconCalls.length, 1);
+  const beaconUrl = new URL(harness.beaconCalls[0].url);
+  assert.equal(beaconUrl.searchParams.get('en'), 'call_main_phone');
+});
