@@ -21,7 +21,9 @@ lived through a Gulf-coast storm season.
 
 * **Electrical.** Brownsville PUB ran a fully buried distribution
   network in collaboration with the developer. No service drops from
-  poles, no transformers on stilts.
+  poles, no transformers on stilts. If you're planning rooftop solar,
+  start with the [Texas solar calculator](/tools/solar/) before your
+  builder locks in roof orientation and electrical equipment locations.
 * **Internet.** [Omni Fiber](/blog/2025/12/10/omni-fiber/) runs a
   buried fiber line direct to each lot. No utility-pole micro-trenching.
 * **Water and wastewater.** Municipal mains are sized for the entire

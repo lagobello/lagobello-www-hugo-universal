@@ -26,6 +26,8 @@ For our current and future residents, this isn't just about checking emails—it
 
 Omni Fiber is setting a new standard for internet in Brownsville, and we are proud that Lago Bello is at the forefront of this movement.
 
+For buyers planning a custom home, internet is only one part of long-term utility planning. Lago Bello's buried electrical service also makes it a good moment to compare future home energy scenarios with our [Texas solar calculator](/tools/solar/).
+
 Come see why Lago Bello isn't just a place to live—it's a place to thrive.
 
-[Explore available lots](/lots/) | [Contact us](/contact/)
+[Explore available lots](/lots/) | [Estimate solar production](/tools/solar/) | [Contact us](/contact/)
