@@ -7,11 +7,14 @@ const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf
 test('solar page targets Texas/Brownsville solar queries and drives lot-sale leads', () => {
   const solar = read('content/tools/solar.md');
 
-  assert.match(solar, /title = "Texas Solar Calculator for Brownsville Homes and Lots"/);
+  assert.match(solar, /title = "Solar Calculator Texas: Brownsville Homes and Lots"/);
+  assert.match(solar, /free Texas solar calculator/i);
+  assert.match(solar, /no signup/i);
   assert.match(solar, /Google Solar Calculator alternative/i);
   assert.match(solar, /Solar energy calculator for Texas homes/i);
   assert.match(solar, /solar-ready home in Brownsville/i);
   assert.match(solar, /planning a solar-ready home in Brownsville/i);
+  assert.match(solar, /solar calculator Texas/i);
   assert.match(solar, /https:\/\/wa\.me\/19563055246/);
   assert.match(solar, /data-cta-location="solar_page_cta"/);
   assert.match(solar, /\/lots-for-sale-brownsville-tx\//);

@@ -1,7 +1,7 @@
 +++
-description = "Texas solar calculator for Brownsville homes and Lago Bello lots. Estimate PV system size, annual solar energy, and electricity-cost offsets before choosing a homesite or builder plan."
-keywords = ["Texas solar calculator","solar calculator Texas","Brownsville solar calculator","solar energy calculator","Google Solar Calculator alternative","solar area calculator","PV system sizing","solar panels","Lago Bello","Brownsville TX"]
-title = "Texas Solar Calculator for Brownsville Homes and Lots"
+description = "Free Texas solar calculator for Brownsville homes and Lago Bello lots. Estimate panels, kWh, PV system size, and electricity-cost offsets with no signup."
+keywords = ["solar calculator Texas","Texas solar calculator","free Texas solar calculator","Brownsville solar calculator","solar energy calculator","Google Solar Calculator alternative","solar area calculator","PV system sizing","solar panels","Lago Bello","Brownsville TX"]
+title = "Solar Calculator Texas: Brownsville Homes and Lots"
 draft = "false"
 banner = "img/tools/1-solarpanel.jpg"
 [[faq]]
@@ -18,10 +18,10 @@ question = "Is this a Google Solar Calculator alternative for Brownsville, Texas
 answer = "Yes. It is a local planning tool for Texas solar calculator queries, especially Brownsville and Lago Bello homesites. It does not replace an installer quote, but it helps buyers model system size, estimated energy, and electricity value while comparing lots."
 +++
 
-Use this Texas solar calculator to estimate how much energy a rooftop or ground-mounted photovoltaic system could produce for a Brownsville-area home, and how that production may translate into electricity-cost offsets.
+Use this **free Texas solar calculator** to estimate how much energy a rooftop or ground-mounted photovoltaic system could produce for a Brownsville-area home, and how that production may translate into electricity-cost offsets. There is no signup: adjust the assumptions, compare panel counts, and use the result as an early planning range before you talk with a builder or solar installer.
 <!--more-->
 
-If you found this page looking for a **Google Solar Calculator alternative**, a **solar energy calculator for Texas homes**, or a Brownsville solar planning tool, start here: set the location near South Texas, adjust panel count and panel area, then compare estimated annual production against your electricity-rate assumption.
+If you found this page looking for **solar calculator Texas**, a **Google Solar Calculator alternative**, a **solar energy calculator for Texas homes**, or a Brownsville solar planning tool, start here: set the location near South Texas, adjust panel count and panel area, then compare estimated annual production against your electricity-rate assumption.
 
 Lago Bello lots are served by [buried electrical infrastructure](/blog/2026/03/04/buried-utilities/) and planned around custom homes, which makes solar a useful conversation to start before finalizing a floor plan. If you are comparing lots, rooflines, garage placement, or home orientation, this tool can help you think through solar panel area, system size, estimated annual generation, and electricity cost assumptions while your builder is still designing.
 
