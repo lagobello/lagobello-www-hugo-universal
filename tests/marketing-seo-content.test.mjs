@@ -39,7 +39,8 @@ test('dedicated Brownsville lots landing page exists with local SEO, CTA, and av
   assert.match(page, /url = "\/lots-for-sale-brownsville-tx\/"/);
   assert.match(page, /land for sale Brownsville TX/i);
   assert.match(page, /buildable lots Brownsville/i);
-  assert.match(page, /Olmito TX/i);
+  assert.match(page, /City of Brownsville/i);
+  assert.match(page, /postal designation.*Olmito, TX 78575/i);
   assert.match(page, /current Lago Bello availability/i);
   assert.match(page, /https:\/\/wa\.me\/19563055246/);
   assert.match(page, /data-cta-location="brownsville_lots_landing"/);

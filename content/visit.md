@@ -1,15 +1,15 @@
 +++
 title = "Visit Us"
 url = "/visit/"
-description = "Plan a visit to Lago Bello in Olmito, TX — directions, what to expect when you arrive, and how to schedule a guided tour."
-keywords = ["visit", "directions", "map", "location", "drive", "tour", "Brownsville", "Olmito"]
+description = "Plan a visit to Lago Bello in Brownsville, TX — directions, what to expect when you arrive, and how to schedule a guided tour."
+keywords = ["visit", "directions", "map", "location", "drive", "tour", "Brownsville"]
 +++
 
 # Visit Lago Bello
 
 Come see Lago Bello in person — the lake, the gate, the lots that already
-have homes going up, and the ones still waiting for yours. We're a quick
-drive from Brownsville and easy to find.
+have homes going up, and the ones still waiting for yours. We're in
+Brownsville and easy to find.
 
 ## Navigation
 
@@ -33,7 +33,7 @@ Click the buttons below to start navigation on your mobile device:
 1000 Vittorio Alfieri Ave.
 Olmito, Texas 78575
 
-Lago Bello sits just north of Brownsville along I-69E, adjacent to South
+Lago Bello is in the City of Brownsville along I-69E, adjacent to South
 Texas Independent School District's Medical Professions campus. You'll
 recognize the entrance by the fountain just inside the front gate.
 

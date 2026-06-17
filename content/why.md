@@ -2,13 +2,13 @@
 title = "Why Lago Bello"
 url = "/why/"
 description = "Lago Bello is a gated waterfront subdivision in Brownsville, TX — 52 residential lots around a private 16-acre lake, with buried fiber, walk-to-school proximity, and a flood-zone X location."
-keywords = ["Lago Bello", "Brownsville TX", "Olmito", "gated community", "waterfront", "subdivision", "lake", "residential lots"]
+keywords = ["Lago Bello", "Brownsville TX", "gated community", "waterfront", "subdivision", "lake", "residential lots"]
 +++
 
 # Why Lago Bello
 
-Lago Bello is a gated residential subdivision in Olmito, just north of
-Brownsville, TX. Fifty-two lots arranged around a private 16-acre
+Lago Bello is a gated residential subdivision in Brownsville, TX. Fifty-two lots
+arranged around a private 16-acre
 freshwater lake, behind a single staffed gate, with the kind of
 infrastructure most subdivisions in the Rio Grande Valley don't have.
 

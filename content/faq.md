@@ -33,8 +33,8 @@ question = "Can I choose my own builder?"
 answer = "Yes, you can bring your own builder. Plans must be approved by the Architectural Control Committee before construction. Homes adjoining the lake must be at least 2,000 sq ft of living area; all other homes must be at least 1,800 sq ft. We also have builder specifications and technical requirements for construction at Lago Bello."
 
 [[faq]]
-question = "How close is Lago Bello to Brownsville?"
-answer = "Lago Bello is located in Olmito, just minutes north of Brownsville, TX. From the front gate it's roughly 15 minutes to downtown Brownsville and the Brownsville/SPI International Airport, 20 minutes to Matamoros via the B&M Bridge, 30 minutes to South Padre Island, and 50 minutes to McAllen."
+question = "Is Lago Bello in Brownsville?"
+answer = "Yes. Lago Bello is in the City of Brownsville, Texas; the postal designation for the formal address is Olmito, TX 78575. From the front gate it's roughly 15 minutes to downtown Brownsville and the Brownsville/SPI International Airport, 20 minutes to Matamoros via the B&M Bridge, 30 minutes to South Padre Island, and 50 minutes to McAllen."
 
 [[faq]]
 question = "Does Lago Bello have high-speed internet?"
@@ -118,9 +118,9 @@ Yes. We work with preferred local lenders to offer lot loans, construction-to-pe
 
 Yes, you can bring your own builder. Plans must be approved by the Architectural Control Committee before construction. Homes adjoining the lake must be at least 2,000 sq ft of living area; all other homes must be at least 1,800 sq ft. See our [builders page](/builders/) for full specifications.
 
-## 8. HOW CLOSE IS LAGO BELLO TO BROWNSVILLE?
+## 8. IS LAGO BELLO IN BROWNSVILLE?
 
-Lago Bello is located in Olmito, just minutes north of Brownsville, TX. From the front gate it's roughly 15 minutes to downtown Brownsville and the Brownsville/SPI International Airport, 20 minutes to Matamoros via the B&M Bridge, 30 minutes to [South Padre Island](/blog/2026/03/25/drive-to-spi/), and 50 minutes to McAllen.
+Yes. Lago Bello is in the City of Brownsville, Texas; the postal designation for the formal address is Olmito, TX 78575. From the front gate it's roughly 15 minutes to downtown Brownsville and the Brownsville/SPI International Airport, 20 minutes to Matamoros via the B&M Bridge, 30 minutes to [South Padre Island](/blog/2026/03/25/drive-to-spi/), and 50 minutes to McAllen.
 
 ## 9. DOES LAGO BELLO HAVE HIGH-SPEED INTERNET?
 
