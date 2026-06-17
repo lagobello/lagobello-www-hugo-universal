@@ -25,36 +25,93 @@ pagerSize = 10
 # Main menu
 
 [[menu.main]]
-    name = "🏠 Home"
-    url  = "/"
+    name = "Lots"
+    identifier = "lots"
+    url = ""
     weight = 1
 
 [[menu.main]]
-    name = "🏞️ Lots for Sale"
+    name = "Available Lots"
     url  = "/lots/"
+    parent = "lots"
+    weight = 1
+
+[[menu.main]]
+    name = "Brownsville Residential Lots"
+    url  = "/lots-for-sale-brownsville-tx/"
+    parent = "lots"
     weight = 2
 
 [[menu.main]]
-    name = "🗺️ Interactive Map"
-    url  = "/interactive-map/"
+    name = "Waterfront Lots"
+    url  = "/waterfront/"
+    parent = "lots"
     weight = 3
 
 [[menu.main]]
-    name = "🌊 Waterfront Lots"
+    name = "Interactive Map"
+    url  = "/interactive-map/"
+    parent = "lots"
+    weight = 4
+
+[[menu.main]]
+    name = "Explore"
+    identifier = "explore"
+    url = ""
+    weight = 2
+
+[[menu.main]]
+    name = "Why Lago Bello"
+    url  = "/why/"
+    parent = "explore"
+    weight = 1
+
+[[menu.main]]
+    name = "Walk to School"
+    url  = "/school/"
+    parent = "explore"
+    weight = 2
+
+[[menu.main]]
+    name = "Waterfront Living"
     url  = "/waterfront/"
-    weight = 3.1
+    parent = "explore"
+    weight = 3
 
 [[menu.main]]
-    name = "🏗️ Builders Page"
+    name = "Build"
+    identifier = "build"
+    url = ""
+    weight = 3
+
+[[menu.main]]
+    name = "For Builders"
     url  = "/builders/"
-    weight = 3.2
-
+    parent = "build"
+    weight = 1
 
 [[menu.main]]
-    name = "❓ FAQ"
+    name = "Solar Calculator"
+    url  = "/tools/solar/"
+    parent = "build"
+    weight = 2
+
+[[menu.main]]
+    name = "FAQ"
     identifier = "faq"
     url  = "/faq/"
-    weight = 6
+    parent = "build"
+    weight = 3
+
+[[menu.main]]
+    name = "Visit"
+    url  = "/visit/"
+    weight = 4
+
+[[menu.main]]
+    name = "Contact"
+    url  = "/contact/"
+    weight = 5
 
 
 # Top bar social links menu
