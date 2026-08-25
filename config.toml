@@ -225,7 +225,7 @@ pagerSize = 10
     enable = true
     show_nav_link = true
     name = "Waterfront Sale"
-    percentage = 0.15
+    percentage = 0.20
     location_filter = "Lake"
 
 [Permalinks]
