@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "repository": "lagobello/lagobello-www-hugo-universal",
+  "scope": "additive-project-documentation",
+  "source_policy": "Exact source bytes hashed before extraction; historical records are not current service verification. Original attribution retained. Source identifiers are provenance labels, not runtime filesystem dependencies.",
+  "license_policy": "Owner-authorized internal migration; no new license grant. Retain declared source licenses and notices. References without independently established rights require review before external redistribution.",
+  "skills": [
+    {
+      "name": "lagobello-website-release",
+      "skill_path": "skills/lagobello-website-release/SKILL.md",
+      "output_sha256": "4efe3580623cd0920c30b50ef79e6ac92230080b35ab271d53c5032363e04500",
+      "supporting_files": [],
+      "sources": [
+        {
+          "sha256": "a13d11ad67dff91e9c4ceda4dcad11f133ac94dfb125a36a8a76388ad3524862",
+          "declared_license": "MIT in parent skill frontmatter; retained attribution, no new license grant",
+          "source_identifier": "installed-skill:productivity/lago-bello-operations-workflows/references/lago-bello-website-branch-integration-and-deploy.md"
+        },
+        {
+          "sha256": "cd8bc0fa71c0f6a4e7c2208747b755f728c149f94da8a2737658ada60a199b6c",
+          "declared_license": "MIT in parent skill frontmatter; retained attribution, no new license grant",
+          "source_identifier": "installed-skill:devops/web-preview-and-service-exposure/references/static-site-preview__lago-bello-production-deploy-pagespeed.md"
+        }
+      ],
+      "extracted_sections": [
+        "Branch integration and preservation",
+        "Test/build and release approval",
+        "Remote SHA versus hosting and live proof"
+      ],
+      "safety_transformations": [
+        "No local hostname/paths or private phone values",
+        "No frozen Hugo version or runtime benchmarks",
+        "Cloud provider procedure referenced, not copied"
+      ]
+    }
+  ]
+}
