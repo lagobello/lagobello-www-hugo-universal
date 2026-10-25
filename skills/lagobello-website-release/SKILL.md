@@ -1,7 +1,7 @@
 ---
 name: lagobello-website-release
 description: "Integrate and verify approved website releases."
-version: 0.1.0
+version: 0.1.1
 author: Vittorio, with Hermes Agent
 ---
 
@@ -25,6 +25,14 @@ Use to recover feature-branch work, integrate a site change or verify an approve
 6. **Cloud preview when approved/requested.** Push only the approved integration branch, inspect the exact commit's hosting checks and test its preview routes/assets. A green build or pushed commit alone is insufficient.
 7. **Production only with explicit approval.** Preserve the owner's preview-first convention. If direct production push is expressly approved, use the verified revision; do not force a PR workflow or force-push history. Confirm the remote production SHA and hosting result.
 8. **Read back live pages.** Verify intended positive markers, absence of regressions and direct asset responses on the actual production hostname, using cache-busting where needed. If Actions shows no new run, inspect the hosting integration rather than assuming failure. Report revision, build, preview, deployment and live checks distinctly.
+
+## Read-only verification and revision matching
+
+- For an audit, do not push, deploy, trigger CI, initialize or fetch into a protected source checkout. Use remote read APIs and an isolated full copy for build outputs, caches and any dependency work.
+- Record local HEAD and remote production SHA separately. When compare APIs cannot resolve local history, compare tracked blob trees; never assume a clean local checkout matches production. Obtain differing source blobs at the pinned remote SHA in the isolated copy and rerun the applicable tests/build. Report omitted documentation-only additions explicitly.
+- Preserve dependency symlinks when copying installed dependencies. Exclude generated site output without globally excluding dependency package directories such as `dist`; an incomplete copy can create false build failures. Record harness failures separately from source defects.
+- Derive asset and data routes from current source/rendered references, not guessed names. Check returned content type as well as status. Retry an isolated HTTP denial once with an identified audit user agent or the exact deployment hostname; preserve the initial result rather than declaring an unobserved cause.
+- Local model/fixture tests and static asset responses do not establish interactive browser behavior, real external API data retrieval or conversion delivery. Do not click tracking/contact controls during read-only verification.
 
 ## Pitfalls
 - Never use destructive reset to bypass a blocked recovery path or erase unrelated work.

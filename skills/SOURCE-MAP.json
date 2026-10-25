@@ -8,7 +8,7 @@
     {
       "name": "lagobello-website-release",
       "skill_path": "skills/lagobello-website-release/SKILL.md",
-      "output_sha256": "4efe3580623cd0920c30b50ef79e6ac92230080b35ab271d53c5032363e04500",
+      "output_sha256": "e05b2997bd50840d9992d4d3e025596cfe7074835684d5cc066baccef3a58b0b",
       "supporting_files": [],
       "sources": [
         {
@@ -31,6 +31,14 @@
         "No local hostname/paths or private phone values",
         "No frozen Hugo version or runtime benchmarks",
         "Cloud provider procedure referenced, not copied"
+      ],
+      "revision_history": [
+        {
+          "version": "0.1.0",
+          "output_sha256": "4efe3580623cd0920c30b50ef79e6ac92230080b35ab271d53c5032363e04500",
+          "superseded_by": "0.1.1",
+          "reason": "Read-only platform tests exposed access, revision and evidence-boundary gaps; source attribution remains unchanged."
+        }
       ]
     }
   ]
